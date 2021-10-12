@@ -2,47 +2,86 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "base64-sol/base64.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
-contract NFT is ERC721URIStorage, Ownable{
+contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     using Strings for uint256;
-
+ 
     event CreatedNFT(uint indexed tokenId, string tokenURL);
+    event RequestedRandomSVG(bytes32 indexed requestId, uint256 indexed tokenId);
+    event CreatedUnfinishedRandomSVG(uint256 indexed tokenId, uint256 indexed randomNumber);
 
     uint256 public tokenCounter;
+    uint256 public fee;
+    bytes32 public keyHash;
+
     mapping(uint => Fighter) public tokenIdToFighter;
-    
+    mapping(bytes32 => address) internal requestIdToSender;
+    mapping(bytes32 => uint256) internal requestIdToTokenId;
+    mapping(uint256 => uint256) internal tokenIdToRandomNumber;
+
     struct Fighter {
         uint tokenId;
         string name;
         uint level;
-        uint experience;
         uint wins;
         uint hp;
         uint strength;
         uint dexterity;
         uint agility;
         uint intelligence;
+        uint durability;
     }
 
-    constructor() ERC721("NFT", "NFT"){
+    constructor(address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee) 
+        ERC721("NFT", "NFT")
+        VRFConsumerBase(_VRFCoordinator, _linkToken){
+        fee = _fee;
+        keyHash = _keyHash;
         tokenCounter = 0;
     }
 
-    function create(string memory _name) public{
-        _safeMint(msg.sender, tokenCounter);
-        createFighter(tokenCounter, _name);
-        string memory imageURL = createImageURL(tokenIdToFighter[tokenCounter]);
-        string memory tokenURL = createTokenURL(imageURL);
-        _setTokenURI(tokenCounter, tokenURL);
-        emit CreatedNFT(tokenCounter, tokenURL);
+    function create() public returns(bytes32 requestId){
+        requestId = requestRandomness(keyHash, fee);
+        requestIdToSender[requestId] = msg.sender;
+        uint256 tokenId = tokenCounter;
+        requestIdToTokenId[requestId] = tokenId;
         tokenCounter ++;
+        emit RequestedRandomSVG(requestId, tokenId);
     }
 
-    function createFighter(uint _tokenId, string memory _name) internal {
-        tokenIdToFighter[_tokenId] = Fighter(_tokenId, _name, 1, 0, 0, 100, 9, 8, 7, 6);
+    function fulfillRandomness(bytes32 _requestId, uint256 _randomNumber) internal override {
+        address nftOwner = requestIdToSender[_requestId];
+        uint256 tokenId = requestIdToTokenId[_requestId];
+        _safeMint(nftOwner, tokenId);
+        tokenIdToRandomNumber[tokenId] = _randomNumber;
+        emit CreatedUnfinishedRandomSVG(tokenId, _randomNumber);
+    }
+
+    function finishMint (uint256 _tokenId) public {
+        require(bytes(tokenURI(_tokenId)).length <= 0, "tokenURI is already set");
+        require(tokenCounter > _tokenId, "token has not been minted yet");
+        require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
+        uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
+
+
+        createFighter(_tokenId, randomNumber);
+        string memory imageURL = createImageURL(tokenIdToFighter[_tokenId]);
+        string memory tokenURL = createTokenURL(imageURL);
+        _setTokenURI(_tokenId, tokenURL);
+        emit CreatedNFT(_tokenId, tokenURL);
+    }
+
+    function createFighter(uint _tokenId, uint256 _randomNumber) internal {
+        uint256[] memory stats = new uint[](5);
+        for(uint i = 0; i < 5; i++){
+            uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
+            stats[i] = ((newRN % 10) + 1);
+        }
+        string memory name = string(abi.encode("BLOOD SPORT #", _tokenId.toString()));
+        tokenIdToFighter[_tokenId] = Fighter(_tokenId, name, 1, 0, 100, stats[0], stats[1], stats[2], stats[3], stats[4]);
     }
 
     function createSVG(Fighter memory _fighter) internal pure returns (string memory){
@@ -63,6 +102,8 @@ contract NFT is ERC721URIStorage, Ownable{
             _fighter.agility.toString(),
             "</text><text x='50%' y='77%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>Intelligence: ",
             _fighter.intelligence.toString(),
+            "</text><text x='50%' y='82%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>Durability: ",
+            _fighter.durability.toString(),
             "</text></svg>"
         ));
         return svg;
