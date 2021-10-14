@@ -63,11 +63,11 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   log("Let's wait for the Chainlink VRF node to respond...");
 
   if (chainId != 31337) {
-    await new Promise((r) => setTimeout(r, 280000));
+    await new Promise((r) => setTimeout(r, 180000));
     log(`Now let's finsih the mint...`);
-    tx = await randomSVG.finishMint(tokenId, { gasLimit: 2000000 });
+    tx = await randomSVG.finishMint(tokenId, { gasLimit: 4444444 });
     await tx.wait(1);
-    log(`You can view the tokenURI here ${await randomSVG.tokenURI(0)}`);
+    log(`You can view the tokenURI here ${await randomSVG.tokenURI(tokenId)}`);
   } else {
     const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
     vrfCoordinator = await ethers.getContractAt(

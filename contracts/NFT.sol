@@ -69,7 +69,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
 
         createFighter(_tokenId, randomNumber);
         string memory imageURL = createImageURL(tokenIdToFighter[_tokenId]);
-        string memory tokenURL = createTokenURL(imageURL);
+        string memory tokenURL = createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
         _setTokenURI(_tokenId, tokenURL);
         emit CreatedNFT(_tokenId, tokenURL);
     }
@@ -80,8 +80,8 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
             uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
             stats[i] = ((newRN % 10) + 1);
         }
-        string memory name = string(abi.encodePacked("BLOOD SPORT #", _tokenId.toString()));
-        tokenIdToFighter[_tokenId] = Fighter(_tokenId, name, 1, 0, 100, stats[0], stats[1], stats[2], stats[3], stats[4]);
+        string memory name = string(abi.encodePacked("BloodSport #", _tokenId.toString()));
+        tokenIdToFighter[_tokenId] = Fighter(_tokenId, name, 1, 0, 20, stats[0], stats[1], stats[2], stats[3], stats[4]);
     }
 
     function createSVG(Fighter memory _fighter) internal pure returns (string memory){
@@ -117,9 +117,23 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         return imageURI;
     }
 
-    function createTokenURL(string memory _imageURL) internal pure returns(string memory){
+    function createTokenURL(string memory _imageURL, Fighter memory _fighter) internal pure returns(string memory){
         string memory baseURL = "data:application/json;base64,";
-        string memory json = Base64.encode(bytes(abi.encodePacked('{"name": "NFT NAME", "description": "An NFT fighting game", "attributes": "", "image": "', _imageURL, '"}')));
+        string memory json = Base64.encode(bytes(abi.encodePacked(
+            '{"name": "',_fighter.name,
+            '","description": "An NFT fighting game",',
+            '"attributes":[',
+            '{"trait_type": "Level","value": "',_fighter.level.toString(),
+            '"},{"trait_type": "Wins","value": "',_fighter.wins.toString(),
+            '"},{"trait_type": "HP","value": "',_fighter.hp.toString(),
+            '"},{"trait_type": "Strength", "value": "',_fighter.strength.toString(),
+            '"},{"trait_type": "Dexterity", "value": "',_fighter.dexterity.toString(),
+            '"},{"trait_type": "Agility", "value": "',_fighter.agility.toString(),
+            '"},{"trait_type": "Intelligence", "value": "',_fighter.intelligence.toString(),
+            '"},{"trait_type": "Durability" ,"value": "',_fighter.durability.toString(),
+            '"}], "image": "', _imageURL,
+            '"}'
+        )));
         string memory tokenURL = string(abi.encodePacked(baseURL, json));
         return tokenURL;
     }
