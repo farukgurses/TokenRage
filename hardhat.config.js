@@ -22,7 +22,14 @@ const ESK = process.env.ETHERSCAN_API_KEY;
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.4",
+  solidity: {
+    compilers: [
+      { version: "0.8.4" },
+      { version: "0.4.24" },
+      { version: "0.6.6" },
+      { version: "0.7.0" },
+    ],
+  },
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},

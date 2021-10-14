@@ -80,7 +80,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
             uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
             stats[i] = ((newRN % 10) + 1);
         }
-        string memory name = string(abi.encode("BLOOD SPORT #", _tokenId.toString()));
+        string memory name = string(abi.encodePacked("BLOOD SPORT #", _tokenId.toString()));
         tokenIdToFighter[_tokenId] = Fighter(_tokenId, name, 1, 0, 100, stats[0], stats[1], stats[2], stats[3], stats[4]);
     }
 
