@@ -36,7 +36,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     }
 
     constructor(address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee) 
-        ERC721("NFT", "NFT")
+        ERC721("BloodSport", "BLD")
         VRFConsumerBase(_VRFCoordinator, _linkToken){
         fee = _fee;
         keyHash = _keyHash;
@@ -86,23 +86,23 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
 
     function createSVG(Fighter memory _fighter) internal pure returns (string memory){
         string memory svg = string(abi.encodePacked(
-            "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500'><rect width='500' height='500' style='fill:rgb(21,21,21);'/><text x='50%' y='20%' font-size='3em' dominant-baseline='middle' text-anchor='middle' fill='white'>",
+            "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500' text-anchor='middle' fill='white' font-size='1.5em'><rect width='500' height='500' style='fill:black;'/><text x='50%' y='20%' font-size='2em'>",
             _fighter.name,
-            "</text><line x1='20%' y1='27%' x2='80%' y2='27%' style='stroke:rgb(255,255,255);stroke-width:4'/><text x='50%' y='35%' font-size='2em' dominant-baseline='middle' text-anchor='middle' fill='white'>Level: ",
+            "</text><line x1='20%' y1='27%' x2='80%' y2='27%' style='stroke:white'/><text x='50%' y='37%' font-size='1.5em'>Level: ",
             _fighter.level.toString(),
-            "</text><text x='50%' y='43%' font-size='2em' dominant-baseline='middle' text-anchor='middle' fill='white'>Wins: ",
+            "</text><text x='50%' y='45%' font-size='1.5em'>Wins: ",
             _fighter.wins.toString(),
-            "</text><line x1='20%' y1='50%' x2='80%' y2='50%' style='stroke:rgb(255,255,255);stroke-width:4'/><text x='50%' y='57%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>HP: ",
+            "</text><line x1='20%' y1='50%' x2='80%' y2='50%' style='stroke:white'/><text x='50%' y='57%'>HP: ",
             _fighter.hp.toString(),
-            "</text><text x='50%' y='62%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>Strength: ",
+            "</text><text x='50%' y='62%'>Strength: ",
             _fighter.strength.toString(),
-            "</text><text x='50%' y='67%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>Dexterity: ",
+            "</text><text x='50%' y='67%'>Dexterity: ",
             _fighter.dexterity.toString(),
-            "</text><text x='50%' y='72%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>Agility: ",
+            "</text><text x='50%' y='72%'>Agility: ",
             _fighter.agility.toString(),
-            "</text><text x='50%' y='77%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>Intelligence: ",
+            "</text><text x='50%' y='77%'>Intelligence: ",
             _fighter.intelligence.toString(),
-            "</text><text x='50%' y='82%' font-size='1.5em' dominant-baseline='middle' text-anchor='middle' fill='white'>Durability: ",
+            "</text><text x='50%' y='82%'>Durability: ",
             _fighter.durability.toString(),
             "</text></svg>"
         ));
@@ -123,15 +123,15 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
             '{"name": "',_fighter.name,
             '","description": "An NFT fighting game",',
             '"attributes":[',
-            '{"trait_type": "Level","value": "',_fighter.level.toString(),
-            '"},{"trait_type": "Wins","value": "',_fighter.wins.toString(),
-            '"},{"trait_type": "HP","value": "',_fighter.hp.toString(),
-            '"},{"trait_type": "Strength", "value": "',_fighter.strength.toString(),
-            '"},{"trait_type": "Dexterity", "value": "',_fighter.dexterity.toString(),
-            '"},{"trait_type": "Agility", "value": "',_fighter.agility.toString(),
-            '"},{"trait_type": "Intelligence", "value": "',_fighter.intelligence.toString(),
-            '"},{"trait_type": "Durability" ,"value": "',_fighter.durability.toString(),
-            '"}], "image": "', _imageURL,
+            '{"trait_type": "Level", "max_value": 100, "value": ',_fighter.level.toString(),
+            '},{"trait_type": "Wins", "value": ',_fighter.wins.toString(),
+            '},{"trait_type": "HP", "max_value": 2000, "value": ',_fighter.hp.toString(),
+            '},{"trait_type": "Strength", "max_value": 1000, "value": ',_fighter.strength.toString(),
+            '},{"trait_type": "Dexterity", "max_value": 1000, "value": ',_fighter.dexterity.toString(),
+            '},{"trait_type": "Agility", "max_value": 1000, "value": ',_fighter.agility.toString(),
+            '},{"trait_type": "Intelligence", "max_value": 1000, "value": ',_fighter.intelligence.toString(),
+            '},{"trait_type": "Durability", "max_value": 1000, "value": ',_fighter.durability.toString(),
+            '}], "image": "', _imageURL,
             '"}'
         )));
         string memory tokenURL = string(abi.encodePacked(baseURL, json));
