@@ -1,39 +1,35 @@
-//SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "base64-sol/base64.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "./Library.sol";
 
 contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     using Strings for uint256;
  
     event CreatedNFT(uint indexed tokenId, string tokenURL);
+    event UpdatedNFT(uint indexed tokenId, string tokenURL);
     event RequestedRandomSVG(bytes32 indexed requestId, uint256 indexed tokenId);
     event CreatedUnfinishedRandomSVG(uint256 indexed tokenId, uint256 indexed randomNumber);
 
     uint256 public tokenCounter;
     uint256 public fee;
     bytes32 public keyHash;
+    address private trainingContract;
+    address private fightingContract;
+    uint256 private cost;
+    uint256 private maxSupply;
+    bool private paused;
 
-    mapping(uint => Fighter) public tokenIdToFighter;
+    mapping(uint => lib.Fighter) public tokenIdToFighter;
     mapping(bytes32 => address) internal requestIdToSender;
     mapping(bytes32 => uint256) internal requestIdToTokenId;
     mapping(uint256 => uint256) internal tokenIdToRandomNumber;
 
-    struct Fighter {
-        uint tokenId;
-        string name;
-        uint level;
-        uint wins;
-        uint hp;
-        uint strength;
-        uint dexterity;
-        uint agility;
-        uint intelligence;
-        uint durability;
-    }
+
 
     constructor(address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee) 
         ERC721("BloodSport", "BLD")
@@ -41,9 +37,17 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         fee = _fee;
         keyHash = _keyHash;
         tokenCounter = 0;
+        cost = 1 ether;
+        maxSupply = 10000;
+        paused = false;
     }
+    
+    // --------------------------------------------  MINT NFT ----------------------------------------------//
+    function create() public payable returns(bytes32 requestId){
+        require(!paused, "Minting is not active");
+        require(tokenCounter < maxSupply, "Minting is over");
+        // require(msg.value >= cost, "Wrong payment");
 
-    function create() public returns(bytes32 requestId){
         requestId = requestRandomness(keyHash, fee);
         requestIdToSender[requestId] = msg.sender;
         uint256 tokenId = tokenCounter;
@@ -66,7 +70,6 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
 
-
         createFighter(_tokenId, randomNumber);
         string memory imageURL = createImageURL(tokenIdToFighter[_tokenId]);
         string memory tokenURL = createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
@@ -74,17 +77,35 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         emit CreatedNFT(_tokenId, tokenURL);
     }
 
-    function createFighter(uint _tokenId, uint256 _randomNumber) internal {
-        uint256[] memory stats = new uint[](5);
-        for(uint i = 0; i < 5; i++){
-            uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
-            stats[i] = ((newRN % 10) + 1);
-        }
-        string memory name = string(abi.encodePacked("BloodSport #", _tokenId.toString()));
-        tokenIdToFighter[_tokenId] = Fighter(_tokenId, name, 1, 0, 20, stats[0], stats[1], stats[2], stats[3], stats[4]);
+    function totalSupply() public view virtual returns (uint256) {
+        return tokenCounter;
     }
 
-    function createSVG(Fighter memory _fighter) internal pure returns (string memory){
+    // --------------------------------------------  ON-CHAIN DATA ----------------------------------------------//
+    function createFighter(uint _tokenId, uint256 _randomNumber) internal {
+        uint256[] memory stats = new uint[](6);
+        for(uint i = 0; i < 6; i++){
+            uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
+            if(i == 0) {
+                stats[i] = ((newRN % 10) + 1);
+            }else{
+                stats[i] = ((newRN % (10 * stats[0])) + 1);
+            }
+        }
+        string memory name = string(abi.encodePacked("BloodSport #", _tokenId.toString()));
+        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, stats[0], 0, stats[0]*20, stats[1], stats[2], stats[3], stats[4], stats[5]);
+    }
+
+    function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
+        // require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
+        tokenIdToFighter[_tokenId] = _fighter;
+        string memory imageURL = createImageURL(_fighter);
+        string memory tokenURL = createTokenURL(imageURL, _fighter);
+        _setTokenURI(_tokenId, tokenURL);
+        emit UpdatedNFT(_tokenId, tokenURL);
+    }
+
+    function createSVG(lib.Fighter memory _fighter) internal pure returns (string memory){
         string memory svg = string(abi.encodePacked(
             "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500' text-anchor='middle' fill='white' font-size='1.5em'><rect width='500' height='500' style='fill:black;'/><text x='50%' y='20%' font-size='2em'>",
             _fighter.name,
@@ -109,7 +130,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         return svg;
     }
 
-    function createImageURL(Fighter memory _fighter) internal pure returns (string memory){
+    function createImageURL(lib.Fighter memory _fighter) internal pure returns (string memory){
         string memory svg = createSVG(_fighter);
         string memory baseURL = "data:image/svg+xml;base64,";
         string memory svgBase64Encoded = Base64.encode(bytes(string(abi.encodePacked(svg))));
@@ -117,7 +138,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         return imageURI;
     }
 
-    function createTokenURL(string memory _imageURL, Fighter memory _fighter) internal pure returns(string memory){
+    function createTokenURL(string memory _imageURL, lib.Fighter memory _fighter) internal pure returns(string memory){
         string memory baseURL = "data:application/json;base64,";
         string memory json = Base64.encode(bytes(abi.encodePacked(
             '{"name": "',_fighter.name,
@@ -137,4 +158,35 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         string memory tokenURL = string(abi.encodePacked(baseURL, json));
         return tokenURL;
     }
+
+    // --------------------------------------------  ONLY OWNER ----------------------------------------------//
+    function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
+        maxSupply = _newMaxSupply;
+    }
+
+    function setCost(uint256 _newCost) public onlyOwner(){
+        cost = _newCost;
+    }
+
+    function setTrainingContract(address _newTrainingContract) public onlyOwner(){
+        trainingContract = _newTrainingContract;
+    }
+
+    function setFightingContract(address _newFightingContract) public onlyOwner(){
+        fightingContract = _newFightingContract;
+    }
+
+    function pause(bool _state) public onlyOwner(){
+        paused = _state;
+    }
+
+    function withdraw() public payable onlyOwner(){
+        require(payable(msg.sender).send(address(this).balance));
+    }
+
+    function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
+        return tokenIdToFighter[_tokenId];
+    }
+
+
 }

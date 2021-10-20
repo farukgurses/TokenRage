@@ -32,7 +32,13 @@ module.exports = {
   },
   defaultNetwork: "hardhat",
   networks: {
-    hardhat: {},
+    //absurdly high
+    hardhat: {
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000,
+    },
     rinkeby: {
       url: RINKEBY_URL,
       accounts: [PK],
