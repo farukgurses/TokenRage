@@ -1,10 +1,11 @@
-//SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "base64-sol/base64.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "./Library.sol";
 
 contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     using Strings for uint256;
@@ -23,23 +24,12 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     uint256 private maxSupply;
     bool private paused;
 
-    mapping(uint => Fighter) public tokenIdToFighter;
+    mapping(uint => lib.Fighter) public tokenIdToFighter;
     mapping(bytes32 => address) internal requestIdToSender;
     mapping(bytes32 => uint256) internal requestIdToTokenId;
     mapping(uint256 => uint256) internal tokenIdToRandomNumber;
 
-    struct Fighter {
-        uint tokenId;
-        string name;
-        uint level;
-        uint wins;
-        uint hp;
-        uint strength;
-        uint dexterity;
-        uint agility;
-        uint intelligence;
-        uint durability;
-    }
+
 
     constructor(address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee) 
         ERC721("BloodSport", "BLD")
@@ -103,11 +93,11 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
             }
         }
         string memory name = string(abi.encodePacked("BloodSport #", _tokenId.toString()));
-        tokenIdToFighter[_tokenId] = Fighter(_tokenId, name, stats[0], 0, stats[0]*20, stats[1], stats[2], stats[3], stats[4], stats[5]);
+        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, stats[0], 0, stats[0]*20, stats[1], stats[2], stats[3], stats[4], stats[5]);
     }
 
-    function updateFighter(uint _tokenId, Fighter memory _fighter) public {
-        require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
+    function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
+        // require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
         tokenIdToFighter[_tokenId] = _fighter;
         string memory imageURL = createImageURL(_fighter);
         string memory tokenURL = createTokenURL(imageURL, _fighter);
@@ -115,7 +105,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         emit UpdatedNFT(_tokenId, tokenURL);
     }
 
-    function createSVG(Fighter memory _fighter) internal pure returns (string memory){
+    function createSVG(lib.Fighter memory _fighter) internal pure returns (string memory){
         string memory svg = string(abi.encodePacked(
             "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500' text-anchor='middle' fill='white' font-size='1.5em'><rect width='500' height='500' style='fill:black;'/><text x='50%' y='20%' font-size='2em'>",
             _fighter.name,
@@ -140,7 +130,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         return svg;
     }
 
-    function createImageURL(Fighter memory _fighter) internal pure returns (string memory){
+    function createImageURL(lib.Fighter memory _fighter) internal pure returns (string memory){
         string memory svg = createSVG(_fighter);
         string memory baseURL = "data:image/svg+xml;base64,";
         string memory svgBase64Encoded = Base64.encode(bytes(string(abi.encodePacked(svg))));
@@ -148,7 +138,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         return imageURI;
     }
 
-    function createTokenURL(string memory _imageURL, Fighter memory _fighter) internal pure returns(string memory){
+    function createTokenURL(string memory _imageURL, lib.Fighter memory _fighter) internal pure returns(string memory){
         string memory baseURL = "data:application/json;base64,";
         string memory json = Base64.encode(bytes(abi.encodePacked(
             '{"name": "',_fighter.name,
@@ -193,6 +183,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     function withdraw() public payable onlyOwner(){
         require(payable(msg.sender).send(address(this).balance));
     }
-
-
+    function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
+        return tokenIdToFighter[_tokenId];
+    }
 }

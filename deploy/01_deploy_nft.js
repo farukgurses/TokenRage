@@ -20,7 +20,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   }
   const keyHash = networkConfig[chainId]["keyHash"];
   const fee = networkConfig[chainId]["fee"];
-  args = [vrfCoordinatorAddress, linkTokenAddress, keyHash, fee];
+  let args = [vrfCoordinatorAddress, linkTokenAddress, keyHash, fee];
   log("----------------------------------------------------");
   const RandomSVG = await deploy("NFT", {
     from: deployer,
@@ -56,7 +56,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await fund_tx.wait(1);
   // await new Promise(r => setTimeout(r, 5000))
   log("Let's create an NFT now!");
-  tx = await randomSVG.create({ gasLimit: 300000 });
+  let tx = await randomSVG.create({ gasLimit: 300000 });
   let receipt = await tx.wait(1);
   let tokenId = receipt.events[3].topics[2];
   log(`You've made your NFT! This is number ${tokenId}`);
