@@ -183,10 +183,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     function withdraw() public payable onlyOwner(){
         require(payable(msg.sender).send(address(this).balance));
     }
-
     function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
         return tokenIdToFighter[_tokenId];
     }
-
-
 }
