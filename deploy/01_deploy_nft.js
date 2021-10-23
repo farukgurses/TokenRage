@@ -77,7 +77,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     );
     let transactionResponse = await vrfCoordinator.callBackWithRandomness(
       receipt.logs[3].topics[1],
-      222111,
+      487,
       randomSVG.address
     );
     await transactionResponse.wait(1);

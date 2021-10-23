@@ -42,18 +42,102 @@ contract Training is ReentrancyGuard, VRFConsumerBase{
         emit ReadyForTraining(tokenId, _randomNumber);
     }
 
-    function finishTraining (uint256 _tokenId) public nonReentrant {
+    function finishTrainingStr (uint256 _tokenId) public nonReentrant {
         require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
+        uint256 randomNumber2 = uint256(keccak256(abi.encode(randomNumber,_tokenId)));
         tokenIdToRandomNumber[_tokenId] = 0;
         lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
+        
+        uint256 trainingSuccessChance = (((fighter.level * 10) - fighter.strength + fighter.durability) / (fighter.level)) * 5;
+        uint256 statIncreaseLimit = ((fighter.level * 10 - fighter.strength) / 10) + 1;
+        if((randomNumber % 100) < trainingSuccessChance){
+            fighter.strength = fighter.strength + (randomNumber2 % statIncreaseLimit) + 1;
+        }
+        if(fighter.strength > fighter.level * 10){
+            fighter.strength = fighter.level * 10;
+        }
 
-        // TODO: Work on training logic
-        // This is just a placeholder to see if it works
-        fighter.strength = fighter.strength + (randomNumber % 10) + 1;
         NFT(nftContract).updateFighter(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter);
+    }    
 
+    function finishTrainingAgi (uint256 _tokenId) public nonReentrant {
+        require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
+        uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
+        uint256 randomNumber2 = uint256(keccak256(abi.encode(randomNumber,_tokenId)));
+        tokenIdToRandomNumber[_tokenId] = 0;
+        lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
+        
+        uint256 trainingSuccessChance = (((fighter.level * 10) - fighter.agility + fighter.durability) / (fighter.level)) * 5;
+        uint256 statIncreaseLimit = ((fighter.level * 10 - fighter.agility) / 10) + 1;
+        if((randomNumber % 100) < trainingSuccessChance){
+            fighter.agility = fighter.agility + (randomNumber2 % statIncreaseLimit) + 1;
+        }
+        if(fighter.agility > fighter.level * 10){
+            fighter.agility = fighter.level * 10;
+        }
+                
+        NFT(nftContract).updateFighter(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter);
+    } 
+
+    function finishTrainingDex (uint256 _tokenId) public nonReentrant {
+        require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
+        uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
+        uint256 randomNumber2 = uint256(keccak256(abi.encode(randomNumber,_tokenId)));
+        tokenIdToRandomNumber[_tokenId] = 0;
+        lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
+        
+        uint256 trainingSuccessChance = (((fighter.level * 10) - fighter.dexterity + fighter.durability) / (fighter.level)) * 5;
+        uint256 statIncreaseLimit = ((fighter.level * 10 - fighter.dexterity) / 10) + 1;
+        if((randomNumber % 100) < trainingSuccessChance){
+            fighter.dexterity = fighter.dexterity + (randomNumber2 % statIncreaseLimit) + 1;
+        }
+        if(fighter.dexterity > fighter.level * 10){
+            fighter.dexterity = fighter.level * 10;
+        }
+                
+        NFT(nftContract).updateFighter(_tokenId, fighter);
         emit TrainingDone(_tokenId, fighter);
     }
+    function finishTrainingInt (uint256 _tokenId) public nonReentrant {
+        require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
+        uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
+        uint256 randomNumber2 = uint256(keccak256(abi.encode(randomNumber,_tokenId)));
+        tokenIdToRandomNumber[_tokenId] = 0;
+        lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
+        
+        uint256 trainingSuccessChance = (((fighter.level * 10) - fighter.intelligence + fighter.durability) / (fighter.level)) * 5;
+        uint256 statIncreaseLimit = ((fighter.level * 10 - fighter.intelligence) / 10) + 1;
+        if((randomNumber % 100) < trainingSuccessChance){
+            fighter.intelligence = fighter.intelligence + (randomNumber2 % statIncreaseLimit) + 1;
+        }
+        if(fighter.intelligence > fighter.level * 10){
+            fighter.intelligence = fighter.level * 10;
+        }
+                
+        NFT(nftContract).updateFighter(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter);
+    }
+    function finishTrainingDur (uint256 _tokenId) public nonReentrant {
+        require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
+        uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
+        uint256 randomNumber2 = uint256(keccak256(abi.encode(randomNumber,_tokenId)));
+        tokenIdToRandomNumber[_tokenId] = 0;
+        lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
+        
+        uint256 trainingSuccessChance = (((fighter.level * 10) - fighter.durability + fighter.durability) / (fighter.level)) * 5;
+        uint256 statIncreaseLimit = ((fighter.level * 10 - fighter.durability) / 10) + 1;
+        if((randomNumber % 100) < trainingSuccessChance){
+            fighter.durability = fighter.durability + (randomNumber2 % statIncreaseLimit) + 1;
+        }
+        if(fighter.durability > fighter.level * 10){
+            fighter.durability = fighter.level * 10;
+        }
+                
+        NFT(nftContract).updateFighter(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter);
+    } 
     
 }
