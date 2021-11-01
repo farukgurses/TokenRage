@@ -95,7 +95,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
-        require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
+        // require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
         tokenIdToFighter[_tokenId] = _fighter;
         string memory imageURL = lib.createImageURL(_fighter);
         string memory tokenURL = lib.createTokenURL(imageURL, _fighter);
