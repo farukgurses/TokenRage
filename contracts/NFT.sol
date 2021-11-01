@@ -3,12 +3,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "base64-sol/base64.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "./Library.sol";
 
 contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
-    using Strings for uint256;
  
     event CreatedNFT(uint indexed tokenId, string tokenURL);
     event UpdatedNFT(uint indexed tokenId, string tokenURL);
@@ -71,8 +69,8 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
 
         createFighter(_tokenId, randomNumber);
-        string memory imageURL = createImageURL(tokenIdToFighter[_tokenId]);
-        string memory tokenURL = createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
+        string memory imageURL = lib.createImageURL(tokenIdToFighter[_tokenId]);
+        string memory tokenURL = lib.createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
         _setTokenURI(_tokenId, tokenURL);
         emit CreatedNFT(_tokenId, tokenURL);
     }
@@ -92,97 +90,44 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
                 stats[i] = ((newRN % (10 * stats[0])) + 1);
             }
         }
-        string memory name = string(abi.encodePacked("BloodSport #", _tokenId.toString()));
+        string memory name = string(abi.encodePacked("BloodSport #", lib.toString(_tokenId)));
         tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, stats[0], 0, stats[0]*20, stats[1], stats[2], stats[3], stats[4], stats[5]);
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
         // require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
         tokenIdToFighter[_tokenId] = _fighter;
-        string memory imageURL = createImageURL(_fighter);
-        string memory tokenURL = createTokenURL(imageURL, _fighter);
+        string memory imageURL = lib.createImageURL(_fighter);
+        string memory tokenURL = lib.createTokenURL(imageURL, _fighter);
         _setTokenURI(_tokenId, tokenURL);
         emit UpdatedNFT(_tokenId, tokenURL);
     }
 
-    function createSVG(lib.Fighter memory _fighter) internal pure returns (string memory){
-        string memory svg = string(abi.encodePacked(
-            "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500' text-anchor='middle' fill='white' font-size='1.5em'><rect width='500' height='500' style='fill:black;'/><text x='50%' y='20%' font-size='2em'>",
-            _fighter.name,
-            "</text><line x1='20%' y1='27%' x2='80%' y2='27%' style='stroke:white'/><text x='50%' y='37%' font-size='1.5em'>Level: ",
-            _fighter.level.toString(),
-            "</text><text x='50%' y='45%' font-size='1.5em'>Wins: ",
-            _fighter.wins.toString(),
-            "</text><line x1='20%' y1='50%' x2='80%' y2='50%' style='stroke:white'/><text x='50%' y='57%'>HP: ",
-            _fighter.hp.toString(),
-            "</text><text x='50%' y='62%'>Strength: ",
-            _fighter.strength.toString(),
-            "</text><text x='50%' y='67%'>Dexterity: ",
-            _fighter.dexterity.toString(),
-            "</text><text x='50%' y='72%'>Agility: ",
-            _fighter.agility.toString(),
-            "</text><text x='50%' y='77%'>Intelligence: ",
-            _fighter.intelligence.toString(),
-            "</text><text x='50%' y='82%'>Durability: ",
-            _fighter.durability.toString(),
-            "</text></svg>"
-        ));
-        return svg;
-    }
-
-    function createImageURL(lib.Fighter memory _fighter) internal pure returns (string memory){
-        string memory svg = createSVG(_fighter);
-        string memory baseURL = "data:image/svg+xml;base64,";
-        string memory svgBase64Encoded = Base64.encode(bytes(string(abi.encodePacked(svg))));
-        string memory imageURI = string(abi.encodePacked(baseURL, svgBase64Encoded));
-        return imageURI;
-    }
-
-    function createTokenURL(string memory _imageURL, lib.Fighter memory _fighter) internal pure returns(string memory){
-        string memory baseURL = "data:application/json;base64,";
-        string memory json = Base64.encode(bytes(abi.encodePacked(
-            '{"name": "',_fighter.name,
-            '","description": "An NFT fighting game",',
-            '"attributes":[',
-            '{"trait_type": "Level", "max_value": 100, "value": ',_fighter.level.toString(),
-            '},{"trait_type": "Wins", "value": ',_fighter.wins.toString(),
-            '},{"trait_type": "HP", "max_value": 2000, "value": ',_fighter.hp.toString(),
-            '},{"trait_type": "Strength", "max_value": 1000, "value": ',_fighter.strength.toString(),
-            '},{"trait_type": "Dexterity", "max_value": 1000, "value": ',_fighter.dexterity.toString(),
-            '},{"trait_type": "Agility", "max_value": 1000, "value": ',_fighter.agility.toString(),
-            '},{"trait_type": "Intelligence", "max_value": 1000, "value": ',_fighter.intelligence.toString(),
-            '},{"trait_type": "Durability", "max_value": 1000, "value": ',_fighter.durability.toString(),
-            '}], "image": "', _imageURL,
-            '"}'
-        )));
-        string memory tokenURL = string(abi.encodePacked(baseURL, json));
-        return tokenURL;
-    }
-
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//
-    function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
-        maxSupply = _newMaxSupply;
-    }
+    // function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
+    //     maxSupply = _newMaxSupply;
+    // }
 
-    function setCost(uint256 _newCost) public onlyOwner(){
-        cost = _newCost;
-    }
+    // function setCost(uint256 _newCost) public onlyOwner(){
+    //     cost = _newCost;
+    // }
 
     function setTrainingContract(address _newTrainingContract) public onlyOwner(){
         trainingContract = _newTrainingContract;
     }
 
-    function setFightingContract(address _newFightingContract) public onlyOwner(){
-        fightingContract = _newFightingContract;
-    }
+    // function setFightingContract(address _newFightingContract) public onlyOwner(){
+    //     fightingContract = _newFightingContract;
+    // }
 
-    function pause(bool _state) public onlyOwner(){
-        paused = _state;
-    }
+    // function pause(bool _state) public onlyOwner(){
+    //     paused = _state;
+    // }
 
-    function withdraw() public payable onlyOwner(){
-        require(payable(msg.sender).send(address(this).balance));
-    }
+    // function withdraw() public payable onlyOwner(){
+    //     require(payable(msg.sender).send(address(this).balance));
+    // }
+
     function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
         return tokenIdToFighter[_tokenId];
     }
