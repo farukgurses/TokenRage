@@ -131,6 +131,4 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
         return tokenIdToFighter[_tokenId];
     }
-
-
 }

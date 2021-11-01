@@ -1,13 +1,16 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Provider } from 'react-redux';
+import Home from './views/Home';
+import store from './redux/store';
+
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <Button type="primary" style={{ marginTop: 20 }}>
-        Mint NFT
-      </Button>
+      <Provider store={store}>
+        <Home />
+      </Provider>
     </div>
   );
 }
