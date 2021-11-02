@@ -6,9 +6,7 @@ import actions from '../redux/actions';
 export default function Home() {
   const dispatch = useDispatch();
   const { name } = useSelector((state: { user: { name: string }}) => state.user);
-
-  console.log(name);
-
+  
   return (
     <div>
       Home Page
