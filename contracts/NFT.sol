@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "./Library.sol";
+import "./FighterCore.sol";
 
-contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
+contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
  
     event CreatedNFT(uint indexed tokenId, string tokenURL);
     event UpdatedNFT(uint indexed tokenId, string tokenURL);
@@ -69,8 +70,8 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
 
         createFighter(_tokenId, randomNumber);
-        string memory imageURL = lib.createImageURL(tokenIdToFighter[_tokenId]);
-        string memory tokenURL = lib.createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
+        string memory imageURL = createImageURL(tokenIdToFighter[_tokenId]);
+        string memory tokenURL = createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
         _setTokenURI(_tokenId, tokenURL);
         emit CreatedNFT(_tokenId, tokenURL);
     }
@@ -97,8 +98,8 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
         // require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
         tokenIdToFighter[_tokenId] = _fighter;
-        string memory imageURL = lib.createImageURL(_fighter);
-        string memory tokenURL = lib.createTokenURL(imageURL, _fighter);
+        string memory imageURL = createImageURL(_fighter);
+        string memory tokenURL = createTokenURL(imageURL, _fighter);
         _setTokenURI(_tokenId, tokenURL);
         emit UpdatedNFT(_tokenId, tokenURL);
     }
