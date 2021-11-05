@@ -35,7 +35,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
         VRFConsumerBase(_VRFCoordinator, _linkToken){
         fee = _fee;
         keyHash = _keyHash;
-        tokenCounter = 0;
+        tokenCounter = 1;
         cost = 1 ether;
         maxSupply = 10000;
         paused = false;
@@ -117,9 +117,9 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
         trainingContract = _newTrainingContract;
     }
 
-    // function setFightingContract(address _newFightingContract) public onlyOwner(){
-    //     fightingContract = _newFightingContract;
-    // }
+    function setFightingContract(address _newFightingContract) public onlyOwner(){
+        fightingContract = _newFightingContract;
+    }
 
     // function pause(bool _state) public onlyOwner(){
     //     paused = _state;

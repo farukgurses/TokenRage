@@ -60,9 +60,9 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await fund_tx.wait(1);
 
   if (chainId == 31337) {
-    let tx = await training.requestTraining(0, { gasLimit: 300000 });
+    let tx = await training.requestTraining(1, { gasLimit: 300000 });
     let receipt = await tx.wait(1);
-    log(`You are requesting training for tokenId: ${0}`);
+    log(`You are requesting training for tokenId: ${1}`);
     log("Let's wait for the Chainlink VRF node to respond...");
     const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
     vrfCoordinator = await ethers.getContractAt(
@@ -77,11 +77,11 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     );
     await transactionResponse.wait(1);
     log(`RandomNumber is ready, finish training`);
-    tx = await training.finishTrainingAgi(0, { gasLimit: 3333333 });
+    tx = await training.finishTrainingAgi(1, { gasLimit: 3333333 });
     await tx.wait(1);
     log(receipt.events[1].topics);
-    const newFighter = await nft.getFighterById(0);
+    const newFighter = await nft.getFighterById(1);
     log(newFighter);
   }
 };
-module.exports.tags = ["all", "rsvg"];
+module.exports.tags = ["all", "rsvg", "training"];
