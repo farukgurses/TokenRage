@@ -1,30 +1,31 @@
 @font-face {
-  font-family: 'Lato-Regular';
-  src: local('Lato-Regular'), url(./fonts/Lato-Regular.ttf) format('truetype');
+  font-family: "Lato-Regular";
+  src: local("Lato-Regular"), url(./fonts/Lato-Regular.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'Lato-Light';
-  src: local('Lato-Light'), url(./fonts/Lato-Light.ttf) format('truetype');
+  font-family: "Lato-Light";
+  src: local("Lato-Light"), url(./fonts/Lato-Light.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'Lato-Bold';
-  src: local('Lato-Bold'), url(./fonts/Lato-Bold.ttf) format('truetype');
+  font-family: "Lato-Bold";
+  src: local("Lato-Bold"), url(./fonts/Lato-Bold.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'Lato-Thin';
-  src: local('Lato-Thin'), url(./fonts/Lato-Thin.ttf) format('truetype');
+  font-family: "Lato-Thin";
+  src: local("Lato-Thin"), url(./fonts/Lato-Thin.ttf) format("truetype");
 }
 
 body {
   margin: 0;
-  font-family: 'Lato-Regular', -apple-system, 'Ubuntu', 'Helvetica Neue', sans-serif;
+  font-family: "Lato-Regular", -apple-system, "Ubuntu", "Helvetica Neue",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #2E2F36;
-  color: #DDDEE4;
+  background: #2e2f36;
+  color: #dddee4;
   font-size: 1.2rem;
   height: 100%;
 }
@@ -41,7 +42,7 @@ body {
 }
 
 .main-container {
-  background: #1C1D21;
+  background: #1c1d21;
   border-radius: 16px;
   max-width: 88rem;
   position: relative;
@@ -60,7 +61,7 @@ body {
 .welcome-text-content {
   margin-top: 5rem;
   padding: 0 6rem;
-  font-family: 'Lato-Light';
+  font-family: "Lato-Light";
   line-height: 19pt;
   letter-spacing: 1.1pt;
 }
@@ -70,12 +71,12 @@ body {
 }
 
 p.about-tokenrage {
-  margin: 1rem 0
+  margin: 1rem 0;
 }
 
 ul.tokenrage-features {
   list-style: none;
-  font-family: 'Lato-Regular';
+  font-family: "Lato-Regular";
   text-align: left;
   margin-top: 3.5rem;
   margin-bottom: 4.5rem;
@@ -101,11 +102,11 @@ ul.tokenrage-features li img {
 /* smaller screens */
 @media screen and (max-width: 540px) {
   .welcome-text-content {
-    padding: 0 2rem
+    padding: 0 2rem;
   }
 
   .main-container {
-    margin-top: 15rem
+    margin-top: 15rem;
   }
 
   ul.tokenrage-features {
@@ -117,7 +118,7 @@ ul.tokenrage-features li img {
     margin-top: 2rem;
     text-align: center;
   }
-  
+
   ul.tokenrage-features li img {
     display: inline;
   }

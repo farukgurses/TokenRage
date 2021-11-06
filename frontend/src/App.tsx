@@ -11,11 +11,11 @@ function App() {
   return (
     <div className="App">
       <MetamaskStateProvider>
-      <Provider store={store}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Provider>
+        <Provider store={store}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </Provider>
       </MetamaskStateProvider>
     </div>
   );

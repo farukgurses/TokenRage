@@ -1,20 +1,22 @@
-import { message } from 'antd'
-import React from 'react'
-import { useMetamask } from 'use-metamask'
-import Web3 from 'web3'
+import { message } from "antd";
+import React from "react";
+import { useMetamask } from "use-metamask";
+import Web3 from "web3";
 
 export default function WelcomeScreen() {
-  const { connect, metaState } = useMetamask()
+  const { connect } = useMetamask();
 
   const connectMetamask = async () => {
     try {
-      await connect(Web3)
+      await connect(Web3);
     } catch (error) {
-      console.error('Error while connecting wallet', error)
-      message.error('Unable to connect to the wallet. Refresh the page and try again.');
+      console.error("Error while connecting wallet", error);
+      message.error(
+        "Unable to connect to the wallet. Refresh the page and try again."
+      );
     }
-  }
-  
+  };
+
   return (
     <main className="main-container welcome-container">
       <img src="/assets/logo.png" className="tokenrage-logo" />
@@ -25,7 +27,12 @@ export default function WelcomeScreen() {
         </div>
 
         <p className="about-tokenrage">
-          Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts (this is a dummy text)
+          Far far away, behind the word mountains, far from the countries
+          Vokalia and Consonantia, there live the blind texts. Separated they
+          live in Bookmarksgrove right at the coast of the Semantics, a large
+          language ocean. A small river named Duden flows by their place and
+          supplies it with the necessary regelialia. It is a paradisematic
+          country, in which roasted parts (this is a dummy text)
         </p>
 
         <ul className="tokenrage-features">
@@ -52,5 +59,5 @@ export default function WelcomeScreen() {
         </div>
       </div>
     </main>
-  )
+  );
 }
