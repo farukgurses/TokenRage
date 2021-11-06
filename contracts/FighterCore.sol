@@ -5,18 +5,27 @@ import "./Library.sol";
 
 contract FighterCore {
 
-function createSVG(lib.Fighter memory _fighter) internal pure returns (string memory){
-    string memory svg = string(abi.encodePacked(
-        "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500' text-anchor='middle' fill='white' font-size='1.5em'><rect width='500' height='500' style='fill:black;'/>",
-        "<rect width='", lib.toString(_fighter.hp/2), "' height='25' y='0' x='0' style='fill:red'></rect>",
-        "<rect width='", lib.toString(_fighter.strength/2), "' height='25' y='25' x='0' style='fill:green'></rect>",
-        "<rect width='", lib.toString(_fighter.dexterity/2), "' height='25' y='50' x='0' style='fill:blue'></rect>",
-        "<rect width='", lib.toString(_fighter.agility/2), "' height='25' y='75' x='0' style='fill:orange'></rect>",
-        "<rect width='", lib.toString(_fighter.intelligence/2), "' height='25' y='100' x='0' style='fill:yellow'></rect>",
-        "<rect width='", lib.toString(_fighter.durability/2), "' height='25' y='125' x='0' style='fill:pink'></rect>",
-
-        "<image href='https://token-rage-nft.s3.eu-central-1.amazonaws.com/axe_man_1.png' height='250' width='250' transform='translate(-150, -50)' x='250' y='250'/>",
-        "</svg>"
+    function createSVG(lib.Fighter memory _fighter) internal pure returns (string memory){
+        string memory svg = string(abi.encodePacked(
+            "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500' text-anchor='middle' fill='white' font-size='1.5em'><rect width='500' height='500' style='fill:black;'/><text x='50%' y='20%' font-size='2em'>",
+            _fighter.name,
+            "</text><line x1='20%' y1='27%' x2='80%' y2='27%' style='stroke:white'/><text x='50%' y='37%' font-size='1.5em'>Level: ",
+            lib.toString(_fighter.level),
+            "</text><text x='50%' y='45%' font-size='1.5em'>Wins: ",
+            lib.toString(_fighter.wins),
+            "</text><line x1='20%' y1='50%' x2='80%' y2='50%' style='stroke:white'/><text x='50%' y='57%'>HP: ",
+            lib.toString(_fighter.hp),
+            "</text><text x='50%' y='62%'>Strength: ",
+            lib.toString(_fighter.strength),
+            "</text><text x='50%' y='67%'>Dexterity: ",
+            lib.toString(_fighter.dexterity),
+            "</text><text x='50%' y='72%'>Agility: ",
+            lib.toString(_fighter.agility),
+            "</text><text x='50%' y='77%'>Intelligence: ",
+            lib.toString(_fighter.intelligence),
+            "</text><text x='50%' y='82%'>Durability: ",
+            lib.toString(_fighter.durability),
+            "</text></svg>"
         ));
         return svg;
     }

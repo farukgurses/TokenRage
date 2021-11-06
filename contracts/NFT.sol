@@ -36,7 +36,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
         fee = _fee;
         keyHash = _keyHash;
         tokenCounter = 1;
-        cost = 1 ether;
+        cost = 0.01 ether;
         maxSupply = 10000;
         paused = false;
     }
@@ -96,7 +96,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
-        // require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
+        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
         tokenIdToFighter[_tokenId] = _fighter;
         string memory imageURL = createImageURL(_fighter);
         string memory tokenURL = createTokenURL(imageURL, _fighter);
@@ -113,13 +113,13 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     //     cost = _newCost;
     // }
 
-    function setTrainingContract(address _newTrainingContract) public onlyOwner(){
-        trainingContract = _newTrainingContract;
-    }
+    // function setTrainingContract(address _newTrainingContract) public onlyOwner(){
+    //     trainingContract = _newTrainingContract;
+    // }
 
-    function setFightingContract(address _newFightingContract) public onlyOwner(){
-        fightingContract = _newFightingContract;
-    }
+    // function setFightingContract(address _newFightingContract) public onlyOwner(){
+    //     fightingContract = _newFightingContract;
+    // }
 
     // function pause(bool _state) public onlyOwner(){
     //     paused = _state;

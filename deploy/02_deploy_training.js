@@ -84,4 +84,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log(newFighter);
   }
 };
-module.exports.tags = ["all", "rsvg", "training"];
+module.exports.tags = ["all", "prod", "training"];

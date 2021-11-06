@@ -17,17 +17,18 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
     bool public paused;
 
  
-    mapping(bytes32 => uint256) internal requestIdToTokenId;
-    mapping(uint256 => uint256) internal tokenIdToRandomNumber;
+    mapping(bytes32 => uint256) public requestIdToMatchId;
+    mapping(uint256 => uint256) public matchIdToRandomNumber;
 
     mapping(uint256 => lib.Fighter) public bracketToFighter;
     mapping(uint256 => Match) public matchIdToMatch;
 
     struct Match{
         uint256 matchId;
-        uint256 fighterOne;
-        uint256 fighterTwo;
+        lib.Fighter fighterOne;
+        lib.Fighter fighterTwo;
         uint256 winner;
+        bool end;
     }
 
     constructor(address _nftContract, address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee)
@@ -41,7 +42,8 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
 
     function toggleOpenToFight(uint256 _tokenId) public nonReentrant{
         require(msg.sender == IERC721(nftContract).ownerOf(_tokenId), 'Not owner of this token');
-        
+        require(!paused, "Fighting is not active");
+
         lib.Fighter memory myFighter = NFT(nftContract).getFighterById(_tokenId);
         uint256 lvl = myFighter.level;
         if(lvl<11){
@@ -51,7 +53,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[0] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<21){
@@ -61,7 +63,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[1] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<31){
@@ -71,7 +73,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[2] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<41){
@@ -81,7 +83,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[3] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<51){
@@ -91,7 +93,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[4] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<61){
@@ -101,7 +103,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[5] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<71){
@@ -111,7 +113,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[6] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<80){
@@ -121,7 +123,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[7] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else if(lvl<80){
@@ -131,7 +133,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[8] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }else{
@@ -141,18 +143,39 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }else if(otherFighter.tokenId < 1){
                 bracketToFighter[9] = myFighter;
             }else{
-                startMatch(otherFighter, myFighter);
+                requestMatch(otherFighter, myFighter);
                 delete bracketToFighter[0];
             }
         }
     }
-    function fulfillRandomness(bytes32 _requestId, uint256 _randomNumber) internal override {
-        uint256 tokenId = requestIdToTokenId[_requestId];
-        tokenIdToRandomNumber[tokenId] = _randomNumber;
-    }
 
-    function startMatch(lib.Fighter memory _fighterOne, lib.Fighter memory _fighterTwo) internal{
-        matchIdToMatch[matchCounter] = Match(matchCounter, _fighterOne.tokenId, _fighterTwo.tokenId, _fighterTwo.tokenId);
+
+    function requestMatch(lib.Fighter memory _fighterOne, lib.Fighter memory _fighterTwo) internal{
+        bytes32 requestId = requestRandomness(keyHash, fee);
+        matchIdToMatch[matchCounter] = Match(matchCounter, _fighterOne, _fighterTwo, 0, false);
+        requestIdToMatchId[requestId] = matchCounter;
         matchCounter++;
     }
+
+    function fulfillRandomness(bytes32 _requestId, uint256 _randomNumber) internal override {
+        uint256 matchId = requestIdToMatchId[_requestId];
+        matchIdToRandomNumber[matchId] = _randomNumber;
+    }
+
+    function finishMatch (uint256 _matchId) public {
+        require(matchIdToMatch[_matchId].end == false && matchIdToMatch[_matchId].winner == 0, "Match is already done");
+        require(matchIdToRandomNumber[_matchId] > 0 , "ChainLink VRF is not ready");
+        fight(_matchId, matchIdToRandomNumber[_matchId]);
+    }
+
+    function fight(uint256 _matchId, uint256 _randomNumber) internal {
+        uint256 result = _randomNumber % 100;
+        if(result > 50){
+            matchIdToMatch[_matchId].winner = matchIdToMatch[_matchId].fighterTwo.tokenId;
+        }else{
+            matchIdToMatch[_matchId].winner = matchIdToMatch[_matchId].fighterOne.tokenId;
+        }
+        matchIdToMatch[_matchId].end = true;
+    }
+
 }

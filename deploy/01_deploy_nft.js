@@ -56,9 +56,9 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await fund_tx.wait(1);
   // await new Promise(r => setTimeout(r, 5000))
   log("Let's create two NFTs now!");
-  let tx = await randomSVG.create({ gasLimit: 300000 });
+  let tx = await randomSVG.create({ gasLimit: 333333 });
   let receipt = await tx.wait(1);
-  tx = await randomSVG.create({ gasLimit: 300000 });
+  tx = await randomSVG.create({ gasLimit: 333333 });
   let receipt2 = await tx.wait(1);
   let tokenId1 = receipt.events[3].topics[2];
   let tokenId2 = receipt2.events[3].topics[2];
@@ -110,4 +110,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   }
 };
 
-module.exports.tags = ["all", "rsvg", "nft"];
+module.exports.tags = ["all", "prod", "nft"];
