@@ -45,107 +45,15 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
         require(!paused, "Fighting is not active");
 
         lib.Fighter memory myFighter = NFT(nftContract).getFighterById(_tokenId);
-        uint256 lvl = myFighter.level;
-        if(lvl<11){
-            lib.Fighter memory otherFighter = bracketToFighter[0];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[0];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[0] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<21){
-            lib.Fighter memory otherFighter = bracketToFighter[1];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[1];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[1] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<31){
-            lib.Fighter memory otherFighter = bracketToFighter[2];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[2];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[2] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<41){
-            lib.Fighter memory otherFighter = bracketToFighter[3];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[3];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[3] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<51){
-            lib.Fighter memory otherFighter = bracketToFighter[4];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[4];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[4] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<61){
-            lib.Fighter memory otherFighter = bracketToFighter[5];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[5];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[5] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<71){
-            lib.Fighter memory otherFighter = bracketToFighter[6];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[6];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[6] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<80){
-            lib.Fighter memory otherFighter = bracketToFighter[7];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[7];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[7] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
-        }else if(lvl<80){
-            lib.Fighter memory otherFighter = bracketToFighter[8];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[8];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[8] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
+        uint256 bracket = myFighter.level / 10;
+        lib.Fighter memory otherFighter = bracketToFighter[bracket];
+        if(otherFighter.tokenId == _tokenId){
+            delete bracketToFighter[bracket];
+        }else if(otherFighter.tokenId < 1){
+            bracketToFighter[bracket] = myFighter;
         }else{
-            lib.Fighter memory otherFighter = bracketToFighter[9];
-            if(otherFighter.tokenId == _tokenId){
-                delete bracketToFighter[9];
-            }else if(otherFighter.tokenId < 1){
-                bracketToFighter[9] = myFighter;
-            }else{
-                requestMatch(otherFighter, myFighter);
-                delete bracketToFighter[0];
-            }
+            requestMatch(otherFighter, myFighter);
+            delete bracketToFighter[bracket;
         }
     }
 
