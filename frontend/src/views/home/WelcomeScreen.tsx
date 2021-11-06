@@ -19,11 +19,18 @@ export default function WelcomeScreen() {
 
   return (
     <main className="main-container welcome-container">
-      <img src="/assets/logo.png" className="tokenrage-logo" />
+      <img
+        srcSet="/assets/logo@2x.png 2x"
+        src="/assets/logo.png"
+        className="tokenrage-logo"
+      />
 
       <div className="welcome-text-content">
         <div className="tokenrage-textlogo">
-          <img src="/assets/tokenrage-text-logo.png" />
+          <img
+            srcSet="/assets/tokenrage-text-logo@2x.png 2x"
+            src="/assets/tokenrage-text-logo.png"
+          />
         </div>
 
         <p className="about-tokenrage">
@@ -37,25 +44,40 @@ export default function WelcomeScreen() {
 
         <ul className="tokenrage-features">
           <li>
-            <img src="/assets/connect-icon.png" />
+            <img
+              srcSet="/assets/connect-icon@2x.png 2x"
+              src="/assets/connect-icon.png"
+            />
             <span>Connect your crypto wallet</span>
           </li>
           <li>
-            <img src="/assets/mint-icon.png" />
+            <img
+              srcSet="/assets/mint-icon@2x.png 2x"
+              src="/assets/mint-icon.png"
+            />
             <span>Mint your first NFT character</span>
           </li>
           <li>
-            <img src="/assets/train-icon.png" />
+            <img
+              srcSet="/assets/train-icon@2x.png 2x"
+              src="/assets/train-icon.png"
+            />
             <span>Train your character</span>
           </li>
           <li>
-            <img src="/assets/deathmatch-icon.png" />
+            <img
+              srcSet="/assets/deathmatch-icon@2x.png 2x"
+              src="/assets/deathmatch-icon.png"
+            />
             <span>Engage into deathmatches</span>
           </li>
         </ul>
 
         <div className="connect-button-container" onClick={connectMetamask}>
-          <img src="/assets/continue-with-metamask-button.png" />
+          <img
+            srcSet="/assets/continue-with-metamask-button@2x.png 2x"
+            src="/assets/continue-with-metamask-button.png"
+          />
         </div>
       </div>
     </main>
