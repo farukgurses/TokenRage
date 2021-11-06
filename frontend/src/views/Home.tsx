@@ -5,20 +5,20 @@ import actions from '../redux/actions';
 
 export default function Home() {
   const dispatch = useDispatch();
-  const { name } = useSelector((state: { user: { name: string }}) => state.user);
+  const { name } = useSelector((state: { name: string }) => state);
   
   return (
-    <div>
-      Home Page
+    <main>
+      Home Page {name}
       <Button
         type="primary"
         style={{ marginTop: 20 }}
         onClick={() => {
-          dispatch(actions.user.changeUsername(`1${name}`));
+          dispatch(actions.changeUsername(`1${name}`));
         }}
       >
         Mint NFT
       </Button>
-    </div>
+    </main>
   );
 }
