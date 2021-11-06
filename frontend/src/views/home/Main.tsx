@@ -1,37 +1,28 @@
-import React from 'react';
-import { Button } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../redux/actions';
+import React, { useEffect } from 'react';
 import { useMetamask } from 'use-metamask';
-import Web3 from 'web3';
+import ConnectedScreen from './ConnectedScreen';
+import WelcomeScreen from './WelcomeScreen';
 
 export default function Home() {
-  const dispatch = useDispatch();
-  const { name } = useSelector((state: { name: string }) => state);
-  const { connect, metaState } = useMetamask();
+  const { metaState, getAccounts } = useMetamask();
   
-  
-  return (
-    <main>
-      Home Page {name} {metaState.isConnected ? 'isConnected': '!isConnected'} {metaState.isAvailable ? 'available' : 'not available'}
-      <Button
-        type="primary"
-        style={{ marginTop: 20 }}
-        onClick={async () => {
-          dispatch(actions.changeUsername(`1${name}`));
-          if (!metaState.isConnected) {
 
-            try {
-              await connect(Web3);
-            } catch (error) {
-              console.log(error);
-            }
-
+  useEffect(() => {
+    if (metaState.isAvailable) {
+      (async () => {
+        try {
+          // this way we can check whether a wallet is already connected
+          await getAccounts()
+        } catch (e) {
+          console.log('Error while getting accounts', e)
         }
-        }}
-      >
-        Mint NFT
-      </Button>
-    </main>
-  );
+      })()
+    }
+  }, [])
+  
+  if (metaState.isConnected) {
+    return <ConnectedScreen/>
+  }
+
+  return <WelcomeScreen />
 }

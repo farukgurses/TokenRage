@@ -8,7 +8,6 @@ import { Route, Routes } from "react-router-dom";
 import { MetamaskStateProvider } from "use-metamask";
 
 function App() {
-  
   return (
     <div className="App">
       <MetamaskStateProvider>
