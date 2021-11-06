@@ -12,7 +12,8 @@ export default function WelcomeScreen() {
     } catch (error) {
       console.error("Error while connecting wallet", error);
       message.error(
-        "Unable to connect to the wallet. Refresh the page and try again."
+        "Unable to connect to the wallet. Make sure MetaMask extension is installed/activated in your browser or refresh the page and try again.",
+        0
       );
     }
   };
