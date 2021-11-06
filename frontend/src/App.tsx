@@ -4,12 +4,15 @@ import Home from "./views/Home";
 import store from "./redux/store";
 
 import "./App.css";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
       <Provider store={store}>
-        <Home />
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
       </Provider>
     </div>
   );

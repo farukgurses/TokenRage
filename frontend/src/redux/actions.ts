@@ -1,5 +1,11 @@
-import { SET_USERNAME } from "../constants";
+import { SET_USERNAME } from "./constants";
 
 export const changeUsername = (username: string) => async (dispatch: any) => {
   dispatch({ type: SET_USERNAME, payload: username });
 };
+
+const actions = {
+  changeUsername,
+};
+
+export default actions;
