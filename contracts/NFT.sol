@@ -82,17 +82,10 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
 
     // --------------------------------------------  ON-CHAIN DATA ----------------------------------------------//
     function createFighter(uint _tokenId, uint256 _randomNumber) internal {
-        uint256[] memory stats = new uint[](6);
-        for(uint i = 0; i < 6; i++){
-            uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
-            if(i == 0) {
-                stats[i] = ((newRN % 10) + 1);
-            }else{
-                stats[i] = ((newRN % (10 * stats[0])) + 1);
-            }
-        }
+        uint256 level = (_randomNumber % 10) + 1;
+        uint256[] memory stats = lib.expand(_randomNumber, 5, level * 10);
         string memory name = string(abi.encodePacked("BloodSport #", lib.toString(_tokenId)));
-        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, stats[0], 0, stats[0]*20, stats[1], stats[2], stats[3], stats[4], stats[5]);
+        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, level, 0, level*20, stats[0], stats[1], stats[2], stats[3], stats[4]);
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {

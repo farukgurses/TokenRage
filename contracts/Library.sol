@@ -38,4 +38,13 @@ library lib {
         }
         return string(bstr);
     }
+
+    function expand(uint256 _randomNumber, uint256 _count, uint256 _limit) internal pure returns(uint256[] memory _randomArray){
+        _randomArray = new uint256[](_count);
+        for(uint i = 1; i <= _count; i++){
+            uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
+            _randomArray[i-1] = ((newRN % _limit) + 1);
+        }
+        return _randomArray;
+    }
 }

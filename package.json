@@ -49,6 +49,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.ts src/**/*.tsx",
+    "deploy": "npx hardhat deploy",
     "deploy:rinkeby": "npx hardhat deploy --network rinkeby --tags prod",
     "deploy:mumbai": "npx hardhat deploy --network mumbai --tags prod",
     "console:rinkeby": "npx hardhat console --network rinkeby",

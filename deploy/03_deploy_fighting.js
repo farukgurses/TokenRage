@@ -74,31 +74,34 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log("----------------------------------------------------");
     await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
     log(`You are making token ${1} openToFight`);
-    await fighting.toggleOpenToFight(2, { gasLimit: 300000 });
+    let tx = await fighting.toggleOpenToFight(2, { gasLimit: 4444444 });
     log(`You are making token ${2} openToFight, this will start the match`);
+    let receipt = await tx.wait(1);
     let match = await fighting.matchIdToMatch(1);
     log(`Match info: ${match}`);
     f1 = await fighting.bracketToFighter(0, { gasLimit: 300000 });
     log("Bracket To fighter should return 0");
     log(f1);
-    // const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
-    // vrfCoordinator = await ethers.getContractAt(
-    //   "VRFCoordinatorMock",
-    //   VRFCoordinatorMock.address,
-    //   signer
-    // );
-    // let transactionResponse = await vrfCoordinator.callBackWithRandomness(
-    //   receipt.logs[3].topics[1],
-    //   1,
-    //   training.address
-    // );
-    // await transactionResponse.wait(1);
-    // log(`RandomNumber is ready, finish training`);
-    // tx = await training.finishTrainingAgi(1, { gasLimit: 3333333 });
-    // await tx.wait(1);
-    // log(receipt.events[1].topics);
-    // const newFighter = await nft.getFighterById(1);
-    // log(newFighter);
+    const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
+    vrfCoordinator = await ethers.getContractAt(
+      "VRFCoordinatorMock",
+      VRFCoordinatorMock.address,
+      signer
+    );
+    let transactionResponse = await vrfCoordinator.callBackWithRandomness(
+      receipt.logs[3].topics[1],
+      849488411818458,
+      fighting.address
+    );
+    await transactionResponse.wait(1);
+    const randomNum = await fighting.matchIdToRandomNumber(1);
+    log(`RandomNumber is ready, finish fight, ${randomNum}`);
+    await fighting.finishMatch(1, { gasLimit: 9999999 });
+    log(`Match is done`);
+    for (let i = 1; i <= 50; i++) {
+      const rnd = await fighting.matchLogs(i);
+      log(`rnd ${i} : ${rnd}`);
+    }
   }
 };
 module.exports.tags = ["all", "prod", "fighting"];

@@ -77,7 +77,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     await tx.wait(1);
     log(`You can view the tokenURIs here:
      1: ${await randomSVG.tokenURI(tokenId1)}
-     2:${await randomSVG.tokenURI(tokenId2)} 
+     2: ${await randomSVG.tokenURI(tokenId2)} 
     `);
   } else {
     const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
@@ -88,12 +88,12 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     );
     let transactionResponse1 = await vrfCoordinator.callBackWithRandomness(
       receipt.logs[3].topics[1],
-      487,
+      881,
       randomSVG.address
     );
     let transactionResponse2 = await vrfCoordinator.callBackWithRandomness(
       receipt2.logs[3].topics[1],
-      8884,
+      3332,
       randomSVG.address
     );
     await transactionResponse1.wait(1);
