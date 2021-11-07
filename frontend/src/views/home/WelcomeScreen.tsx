@@ -1,22 +1,19 @@
 import { message } from "antd";
-import React from "react";
-import { useMetamask } from "use-metamask";
-import Web3 from "web3";
+import React, { useEffect } from "react";
+import { useConnectToWallet } from "ethereal-react";
 
 export default function WelcomeScreen() {
-  const { connect } = useMetamask();
+  const [connect, { error }] = useConnectToWallet();
 
-  const connectMetamask = async () => {
-    try {
-      await connect(Web3);
-    } catch (error) {
+  useEffect(() => {
+    if (error) {
       console.error("Error while connecting wallet", error);
       message.error(
         "Unable to connect to the wallet. Make sure MetaMask extension is installed/activated in your browser or refresh the page and try again.",
         0
       );
     }
-  };
+  }, [error]);
 
   return (
     <main className="main-container welcome-container">
@@ -74,7 +71,7 @@ export default function WelcomeScreen() {
           </li>
         </ul>
 
-        <div className="connect-button-container" onClick={connectMetamask}>
+        <div className="connect-button-container" onClick={connect}>
           <img
             srcSet="/assets/continue-with-metamask-button@2x.png 2x"
             src="/assets/continue-with-metamask-button.png"
