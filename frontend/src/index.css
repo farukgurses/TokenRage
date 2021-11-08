@@ -1,13 +1,129 @@
+@font-face {
+  font-family: "Lato-Regular";
+  src: local("Lato-Regular"), url(./fonts/Lato-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Lato-Light";
+  src: local("Lato-Light"), url(./fonts/Lato-Light.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Lato-Bold";
+  src: local("Lato-Bold"), url(./fonts/Lato-Bold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Lato-Thin";
+  src: local("Lato-Thin"), url(./fonts/Lato-Thin.ttf) format("truetype");
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: "Lato-Regular", -apple-system, "Ubuntu", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #2e2f36;
+  color: #dddee4;
+  font-size: 1.1rem;
+  height: 100%;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+#root {
+  height: 100%;
+}
+
+.App {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-container {
+  background: #1c1d21;
+  border-radius: 16px;
+  max-width: 88rem;
+  position: relative;
+}
+
+.welcome-container {
+  max-width: 40rem;
+}
+
+.tokenrage-logo {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -64%);
+}
+
+.welcome-text-content {
+  margin-top: 5rem;
+  padding: 0 6rem;
+  line-height: 19pt;
+  letter-spacing: 1.1pt;
+}
+
+.welcome-text-content .tokenrage-textlogo {
+  align-self: center;
+}
+
+p.about-tokenrage {
+  margin: 1rem 0;
+}
+
+ul.tokenrage-features {
+  list-style: none;
+  font-family: "Lato-Bold";
+  text-align: left;
+  margin-top: 3.5rem;
+  margin-bottom: 4.5rem;
+}
+
+ul.tokenrage-features li {
+  margin-bottom: 1rem;
+}
+
+ul.tokenrage-features li img {
+  margin-top: -5px;
+  margin-right: 10px;
+}
+
+.connect-button-container {
+  position: absolute;
+  cursor: pointer;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+/* smaller screens */
+@media screen and (max-width: 540px) {
+  .welcome-text-content {
+    padding: 0 2rem;
+  }
+
+  .main-container {
+    margin-top: 15rem;
+  }
+
+  ul.tokenrage-features {
+    padding-inline-start: 0;
+    margin-bottom: 8rem;
+  }
+
+  ul.tokenrage-features li {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  ul.tokenrage-features li img {
+    display: inline;
+  }
+
+  .connect-button-container {
+    position: fixed;
+    bottom: 3rem;
+  }
 }
