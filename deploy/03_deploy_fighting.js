@@ -90,7 +90,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     );
     let transactionResponse = await vrfCoordinator.callBackWithRandomness(
       receipt.logs[3].topics[1],
-      849488411818458,
+      8494884118123,
       fighting.address
     );
     await transactionResponse.wait(1);
@@ -98,10 +98,17 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log(`RandomNumber is ready, finish fight, ${randomNum}`);
     await fighting.finishMatch(1, { gasLimit: 9999999 });
     log(`Match is done`);
+
+    match = await fighting.matchIdToMatch(1);
     for (let i = 1; i <= 50; i++) {
       const rnd = await fighting.matchLogs(i);
       log(`rnd ${i} : ${rnd}`);
     }
+    log(`Match info: ${match}`);
+    const newFighter1 = await nft.getFighterById(1);
+    log(newFighter1);
+    const newFighter2 = await nft.getFighterById(2);
+    log(newFighter2);
   }
 };
 module.exports.tags = ["all", "prod", "fighting"];

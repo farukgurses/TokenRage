@@ -88,12 +88,12 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     );
     let transactionResponse1 = await vrfCoordinator.callBackWithRandomness(
       receipt.logs[3].topics[1],
-      881,
+      217839,
       randomSVG.address
     );
     let transactionResponse2 = await vrfCoordinator.callBackWithRandomness(
       receipt2.logs[3].topics[1],
-      3332,
+      12387,
       randomSVG.address
     );
     await transactionResponse1.wait(1);

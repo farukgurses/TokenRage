@@ -82,9 +82,9 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
 
     // --------------------------------------------  ON-CHAIN DATA ----------------------------------------------//
     function createFighter(uint _tokenId, uint256 _randomNumber) internal {
-        uint256 level = (_randomNumber % 10) + 1;
+        uint256 level = (_randomNumber % 9) + 1;
         uint256[] memory stats = lib.expand(_randomNumber, 5, level * 10);
-        string memory name = string(abi.encodePacked("BloodSport #", lib.toString(_tokenId)));
+        string memory name = string(abi.encodePacked("CoinRage #", lib.toString(_tokenId)));
         tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, level, 0, level*20, stats[0], stats[1], stats[2], stats[3], stats[4]);
     }
 
@@ -95,6 +95,11 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
         string memory tokenURL = createTokenURL(imageURL, _fighter);
         _setTokenURI(_tokenId, tokenURL);
         emit UpdatedNFT(_tokenId, tokenURL);
+    }
+
+    function _BURN(uint _tokenId) public {
+        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
+        super._burn(_tokenId);
     }
 
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//

@@ -31,8 +31,9 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
         lib.Fighter fighterOne;
         lib.Fighter fighterTwo;
         uint256 winner;
+        uint256 looser;
         bool end;
-        string matchLogs;
+        string[] matchLogs;
     }
 
     constructor(address _nftContract, address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee)
@@ -64,7 +65,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
 
     function requestMatch(lib.Fighter memory _fighterOne, lib.Fighter memory _fighterTwo) internal{
         bytes32 requestId = requestRandomness(keyHash, fee);
-        matchIdToMatch[matchCounter] = Match(matchCounter, _fighterOne, _fighterTwo, 0, false, "");
+        matchIdToMatch[matchCounter] = Match(matchCounter, _fighterOne, _fighterTwo, 0, 0,false, new string[](100));
         requestIdToMatchId[requestId] = matchCounter;
         emit RequestedMatch(requestId, matchCounter);
         matchCounter++;
@@ -117,6 +118,10 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
                 }
                 if(data.dmg > f2.hp){
                     matchLogs[i] = "PLAYER2 DEAD";
+                    matchIdToMatch[_matchId].end=true;
+                    matchIdToMatch[_matchId].winner = f1.tokenId;
+                    matchIdToMatch[_matchId].looser = f2.tokenId;
+                    matchIdToMatch[_matchId].matchLogs = matchLogs;
                     break;
                 }
                 f2.hp -= data.dmg;
@@ -144,6 +149,10 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
                 }
                 if(data.dmg > f1.hp){
                     matchLogs[i] = "PLAYER1 DEAD";
+                    matchIdToMatch[_matchId].end=true;
+                    matchIdToMatch[_matchId].winner = f2.tokenId;
+                    matchIdToMatch[_matchId].looser = f1.tokenId;
+                    matchIdToMatch[_matchId].matchLogs = matchLogs;
                     break;
                 }
                 f1.hp -= data.dmg;
@@ -160,6 +169,18 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
             }
             randomI++;
         }
+        finaliseMatch(_matchId);
+
+    }
+
+    function finaliseMatch(uint _matchId) internal{
+        Match memory _match = matchIdToMatch[_matchId];
+        lib.Fighter memory winner = NFT(nftContract).getFighterById(_match.winner);
+        lib.Fighter memory looser = NFT(nftContract).getFighterById(_match.looser);
+        winner.wins ++;
+        winner.level += looser.level;
+        NFT(nftContract).updateFighter(_match.winner, winner);
+        NFT(nftContract)._BURN(_match.looser);
     }
 
     function successfullHit(uint dex, uint agi, uint rN) internal returns(bool){
@@ -167,7 +188,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase{
     }
 
     function criticalHit(uint intAtt, uint intDef, uint dex, uint agi, uint rN) internal returns(bool){
-        return ((intAtt * dex) / (intDef + agi)) * 10 > rN;
+        return ((intAtt * dex) / (intDef + agi)) * 40 > rN;
     }
 
     function calculateDmg(uint str, uint lvl, bool crit, uint rN) internal returns (uint dmg){
