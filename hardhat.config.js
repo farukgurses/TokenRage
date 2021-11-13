@@ -18,6 +18,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const RINKEBY_URL = process.env.RINKEBY_URL;
 const PK = process.env.PRIVATE_KEY;
 const ESK = process.env.ETHERSCAN_API_KEY;
+const MUMBAI_URL = process.env.MUMBAI_URL;
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -41,6 +42,11 @@ module.exports = {
     },
     rinkeby: {
       url: RINKEBY_URL,
+      accounts: [PK],
+      saveDeployments: true,
+    },
+    mumbai: {
+      url: MUMBAI_URL,
       accounts: [PK],
       saveDeployments: true,
     },

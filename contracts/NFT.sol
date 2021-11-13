@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "./Library.sol";
+import "./FighterCore.sol";
 
-contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
+contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
  
     event CreatedNFT(uint indexed tokenId, string tokenURL);
     event UpdatedNFT(uint indexed tokenId, string tokenURL);
@@ -34,8 +35,8 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         VRFConsumerBase(_VRFCoordinator, _linkToken){
         fee = _fee;
         keyHash = _keyHash;
-        tokenCounter = 0;
-        cost = 1 ether;
+        tokenCounter = 1;
+        cost = 0.01 ether;
         maxSupply = 10000;
         paused = false;
     }
@@ -69,8 +70,8 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
 
         createFighter(_tokenId, randomNumber);
-        string memory imageURL = lib.createImageURL(tokenIdToFighter[_tokenId]);
-        string memory tokenURL = lib.createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
+        string memory imageURL = createImageURL(tokenIdToFighter[_tokenId]);
+        string memory tokenURL = createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
         _setTokenURI(_tokenId, tokenURL);
         emit CreatedNFT(_tokenId, tokenURL);
     }
@@ -81,26 +82,24 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
 
     // --------------------------------------------  ON-CHAIN DATA ----------------------------------------------//
     function createFighter(uint _tokenId, uint256 _randomNumber) internal {
-        uint256[] memory stats = new uint[](6);
-        for(uint i = 0; i < 6; i++){
-            uint256 newRN = uint256(keccak256(abi.encode(_randomNumber,i)));
-            if(i == 0) {
-                stats[i] = ((newRN % 10) + 1);
-            }else{
-                stats[i] = ((newRN % (10 * stats[0])) + 1);
-            }
-        }
-        string memory name = string(abi.encodePacked("BloodSport #", lib.toString(_tokenId)));
-        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, stats[0], 0, stats[0]*20, stats[1], stats[2], stats[3], stats[4], stats[5]);
+        uint256 level = (_randomNumber % 9) + 1;
+        uint256[] memory stats = lib.expand(_randomNumber, 5, level * 10);
+        string memory name = string(abi.encodePacked("CoinRage #", lib.toString(_tokenId)));
+        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, level, 0, level*20, stats[0], stats[1], stats[2], stats[3], stats[4]);
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
-        // require(msg.sender == trainingContract, "Only Training Contract can update Fighter");
+        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
         tokenIdToFighter[_tokenId] = _fighter;
-        string memory imageURL = lib.createImageURL(_fighter);
-        string memory tokenURL = lib.createTokenURL(imageURL, _fighter);
+        string memory imageURL = createImageURL(_fighter);
+        string memory tokenURL = createTokenURL(imageURL, _fighter);
         _setTokenURI(_tokenId, tokenURL);
         emit UpdatedNFT(_tokenId, tokenURL);
+    }
+
+    function _BURN(uint _tokenId) public {
+        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
+        super._burn(_tokenId);
     }
 
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//
@@ -112,9 +111,9 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase{
     //     cost = _newCost;
     // }
 
-    function setTrainingContract(address _newTrainingContract) public onlyOwner(){
-        trainingContract = _newTrainingContract;
-    }
+    // function setTrainingContract(address _newTrainingContract) public onlyOwner(){
+    //     trainingContract = _newTrainingContract;
+    // }
 
     // function setFightingContract(address _newFightingContract) public onlyOwner(){
     //     fightingContract = _newFightingContract;

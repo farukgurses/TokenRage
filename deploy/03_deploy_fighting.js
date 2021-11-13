@@ -28,18 +28,18 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     fee,
   ];
   log("----------------------------------------------------");
-  const Training = await deploy("Training", {
+  const Fighting = await deploy("Fighting", {
     from: deployer,
     args: args,
     log: true,
   });
-  log(`You have deployed Training contract to ${Training.address}`);
-  const TrainingContract = await ethers.getContractFactory("Training");
+  log(`You have deployed Fighting contract to ${Fighting.address}`);
+  const FightingContract = await ethers.getContractFactory("Fighting");
   const accounts = await hre.ethers.getSigners();
   const signer = accounts[0];
-  const training = new ethers.Contract(
-    Training.address,
-    TrainingContract.interface,
+  const fighting = new ethers.Contract(
+    Fighting.address,
+    FightingContract.interface,
     signer
   );
 
@@ -56,14 +56,32 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     signer
   );
   log("Funding contract with chainlink");
-  let fund_tx = await linkToken.transfer(Training.address, fundAmount);
+  let fund_tx = await linkToken.transfer(Fighting.address, fundAmount);
   await fund_tx.wait(1);
 
   if (chainId == 31337) {
-    let tx = await training.requestTraining(1, { gasLimit: 300000 });
+    await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
+    log(`You are making token ${1} openToFight`);
+    let f1 = await fighting.bracketToFighter(0, { gasLimit: 300000 });
+    log("Bracket To fighter should return your fighter");
+    log(f1);
+    log("----------------------------------------------------");
+    await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
+    log("Bracket toggle openTofight to false");
+    f1 = await fighting.bracketToFighter(0, { gasLimit: 300000 });
+    log("Bracket To fighter should return 0");
+    log(f1);
+    log("----------------------------------------------------");
+    await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
+    log(`You are making token ${1} openToFight`);
+    let tx = await fighting.toggleOpenToFight(2, { gasLimit: 4444444 });
+    log(`You are making token ${2} openToFight, this will start the match`);
     let receipt = await tx.wait(1);
-    log(`You are requesting training for tokenId: ${1}`);
-    log("Let's wait for the Chainlink VRF node to respond...");
+    let match = await fighting.matchIdToMatch(1);
+    log(`Match info: ${match}`);
+    f1 = await fighting.bracketToFighter(0, { gasLimit: 300000 });
+    log("Bracket To fighter should return 0");
+    log(f1);
     const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
     vrfCoordinator = await ethers.getContractAt(
       "VRFCoordinatorMock",
@@ -72,16 +90,22 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     );
     let transactionResponse = await vrfCoordinator.callBackWithRandomness(
       receipt.logs[3].topics[1],
-      1,
-      training.address
+      849488718123,
+      fighting.address
     );
     await transactionResponse.wait(1);
-    log(`RandomNumber is ready, finish training`);
-    tx = await training.finishTrainingAgi(1, { gasLimit: 3333333 });
-    await tx.wait(1);
-    log(receipt.events[1].topics);
-    const newFighter = await nft.getFighterById(1);
-    log(newFighter);
+    const randomNum = await fighting.matchIdToRandomNumber(1);
+    log(`RandomNumber is ready, finish fight, ${randomNum}`);
+    await fighting.finishMatch(1, { gasLimit: 9999999 });
+    log(`Match is done`);
+
+    match = await fighting.matchIdToMatch(1);
+
+    log(`Match info: ${match}`);
+    const newFighter1 = await nft.getFighterById(1);
+    log(newFighter1);
+    const newFighter2 = await nft.getFighterById(2);
+    log(newFighter2);
   }
 };
-module.exports.tags = ["all", "prod", "training"];
+module.exports.tags = ["all", "prod", "fighting"];

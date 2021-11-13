@@ -25,5 +25,14 @@
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0"
+  },
+  "scripts": {
+    "deploy": "npx hardhat deploy",
+    "deploy:rinkeby": "npx hardhat deploy --network rinkeby --tags prod",
+    "deploy:mumbai": "npx hardhat deploy --network mumbai --tags prod",
+    "console:rinkeby": "npx hardhat console --network rinkeby",
+    "console:mumbai": "npx hardhat console --network mumbai"
   }
 }
+
+
