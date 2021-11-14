@@ -8,6 +8,7 @@
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.7",
     "hardhat": "^2.6.5",
+    "hardhat-contract-sizer": "^2.1.1",
     "hardhat-deploy": "^0.9.3"
   },
   "dependencies": {
@@ -20,19 +21,18 @@
     "antd": "^4.16.13",
     "base64-sol": "^1.0.1",
     "dotenv": "^10.0.0",
-    "web-vitals": "^1.1.2",
-    "webpack": "4.44.2",
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "web-vitals": "^1.1.2",
+    "webpack": "4.44.2"
   },
   "scripts": {
-    "deploy": "npx hardhat deploy",
+    "test:contracts": "npx hardhat deploy",
     "deploy:rinkeby": "npx hardhat deploy --network rinkeby --tags prod",
     "deploy:mumbai": "npx hardhat deploy --network mumbai --tags prod",
     "console:rinkeby": "npx hardhat console --network rinkeby",
-    "console:mumbai": "npx hardhat console --network mumbai"
+    "console:mumbai": "npx hardhat console --network mumbai",
+    "sizer": "hardhat size-contracts"
   }
 }
-
-

@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "./Library.sol";
-import "./FighterCore.sol";
+import "./FighterUtils.sol";
 
-contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
+contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
  
     event CreatedNFT(uint indexed tokenId, string tokenURL);
     event UpdatedNFT(uint indexed tokenId, string tokenURL);
@@ -17,6 +17,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     uint256 public tokenCounter;
     uint256 public fee;
     bytes32 public keyHash;
+    address private utilsContract;
     address private trainingContract;
     address private fightingContract;
     uint256 private cost;
@@ -24,17 +25,18 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     bool private paused;
 
     mapping(uint => lib.Fighter) public tokenIdToFighter;
-    mapping(bytes32 => address) internal requestIdToSender;
-    mapping(bytes32 => uint256) internal requestIdToTokenId;
-    mapping(uint256 => uint256) internal tokenIdToRandomNumber;
+    mapping(bytes32 => address) private requestIdToSender;
+    mapping(bytes32 => uint256) private requestIdToTokenId;
+    mapping(uint256 => uint256) private tokenIdToRandomNumber;
 
 
 
-    constructor(address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee) 
-        ERC721("BloodSport", "BLD")
+    constructor(address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee, address _utilsContract) 
+        ERC721("TokenRage", "RAGE")
         VRFConsumerBase(_VRFCoordinator, _linkToken){
         fee = _fee;
         keyHash = _keyHash;
+        utilsContract = _utilsContract;
         tokenCounter = 1;
         cost = 0.01 ether;
         maxSupply = 10000;
@@ -43,9 +45,9 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     
     // --------------------------------------------  MINT NFT ----------------------------------------------//
     function create() public payable returns(bytes32 requestId){
-        require(!paused, "Minting is not active");
-        require(tokenCounter < maxSupply, "Minting is over");
-        // require(msg.value >= cost, "Wrong payment");
+        require(!paused, "MNA");
+        require(tokenCounter < maxSupply, "MO");
+        require(msg.value >= cost, "WP");
 
         requestId = requestRandomness(keyHash, fee);
         requestIdToSender[requestId] = msg.sender;
@@ -64,14 +66,14 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     }
 
     function finishMint (uint256 _tokenId) public {
-        require(bytes(tokenURI(_tokenId)).length <= 0, "tokenURI is already set");
-        require(tokenCounter > _tokenId, "token has not been minted yet");
-        require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
+        require(bytes(tokenURI(_tokenId)).length <= 0, "TUS");
+        require(tokenCounter > _tokenId, "TNM");
+        require(tokenIdToRandomNumber[_tokenId] > 0 , "CNR");
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
 
         createFighter(_tokenId, randomNumber);
-        string memory imageURL = createImageURL(tokenIdToFighter[_tokenId]);
-        string memory tokenURL = createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
+        string memory imageURL =  FighterUtils(utilsContract).createImageURL(tokenIdToFighter[_tokenId]);
+        string memory tokenURL = FighterUtils(utilsContract).createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
         _setTokenURI(_tokenId, tokenURL);
         emit CreatedNFT(_tokenId, tokenURL);
     }
@@ -81,7 +83,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     }
 
     // --------------------------------------------  ON-CHAIN DATA ----------------------------------------------//
-    function createFighter(uint _tokenId, uint256 _randomNumber) internal {
+    function createFighter(uint _tokenId, uint256 _randomNumber) private {
         uint256 level = (_randomNumber % 9) + 1;
         uint256[] memory stats = lib.expand(_randomNumber, 5, level * 10);
         string memory name = string(abi.encodePacked("CoinRage #", lib.toString(_tokenId)));
@@ -89,45 +91,49 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
-        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
+        require(msg.sender == trainingContract || msg.sender == fightingContract, "AE");
         tokenIdToFighter[_tokenId] = _fighter;
-        string memory imageURL = createImageURL(_fighter);
-        string memory tokenURL = createTokenURL(imageURL, _fighter);
+        string memory imageURL = FighterUtils(utilsContract).createImageURL(_fighter);
+        string memory tokenURL = FighterUtils(utilsContract).createTokenURL(imageURL, _fighter);
         _setTokenURI(_tokenId, tokenURL);
         emit UpdatedNFT(_tokenId, tokenURL);
     }
 
+    function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
+        return tokenIdToFighter[_tokenId];
+    }
+
     function _BURN(uint _tokenId) public {
-        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
+        require(msg.sender == fightingContract, "AE2");
         super._burn(_tokenId);
     }
 
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//
-    // function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
-    //     maxSupply = _newMaxSupply;
-    // }
-
-    // function setCost(uint256 _newCost) public onlyOwner(){
-    //     cost = _newCost;
-    // }
-
-    // function setTrainingContract(address _newTrainingContract) public onlyOwner(){
-    //     trainingContract = _newTrainingContract;
-    // }
-
-    // function setFightingContract(address _newFightingContract) public onlyOwner(){
-    //     fightingContract = _newFightingContract;
-    // }
-
-    // function pause(bool _state) public onlyOwner(){
-    //     paused = _state;
-    // }
-
-    // function withdraw() public payable onlyOwner(){
-    //     require(payable(msg.sender).send(address(this).balance));
-    // }
-
-    function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
-        return tokenIdToFighter[_tokenId];
+    function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
+        maxSupply = _newMaxSupply;
     }
+
+    function setCost(uint256 _newCost) public onlyOwner(){
+        cost = _newCost;
+    }
+
+    function setTrainingContract(address _newTrainingContract) public onlyOwner(){
+        trainingContract = _newTrainingContract;
+    }
+
+    function setFightingContract(address _newFightingContract) public onlyOwner(){
+        fightingContract = _newFightingContract;
+    }
+    function setUtilsContract(address _newUtilsContract) public onlyOwner(){
+        utilsContract = _newUtilsContract;
+    }
+
+    function pause(bool _state) public onlyOwner(){
+        paused = _state;
+    }
+
+    function withdraw() public payable onlyOwner(){
+        require(payable(msg.sender).send(address(this).balance));
+    }
+
 }

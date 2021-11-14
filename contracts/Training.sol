@@ -3,18 +3,19 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./NFT.sol";
 import "./Library.sol";
 
-contract Training is ReentrancyGuard, VRFConsumerBase{
+contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
     
     event RequestedTraining(bytes32 indexed requestId, uint256 indexed tokenId);
     event ReadyForTraining(uint256 indexed tokenId, uint256 indexed randomNumber);
     event TrainingDone(uint256 indexed tokenId, lib.Fighter indexed fighter);
 
-    address payable owner;
     address private nftContract;
-    
+    uint256 private cost;
+
     uint256 public fee;
     bytes32 public keyHash;
     bool public paused;
@@ -27,10 +28,13 @@ contract Training is ReentrancyGuard, VRFConsumerBase{
         fee = _fee;
         keyHash = _keyHash;
         nftContract = _nftContract;
-        owner = payable(msg.sender);
+        cost = 0.01 ether;
+        paused = false;
     }
 
-    function requestTraining (uint256 _tokenId) public payable nonReentrant returns(bytes32 requestId){
+    function requestTraining (uint256 _tokenId) public payable returns(bytes32 requestId){
+        require(!paused, "TNA");
+        require(msg.value >= cost, "WP");
         requestId = requestRandomness(keyHash, fee);
         requestIdToTokenId[requestId] = _tokenId;
         emit RequestedTraining(requestId, _tokenId);
@@ -110,6 +114,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase{
         NFT(nftContract).updateFighter(_tokenId, fighter);
         emit TrainingDone(_tokenId, fighter);
     }
+    
     function finishTrainingDur (uint256 _tokenId) public nonReentrant {
         lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
         uint256[] memory rns = startTraining(_tokenId);
@@ -144,5 +149,19 @@ contract Training is ReentrancyGuard, VRFConsumerBase{
     function statIncreaseLimit(uint _level, uint _stat) internal pure returns(uint256){
         return ((_level * 10 - _stat) / 10) + 1;
     }
-    
+
+    //--------------------------------------- ONLY OWNER ---------------------------------------------
+
+    function pause(bool _state) public onlyOwner(){
+        paused = _state;
+    }
+
+        
+    function setCost(uint256 _newCost) public onlyOwner(){
+        cost = _newCost;
+    }
+
+    function withdraw() public payable onlyOwner(){
+        require(payable(msg.sender).send(address(this).balance));
+    }
 }

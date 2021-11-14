@@ -8,6 +8,13 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   let linkTokenAddress;
   let vrfCoordinatorAddress;
 
+  log("----------------------------------------------------");
+  const Utils = await deploy("FighterUtils", {
+    from: deployer,
+    log: true,
+  });
+  log(`You have deployed Core contract to ${Utils.address}`);
+
   if (chainId == 31337) {
     let linkToken = await get("LinkToken");
     let VRFCoordinatorMock = await get("VRFCoordinatorMock");
@@ -18,10 +25,20 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     linkTokenAddress = networkConfig[chainId]["linkToken"];
     vrfCoordinatorAddress = networkConfig[chainId]["vrfCoordinator"];
   }
+  log("----------------------------------------------------");
+
   const keyHash = networkConfig[chainId]["keyHash"];
   const fee = networkConfig[chainId]["fee"];
-  let args = [vrfCoordinatorAddress, linkTokenAddress, keyHash, fee];
+  let args = [
+    vrfCoordinatorAddress,
+    linkTokenAddress,
+    keyHash,
+    fee,
+    Utils.address,
+  ];
+
   log("----------------------------------------------------");
+
   const RandomSVG = await deploy("NFT", {
     from: deployer,
     args: args,
@@ -29,11 +46,13 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   });
   log(`You have deployed an NFT contract to ${RandomSVG.address}`);
   const networkName = networkConfig[chainId]["name"];
+
   log(
     `Verify with:\n npx hardhat verify --network ${networkName} ${
       RandomSVG.address
     } ${args.toString().replace(/,/g, " ")}`
   );
+
   const RandomSVGContract = await ethers.getContractFactory("NFT");
   const accounts = await hre.ethers.getSigners();
   const signer = accounts[0];
@@ -54,32 +73,20 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   );
   let fund_tx = await linkToken.transfer(RandomSVG.address, fundAmount);
   await fund_tx.wait(1);
-  // await new Promise(r => setTimeout(r, 5000))
-  log("Let's create two NFTs now!");
-  let tx = await randomSVG.create({ gasLimit: 333333 });
-  let receipt = await tx.wait(1);
-  tx = await randomSVG.create({ gasLimit: 333333 });
-  let receipt2 = await tx.wait(1);
-  let tokenId1 = receipt.events[3].topics[2];
-  let tokenId2 = receipt2.events[3].topics[2];
-  log(`You've made your NFTs!
-  This is number ${tokenId1}
-  This is number ${tokenId2}
-  `);
-  log("Let's wait for the Chainlink VRF node to respond...");
 
-  if (chainId != 31337) {
-    await new Promise((r) => setTimeout(r, 180000));
-    log(`Now let's finsih the mint...`);
-    tx = await randomSVG.finishMint(tokenId1, { gasLimit: 4444444 });
-    await tx.wait(1);
-    tx = await randomSVG.finishMint(tokenId2, { gasLimit: 4444444 });
-    await tx.wait(1);
-    log(`You can view the tokenURIs here:
-     1: ${await randomSVG.tokenURI(tokenId1)}
-     2: ${await randomSVG.tokenURI(tokenId2)} 
+  if (chainId == 31337) {
+    log("Let's create two NFTs now!");
+    let tx = await randomSVG.create({ gasLimit: 333333 });
+    let receipt = await tx.wait(1);
+    tx = await randomSVG.create({ gasLimit: 333333 });
+    let receipt2 = await tx.wait(1);
+    let tokenId1 = receipt.events[3].topics[2];
+    let tokenId2 = receipt2.events[3].topics[2];
+    log(`You've made your NFTs!
+    This is number ${tokenId1}
+    This is number ${tokenId2}
     `);
-  } else {
+    log("Let's wait for the Chainlink VRF node to respond...");
     const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
     vrfCoordinator = await ethers.getContractAt(
       "VRFCoordinatorMock",

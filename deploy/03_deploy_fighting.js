@@ -59,19 +59,13 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   let fund_tx = await linkToken.transfer(Fighting.address, fundAmount);
   await fund_tx.wait(1);
 
+  log("Set Fighting contract in NFT contract");
+  await nft.setFightingContract(Fighting.address);
   if (chainId == 31337) {
     await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
-    log(`You are making token ${1} openToFight`);
-    let f1 = await fighting.bracketToFighter(0, { gasLimit: 300000 });
-    log("Bracket To fighter should return your fighter");
-    log(f1);
-    log("----------------------------------------------------");
+    log(`You are making token 1 openToFight`);
     await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
     log("Bracket toggle openTofight to false");
-    f1 = await fighting.bracketToFighter(0, { gasLimit: 300000 });
-    log("Bracket To fighter should return 0");
-    log(f1);
-    log("----------------------------------------------------");
     await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
     log(`You are making token ${1} openToFight`);
     let tx = await fighting.toggleOpenToFight(2, { gasLimit: 4444444 });
@@ -79,9 +73,6 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     let receipt = await tx.wait(1);
     let match = await fighting.matchIdToMatch(1);
     log(`Match info: ${match}`);
-    f1 = await fighting.bracketToFighter(0, { gasLimit: 300000 });
-    log("Bracket To fighter should return 0");
-    log(f1);
     const VRFCoordinatorMock = await deployments.get("VRFCoordinatorMock");
     vrfCoordinator = await ethers.getContractAt(
       "VRFCoordinatorMock",
@@ -94,13 +85,9 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
       fighting.address
     );
     await transactionResponse.wait(1);
-    const randomNum = await fighting.matchIdToRandomNumber(1);
-    log(`RandomNumber is ready, finish fight, ${randomNum}`);
     await fighting.finishMatch(1, { gasLimit: 9999999 });
     log(`Match is done`);
-
     match = await fighting.matchIdToMatch(1);
-
     log(`Match info: ${match}`);
     const newFighter1 = await nft.getFighterById(1);
     log(newFighter1);

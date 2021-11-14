@@ -59,6 +59,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   let fund_tx = await linkToken.transfer(Training.address, fundAmount);
   await fund_tx.wait(1);
 
+  log("Set training contract in NFT contract");
+  await nft.setTrainingContract(Training.address);
   if (chainId == 31337) {
     let tx = await training.requestTraining(1, { gasLimit: 300000 });
     let receipt = await tx.wait(1);
