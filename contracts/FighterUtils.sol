@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./Library.sol";
 
-contract FighterCore {
+contract FighterUtils {
 
-    function createSVG(lib.Fighter memory _fighter) internal pure returns (string memory){
+    function createSVG(lib.Fighter memory _fighter) private pure returns (string memory){
         string memory svg = string(abi.encodePacked(
             "<svg xmlns='http://www.w3.org/2000/svg' height='500' width='500' text-anchor='middle' fill='white' font-size='1.5em'><rect width='500' height='500' style='fill:black;'/><text x='50%' y='20%' font-size='2em'>",
             _fighter.name,
@@ -30,7 +30,7 @@ contract FighterCore {
         return svg;
     }
 
-    function createImageURL(lib.Fighter memory _fighter) internal pure returns (string memory){
+    function createImageURL(lib.Fighter memory _fighter) public pure returns (string memory){
         string memory svg = createSVG(_fighter);
         string memory baseURL = "data:image/svg+xml;base64,";
         string memory svgBase64Encoded = Base64.encode(bytes(string(abi.encodePacked(svg))));
@@ -38,7 +38,7 @@ contract FighterCore {
         return imageURI;
     }
 
-    function createTokenURL(string memory _imageURL, lib.Fighter memory _fighter) internal pure returns(string memory){
+    function createTokenURL(string memory _imageURL, lib.Fighter memory _fighter) public pure returns(string memory){
         string memory baseURL = "data:application/json;base64,";
         string memory json = Base64.encode(bytes(abi.encodePacked(
             '{"name": "',_fighter.name,

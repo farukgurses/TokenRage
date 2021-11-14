@@ -8,6 +8,13 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   let linkTokenAddress;
   let vrfCoordinatorAddress;
 
+  log("----------------------------------------------------");
+  const Utils = await deploy("FighterUtils", {
+    from: deployer,
+    log: true,
+  });
+  log(`You have deployed Core contract to ${Utils.address}`);
+
   if (chainId == 31337) {
     let linkToken = await get("LinkToken");
     let VRFCoordinatorMock = await get("VRFCoordinatorMock");
@@ -18,10 +25,20 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     linkTokenAddress = networkConfig[chainId]["linkToken"];
     vrfCoordinatorAddress = networkConfig[chainId]["vrfCoordinator"];
   }
+  log("----------------------------------------------------");
+
   const keyHash = networkConfig[chainId]["keyHash"];
   const fee = networkConfig[chainId]["fee"];
-  let args = [vrfCoordinatorAddress, linkTokenAddress, keyHash, fee];
+  let args = [
+    vrfCoordinatorAddress,
+    linkTokenAddress,
+    keyHash,
+    fee,
+    Utils.address,
+  ];
+
   log("----------------------------------------------------");
+
   const RandomSVG = await deploy("NFT", {
     from: deployer,
     args: args,
@@ -29,11 +46,13 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   });
   log(`You have deployed an NFT contract to ${RandomSVG.address}`);
   const networkName = networkConfig[chainId]["name"];
+
   log(
     `Verify with:\n npx hardhat verify --network ${networkName} ${
       RandomSVG.address
     } ${args.toString().replace(/,/g, " ")}`
   );
+
   const RandomSVGContract = await ethers.getContractFactory("NFT");
   const accounts = await hre.ethers.getSigners();
   const signer = accounts[0];
