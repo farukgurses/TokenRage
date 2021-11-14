@@ -3,6 +3,7 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 require("hardhat-deploy");
 require("hardhat-contract-sizer");
+require("hardhat-abi-exporter");
 require("dotenv").config();
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -65,5 +66,12 @@ module.exports = {
     disambiguatePaths: false,
     runOnCompile: true,
     strict: true,
+  },
+  abiExporter: {
+    path: "./frontend/src/artifacts",
+    clear: true,
+    flat: true,
+    spacing: 2,
+    pretty: true,
   },
 };
