@@ -81,15 +81,15 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     function totalSupply() public view virtual returns (uint256) {
         return tokenCounter - 1;
     }
-
-    function tokensOfOwner(address _owner) external view returns(uint256[] memory ownerTokens) {
+    
+    function tokensOfOwner(address _owner) external view returns(uint[] memory ownerTokens) {
         uint256 tokenCount = balanceOf(_owner);
 
         if (tokenCount == 0) {
             // Return an empty array
-            return new uint256[](0);
+            return new uint[](0);
         } else {
-            uint256[] memory result = new uint256[](tokenCount);
+            uint[] memory result = new uint[](tokenCount);
             uint256 resultIndex = 0;
 
             uint256 tokenId;
@@ -100,7 +100,6 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
                     resultIndex++;
                 }
             }
-
             return result;
         }
     }

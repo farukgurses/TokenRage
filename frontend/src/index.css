@@ -98,6 +98,14 @@ ul.tokenrage-features li img {
   transform: translate(-50%, 50%);
 }
 
+.my-wallet-container {
+  margin-top: 5rem;
+  padding: 0 6rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 5rem;
+}
+
 /* smaller screens */
 @media screen and (max-width: 540px) {
   .welcome-text-content {
