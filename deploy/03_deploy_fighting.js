@@ -59,6 +59,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   let fund_tx = await linkToken.transfer(Fighting.address, fundAmount);
   await fund_tx.wait(1);
 
+  log("Set Fighting contract in NFT contract");
+  await nft.setFightingContract(Fighting.address);
   if (chainId == 31337) {
     await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
     log(`You are making token ${1} openToFight`);

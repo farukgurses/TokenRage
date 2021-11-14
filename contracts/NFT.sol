@@ -31,7 +31,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
 
 
     constructor(address _VRFCoordinator, address _linkToken, bytes32 _keyHash, uint256 _fee) 
-        ERC721("BloodSport", "BLD")
+        ERC721("TokenRage", "RAGE")
         VRFConsumerBase(_VRFCoordinator, _linkToken){
         fee = _fee;
         keyHash = _keyHash;
@@ -43,8 +43,8 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     
     // --------------------------------------------  MINT NFT ----------------------------------------------//
     function create() public payable returns(bytes32 requestId){
-        require(!paused, "Minting is not active");
-        require(tokenCounter < maxSupply, "Minting is over");
+        require(!paused, "MNA");
+        require(tokenCounter < maxSupply, "MO");
         // require(msg.value >= cost, "Wrong payment");
 
         requestId = requestRandomness(keyHash, fee);
@@ -64,9 +64,9 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     }
 
     function finishMint (uint256 _tokenId) public {
-        require(bytes(tokenURI(_tokenId)).length <= 0, "tokenURI is already set");
-        require(tokenCounter > _tokenId, "token has not been minted yet");
-        require(tokenIdToRandomNumber[_tokenId] > 0 , "ChainLink VRF is not ready");
+        require(bytes(tokenURI(_tokenId)).length <= 0, "TUS");
+        require(tokenCounter > _tokenId, "TNM");
+        require(tokenIdToRandomNumber[_tokenId] > 0 , "CNR");
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
 
         createFighter(_tokenId, randomNumber);
@@ -89,7 +89,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
-        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
+        require(msg.sender == trainingContract || msg.sender == fightingContract, "AE");
         tokenIdToFighter[_tokenId] = _fighter;
         string memory imageURL = createImageURL(_fighter);
         string memory tokenURL = createTokenURL(imageURL, _fighter);
@@ -98,34 +98,34 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase, FighterCore{
     }
 
     function _BURN(uint _tokenId) public {
-        // require(msg.sender == trainingContract || msg.sender == fightingContract, "Only Training Contract can update Fighter");
+        require(msg.sender == fightingContract, "AE2");
         super._burn(_tokenId);
     }
 
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//
-    // function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
-    //     maxSupply = _newMaxSupply;
-    // }
+    function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
+        maxSupply = _newMaxSupply;
+    }
 
-    // function setCost(uint256 _newCost) public onlyOwner(){
-    //     cost = _newCost;
-    // }
+    function setCost(uint256 _newCost) public onlyOwner(){
+        cost = _newCost;
+    }
 
-    // function setTrainingContract(address _newTrainingContract) public onlyOwner(){
-    //     trainingContract = _newTrainingContract;
-    // }
+    function setTrainingContract(address _newTrainingContract) public onlyOwner(){
+        trainingContract = _newTrainingContract;
+    }
 
-    // function setFightingContract(address _newFightingContract) public onlyOwner(){
-    //     fightingContract = _newFightingContract;
-    // }
+    function setFightingContract(address _newFightingContract) public onlyOwner(){
+        fightingContract = _newFightingContract;
+    }
 
-    // function pause(bool _state) public onlyOwner(){
-    //     paused = _state;
-    // }
+    function pause(bool _state) public onlyOwner(){
+        paused = _state;
+    }
 
-    // function withdraw() public payable onlyOwner(){
-    //     require(payable(msg.sender).send(address(this).balance));
-    // }
+    function withdraw() public payable onlyOwner(){
+        require(payable(msg.sender).send(address(this).balance));
+    }
 
     function getFighterById(uint256 _tokenId) public view returns(lib.Fighter memory _fighter){
         return tokenIdToFighter[_tokenId];
