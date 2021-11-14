@@ -47,7 +47,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     function create() public payable returns(bytes32 requestId){
         require(!paused, "MNA");
         require(tokenCounter < maxSupply, "MO");
-        // require(msg.value >= cost, "WP");
+        require(msg.value >= cost, "WP");
 
         requestId = requestRandomness(keyHash, fee);
         requestIdToSender[requestId] = msg.sender;

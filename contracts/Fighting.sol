@@ -10,18 +10,15 @@ import "./Library.sol";
 contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
     event RequestedMatch(bytes32 indexed requestId, uint256 indexed matchId);
     
-    
     address private nftContract;
-    
     uint256 public fee;
     bytes32 public keyHash;
     uint256 public matchCounter;
     bool public paused;
 
-    mapping(bytes32 => uint256) public requestIdToMatchId;
-    mapping(uint256 => uint256) public matchIdToRandomNumber;
-
-    mapping(uint256 => lib.Fighter) public bracketToFighter;
+    mapping(bytes32 => uint256) private requestIdToMatchId;
+    mapping(uint256 => uint256) private matchIdToRandomNumber;
+    mapping(uint256 => lib.Fighter) private bracketToFighter;
     mapping(uint256 => Match) public matchIdToMatch;
 
     struct Match {
