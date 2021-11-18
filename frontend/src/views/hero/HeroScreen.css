@@ -44,31 +44,25 @@
 
 .hp {
   border-radius: 10px;
-
   background-color: #f44336;
 } /* Green */
 .strength {
   border-radius: 10px;
-
   background-color: #2196f3;
 } /* Blue */
 .dexterity {
   border-radius: 10px;
-
   background-color: #22f5fc;
 } /* Red */
 .agility {
   border-radius: 10px;
-
   background-color: #1afd1a;
 }
 .intelligence {
   border-radius: 10px;
-
   background-color: #e51ff7;
 }
 .durability {
   border-radius: 10px;
-
   background-color: #f2f526;
 }
