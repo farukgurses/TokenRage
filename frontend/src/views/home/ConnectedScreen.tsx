@@ -1,32 +1,63 @@
-import React, { Suspense, useState } from "react";
-import {
-  useContract,
-  useReadContract,
-  useUserAddress,
-  useWaitForTransaction,
-  useWriteContract,
-} from "ethereal-react";
+import React, { useContext, useEffect, useState } from "react";
+
 import { ethers } from "ethers";
 import config from "../../config";
 import nftContractABI from "../../artifacts/NFT.json";
 import { FighterCard } from "../../components/FighterCard";
-export default function ConnectedScreen() {
-  const nftContract = useContract(config.NFT_CONTRACT, nftContractABI);
-  const address = useUserAddress();
-  const walletOfOwner = useReadContract(nftContract, "tokensOfOwner", address);
-  console.log(walletOfOwner);
-  const [createNFT, { loading, data }] = useWriteContract(
-    nftContract,
-    "create"
-  );
+import { AppContext } from "../../context/state";
+import Web3Modal from "web3modal";
+import Loading from "../../components/Loading";
 
-  if (data) {
-    useWaitForTransaction(data);
+export default function ConnectedScreen() {
+  const { loading, setLoading } = useContext(AppContext);
+  const [tokens, setTokens] = useState([]);
+
+  useEffect(() => {
+    setLoading(true);
+    loadNFTs();
+  }, []);
+  async function loadNFTs() {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      config.NFT_CONTRACT,
+      nftContractABI,
+      signer
+    );
+    const firstAccount = (await provider.listAccounts())[0];
+    const data = await contract.tokensOfOwner(firstAccount);
     console.log(data);
+    setTokens(data);
+    setLoading(false);
   }
-  function mintNFT() {
-    const price = ethers.utils.parseUnits("0.01", "ether");
-    createNFT({ value: price });
+
+  async function mintNFT() {
+    setLoading(true);
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        config.NFT_CONTRACT,
+        nftContractABI,
+        signer
+      );
+      const price = ethers.utils.parseUnits("0.01", "ether");
+      const transaction = await contract.create({ value: price });
+      await transaction.wait();
+      await loadNFTs();
+    } catch (error) {
+      setLoading(false);
+    }
+
+    setLoading(false);
+  }
+
+  if (loading) {
+    return <Loading />;
   }
   return (
     <main className="main-container">
@@ -37,13 +68,8 @@ export default function ConnectedScreen() {
       />
 
       <div className="my-wallet-container">
-        {walletOfOwner.map((tokenID: number, i: number) => (
-          <Suspense
-            fallback={<FighterCard tokenID={tokenID} status="minting" />}
-            key={i}
-          >
-            <FighterCard tokenID={tokenID} status="ready" />
-          </Suspense>
+        {tokens.map((tokenID: number, i: number) => (
+          <FighterCard tokenID={tokenID} key={i} />
         ))}
       </div>
       <button onClick={mintNFT}>mint</button>
