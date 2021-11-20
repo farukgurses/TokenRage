@@ -97,7 +97,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
             uint256 tokenId;
 
             for (tokenId = 1; tokenId < tokenCounter; tokenId++) {
-                if (ownerOf(tokenId) == _owner) {
+                if (_exists(tokenId) && ownerOf(tokenId) == _owner) {
                     result[resultIndex] = tokenId;
                     resultIndex++;
                 }

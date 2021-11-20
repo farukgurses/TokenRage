@@ -4,6 +4,8 @@ import config from "../../config";
 import { ethers } from "ethers";
 import nftContractABI from "../../artifacts/NFT.json";
 import trainingContractABI from "../../artifacts/Training.json";
+import fightingContractABI from "../../artifacts/Fighting.json";
+
 import "./HeroScreen.css";
 import Web3Modal from "web3modal";
 import { AppContext } from "../../context/state";
@@ -22,6 +24,10 @@ enum Stat {
 const HeroScreen = () => {
   const [fighter, setFighter] = useState({
     attributes: [
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
       { value: "100" },
       { value: "100" },
       { value: "100" },
@@ -61,7 +67,7 @@ const HeroScreen = () => {
     setLoading(false);
   }
 
-  async function startTraining() {
+  async function goToTraining() {
     setLoading(true);
     try {
       const web3Modal = new Web3Modal();
@@ -78,14 +84,53 @@ const HeroScreen = () => {
         value: price,
       });
       await transaction.wait();
+      await sleep(10000);
+      await loadNFT();
     } catch (error: any) {
-      message.error(error.message, 2);
+      if (error.data.message) {
+        message.error(error.data.message, 2);
+      } else {
+        message.error(error.message, 2);
+      }
+    }
+
+    setLoading(false);
+  }
+  async function goToArena() {
+    setLoading(true);
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const fightingContract = new ethers.Contract(
+        config.FIGHTING_CONTRACT,
+        fightingContractABI,
+        signer
+      );
+      const transaction = await fightingContract.toggleOpenToFight(id);
+      await transaction.wait();
+      await sleep(10000);
+      await loadNFT();
+    } catch (error: any) {
+      if (error.data.message) {
+        message.error(error.data.message, 2);
+      } else {
+        message.error(error.message, 2);
+      }
     }
 
     setLoading(false);
   }
   async function finishTraining(stat: Stat) {
+    if (parseInt(fighter.attributes[1].value) !== 1) {
+      return message.error(
+        "You need to be in Training Range to train your stats",
+        2
+      );
+    }
     setLoading(true);
+
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
@@ -114,19 +159,68 @@ const HeroScreen = () => {
           break;
       }
       await sleep(20000);
+      await loadNFT();
     } catch (error: any) {
       if (error.code === -32603) {
         message.error(
-          "You need to click on start training and wait for some time before finishing your training",
+          "Your Fighter is getting ready for training, please try again soon",
           2
         );
+      } else {
+        message.error(error.message, 2);
       }
-      message.error(error.message, 2);
+      await loadNFT();
     }
 
     setLoading(false);
   }
+  async function finishedMatches() {
+    // const web3Modal = new Web3Modal();
+    // const connection = await web3Modal.connect();
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://matic-mumbai.chainstacklabs.com"
+    );
+    // const provider = new ethers.providers.Web3Provider(connection);
+    const fightingContract = new ethers.Contract(
+      config.FIGHTING_CONTRACT,
+      fightingContractABI,
+      provider
+    );
+    const m = await fightingContract.getFinishedMatchIds(id);
 
+    console.log(m);
+  }
+  async function unfinishedMatches() {
+    // const web3Modal = new Web3Modal();
+    // const connection = await web3Modal.connect();
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://matic-mumbai.chainstacklabs.com"
+    );
+    // const provider = new ethers.providers.Web3Provider(connection);
+    const fightingContract = new ethers.Contract(
+      config.FIGHTING_CONTRACT,
+      fightingContractABI,
+      provider
+    );
+    const m = await fightingContract.getUnFinishedMatchIds(id);
+
+    console.log(m);
+  }
+  async function startFight(id: number) {
+    console.log(id);
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const fightingContract = new ethers.Contract(
+      config.FIGHTING_CONTRACT,
+      fightingContractABI,
+      signer
+    );
+
+    const m = await fightingContract.finishMatch(id);
+    console.log(m);
+  }
   if (loading) {
     return <Loading />;
   }
@@ -193,9 +287,18 @@ const HeroScreen = () => {
 
           <div className="hero-section hero-mid">
             <div>
+              <p>Location : {fighter.attributes[1].value}</p>
+
               <img src={fighter.image} alt="" />
               <div className="connect-button-container">
-                <button onClick={startTraining}>Start Training</button>
+                <button onClick={goToTraining}>Go To Training Range</button>
+                <button onClick={goToArena}>Go To Fighting Arena</button>
+                <button onClick={() => startFight(0)}>START</button>
+                <button onClick={() => unfinishedMatches()}>
+                  ready matches
+                </button>
+
+                <button onClick={() => finishedMatches()}>match history</button>
               </div>
             </div>
           </div>
