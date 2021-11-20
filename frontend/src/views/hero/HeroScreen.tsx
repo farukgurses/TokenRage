@@ -1,65 +1,145 @@
-import React, { Suspense } from "react";
-import { useParams } from "react-router-dom";
+import React, { Suspense, useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import config from "../../config";
 import { ethers } from "ethers";
 import nftContractABI from "../../artifacts/NFT.json";
 import trainingContractABI from "../../artifacts/Training.json";
 import "./HeroScreen.css";
-import {
-  useContract,
-  useReadContract,
-  useWaitForTransaction,
-  useWriteContract,
-} from "ethereal-react";
+import Web3Modal from "web3modal";
+import { AppContext } from "../../context/state";
+import Loading from "../../components/Loading";
+import { message } from "antd";
+import { sleep } from "../../utils";
+
+enum Stat {
+  STR,
+  DEX,
+  AGI,
+  INT,
+  DUR,
+}
+
 const HeroScreen = () => {
+  const [fighter, setFighter] = useState({
+    attributes: [
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
+      { value: "100" },
+    ],
+
+    image:
+      "https://st.depositphotos.com/2885805/3842/v/600/depositphotos_38422667-stock-illustration-coming-soon-message-illuminated-with.jpg",
+  });
   const { id } = useParams();
-  const nftContract = useContract(config.NFT_CONTRACT, nftContractABI);
+  const { loading, setLoading } = useContext(AppContext);
 
-  const trainingContract = useContract(
-    config.TRAINING_CONTRACT,
-    trainingContractABI
-  );
-  const f = useReadContract(nftContract, "tokenIdToFighter", id);
-  let tokenURI = useReadContract(nftContract, "tokenURI", id);
+  useEffect(() => {
+    loadNFT();
+  }, []);
 
-  const [requestTraining, { loading, data }] = useWriteContract(
-    trainingContract,
-    "requestTraining"
-  );
-  const [finishTrainingAgi, { loading: _, data: data2 }] = useWriteContract(
-    trainingContract,
-    "finishTrainingDur"
-  );
+  async function loadNFT() {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const nftContract = new ethers.Contract(
+      config.NFT_CONTRACT,
+      nftContractABI,
+      signer
+    );
+    const data = await nftContract.tokenURI(id);
 
-  const base64ToString = Buffer.from(
-    tokenURI.split(",")[1],
-    "base64"
-  ).toString();
-  const obj = JSON.parse(base64ToString) as any;
-  const startTraining = () => {
-    const price = ethers.utils.parseUnits("0.01", "ether");
-    requestTraining(id, { value: price });
-  };
-  const finishTrainingAgiClicked = () => {
-    finishTrainingAgi(id);
-  };
-
-  if (data) {
-    useWaitForTransaction(data);
-  }
-  if (data2) {
-    useWaitForTransaction(data2);
-    tokenURI = useReadContract(nftContract, "tokenURI", id);
+    const base64ToString = Buffer.from(data.split(",")[1], "base64").toString();
+    const obj = JSON.parse(base64ToString) as any;
+    setFighter(obj);
+    console.log(obj);
+    setLoading(false);
   }
 
+  async function startTraining() {
+    setLoading(true);
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const trainingContract = new ethers.Contract(
+        config.TRAINING_CONTRACT,
+        trainingContractABI,
+        signer
+      );
+      const price = ethers.utils.parseUnits("0.01", "ether");
+      const transaction = await trainingContract.requestTraining(id, {
+        value: price,
+      });
+      await transaction.wait();
+    } catch (error: any) {
+      message.error(error.message, 2);
+    }
+
+    setLoading(false);
+  }
+  async function finishTraining(stat: Stat) {
+    setLoading(true);
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const trainingContract = new ethers.Contract(
+      config.TRAINING_CONTRACT,
+      trainingContractABI,
+      signer
+    );
+    try {
+      switch (stat) {
+        case Stat.STR:
+          await trainingContract.finishTrainingStr(id);
+          break;
+        case Stat.DEX:
+          await trainingContract.finishTrainingDex(id);
+          break;
+        case Stat.AGI:
+          await trainingContract.finishTrainingAgi(id);
+          break;
+        case Stat.INT:
+          await trainingContract.finishTrainingInt(id);
+          break;
+        case Stat.DUR:
+          await trainingContract.finishTrainingDur(id);
+          break;
+      }
+      await sleep(3000);
+    } catch (error: any) {
+      if (error.code === -32603) {
+        message.error(
+          "You need to click on start training and wait for some time before finishing your training",
+          2
+        );
+      }
+      message.error(error.message, 2);
+    }
+
+    setLoading(false);
+  }
+
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <Suspense fallback={<>LOADING...</>}>
       <main className="main-container">
-        <img
-          srcSet="/assets/logo@2x.png 2x"
-          src="/assets/logo.png"
-          className="tokenrage-logo"
-        />
+        <Link to="/">
+          <img
+            srcSet="/assets/logo@2x.png 2x"
+            src="/assets/logo.png"
+            className="tokenrage-logo"
+          />
+        </Link>
         <div className="hero-container">
           <div className="hero-section hero-side">
             <div className="stat-container">
@@ -68,34 +148,44 @@ const HeroScreen = () => {
                 <div
                   className="stats hp"
                   style={{
-                    width: (f.hp.toNumber() * 100) / 2000,
+                    width: (parseInt(fighter.attributes[2].value) * 100) / 2000,
                   }}
                 >
-                  {f.hp.toNumber()}
+                  {parseInt(fighter.attributes[2].value)}
                 </div>
               </div>
             </div>
 
-            <div className="stat-container">
+            <div
+              className="stat-container"
+              onClick={() => finishTraining(Stat.STR)}
+            >
               <span className="stat-name">Strength</span>
               <div className="hero-bar-container">
                 <div
                   className="stats strength"
-                  style={{ width: (f.strength.toNumber() * 100) / 500 }}
+                  style={{
+                    width: (parseInt(fighter.attributes[3].value) * 100) / 500,
+                  }}
                 >
-                  {f.strength.toNumber()}
+                  {parseInt(fighter.attributes[3].value)}
                 </div>
               </div>
             </div>
 
-            <div className="stat-container">
+            <div
+              className="stat-container"
+              onClick={() => finishTraining(Stat.DEX)}
+            >
               <span className="stat-name">Dexterity</span>
               <div className="hero-bar-container">
                 <div
                   className="stats dexterity"
-                  style={{ width: (f.dexterity.toNumber() * 100) / 500 }}
+                  style={{
+                    width: (parseInt(fighter.attributes[4].value) * 100) / 500,
+                  }}
                 >
-                  {f.dexterity.toNumber()}
+                  {parseInt(fighter.attributes[4].value)}
                 </div>
               </div>
             </div>
@@ -103,49 +193,59 @@ const HeroScreen = () => {
 
           <div className="hero-section hero-mid">
             <div>
-              <img src={obj.image} alt="" />
-              <div className="connect-button-container" onClick={startTraining}>
-                <img
-                  srcSet="/assets/continue-with-metamask-button@2x.png 2x"
-                  src="/assets/continue-with-metamask-button.png"
-                />
+              <img src={fighter.image} alt="" />
+              <div className="connect-button-container">
+                <button onClick={startTraining}>Start Training</button>
               </div>
             </div>
           </div>
 
           <div className="hero-section hero-side">
-            <div className="stat-container">
+            <div
+              className="stat-container"
+              onClick={() => finishTraining(Stat.AGI)}
+            >
               <span className="stat-name">Agility</span>
               <div className="hero-bar-container">
                 <div
                   className="stats agility"
-                  style={{ width: (f.agility.toNumber() * 100) / 500 }}
+                  style={{
+                    width: (parseInt(fighter.attributes[5].value) * 100) / 500,
+                  }}
                 >
-                  {f.agility.toNumber()}
+                  {parseInt(fighter.attributes[5].value)}
                 </div>
               </div>
             </div>
-            <div className="stat-container">
+            <div
+              className="stat-container"
+              onClick={() => finishTraining(Stat.INT)}
+            >
               <span className="stat-name">Intelligence</span>
               <div className="hero-bar-container">
                 <div
                   className="stats intelligence"
-                  style={{ width: (f.intelligence.toNumber() * 100) / 500 }}
+                  style={{
+                    width: (parseInt(fighter.attributes[6].value) * 100) / 500,
+                  }}
                 >
-                  {f.intelligence.toNumber()}
+                  {parseInt(fighter.attributes[6].value)}
                 </div>
               </div>
             </div>
-            <div className="stat-container">
-              <span className="stat-name" onClick={finishTrainingAgiClicked}>
-                Durability
-              </span>
+            <div
+              className="stat-container"
+              onClick={() => finishTraining(Stat.DUR)}
+            >
+              <span className="stat-name">Durability</span>
               <div className="hero-bar-container">
                 <div
                   className="stats durability"
-                  style={{ width: (f.durability.toNumber() * 100) / 500 }}
+                  style={{
+                    width: (parseInt(fighter.attributes[7].value) * 100) / 500,
+                  }}
                 >
-                  {f.durability.toNumber()}
+                  {parseInt(fighter.attributes[7].value)}
                 </div>
               </div>
             </div>

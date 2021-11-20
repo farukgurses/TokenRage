@@ -7,6 +7,8 @@ import { FighterCard } from "../../components/FighterCard";
 import { AppContext } from "../../context/state";
 import Web3Modal from "web3modal";
 import Loading from "../../components/Loading";
+import { message } from "antd";
+import { sleep } from "../../utils";
 
 export default function ConnectedScreen() {
   const { loading, setLoading } = useContext(AppContext);
@@ -17,19 +19,27 @@ export default function ConnectedScreen() {
     loadNFTs();
   }, []);
   async function loadNFTs() {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      config.NFT_CONTRACT,
-      nftContractABI,
-      signer
-    );
-    const firstAccount = (await provider.listAccounts())[0];
-    const data = await contract.tokensOfOwner(firstAccount);
-    console.log(data);
-    setTokens(data);
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        config.NFT_CONTRACT,
+        nftContractABI,
+        signer
+      );
+      const firstAccount = (await provider.listAccounts())[0];
+      const data = await contract.tokensOfOwner(firstAccount);
+      setTokens(data);
+    } catch (error) {
+      setLoading(true);
+      message.info("Your token is getting minted please be patient", 2);
+      await sleep(30000);
+      await loadNFTs();
+      setLoading(false);
+    }
+
     setLoading(false);
   }
 
@@ -47,9 +57,14 @@ export default function ConnectedScreen() {
       );
       const price = ethers.utils.parseUnits("0.01", "ether");
       const transaction = await contract.create({ value: price });
+      message.info(
+        "Your token is getting created, this will take some time",
+        2
+      );
       await transaction.wait();
       await loadNFTs();
-    } catch (error) {
+    } catch (error: any) {
+      message.error(error.message, 2);
       setLoading(false);
     }
 
@@ -66,7 +81,6 @@ export default function ConnectedScreen() {
         src="/assets/logo.png"
         className="tokenrage-logo"
       />
-
       <div className="my-wallet-container">
         {tokens.map((tokenID: number, i: number) => (
           <FighterCard tokenID={tokenID} key={i} />

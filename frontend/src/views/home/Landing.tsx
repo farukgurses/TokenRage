@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import Web3Modal from "web3modal";
 import ConnectedScreen from "./ConnectedScreen";
 export default function LandingScreen() {
-  const [error, setError] = useState(false);
   const [connected, setConnected] = useState(false);
 
   async function connect() {
@@ -14,22 +13,14 @@ export default function LandingScreen() {
     const provider = new ethers.providers.Web3Provider(connection);
     const { chainId } = await provider.getNetwork();
     if (chainId !== 80001) {
-      setError(true);
+      message.error(
+        "Unable to connect to the wallet. Make sure you are on the Mumbai Testnet",
+        2
+      );
     } else {
-      setError(false);
       setConnected(true);
     }
   }
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error while connecting wallet", error);
-      message.error(
-        "Unable to connect to the wallet. Make sure you are on the correct chain",
-        0
-      );
-    }
-  }, [error]);
 
   if (connected) {
     return <ConnectedScreen />;
