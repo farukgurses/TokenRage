@@ -113,7 +113,7 @@ const HeroScreen = () => {
           await trainingContract.finishTrainingDur(id);
           break;
       }
-      await sleep(3000);
+      await sleep(20000);
     } catch (error: any) {
       if (error.code === -32603) {
         message.error(
@@ -148,10 +148,10 @@ const HeroScreen = () => {
                 <div
                   className="stats hp"
                   style={{
-                    width: (parseInt(fighter.attributes[2].value) * 100) / 2000,
+                    width: (parseInt(fighter.attributes[4].value) * 100) / 2000,
                   }}
                 >
-                  {parseInt(fighter.attributes[2].value)}
+                  {parseInt(fighter.attributes[4].value)}
                 </div>
               </div>
             </div>
@@ -165,10 +165,10 @@ const HeroScreen = () => {
                 <div
                   className="stats strength"
                   style={{
-                    width: (parseInt(fighter.attributes[3].value) * 100) / 500,
+                    width: (parseInt(fighter.attributes[5].value) * 100) / 500,
                   }}
                 >
-                  {parseInt(fighter.attributes[3].value)}
+                  {parseInt(fighter.attributes[5].value)}
                 </div>
               </div>
             </div>
@@ -182,10 +182,10 @@ const HeroScreen = () => {
                 <div
                   className="stats dexterity"
                   style={{
-                    width: (parseInt(fighter.attributes[4].value) * 100) / 500,
+                    width: (parseInt(fighter.attributes[6].value) * 100) / 500,
                   }}
                 >
-                  {parseInt(fighter.attributes[4].value)}
+                  {parseInt(fighter.attributes[6].value)}
                 </div>
               </div>
             </div>
@@ -210,10 +210,10 @@ const HeroScreen = () => {
                 <div
                   className="stats agility"
                   style={{
-                    width: (parseInt(fighter.attributes[5].value) * 100) / 500,
+                    width: (parseInt(fighter.attributes[7].value) * 100) / 500,
                   }}
                 >
-                  {parseInt(fighter.attributes[5].value)}
+                  {parseInt(fighter.attributes[7].value)}
                 </div>
               </div>
             </div>
@@ -226,10 +226,10 @@ const HeroScreen = () => {
                 <div
                   className="stats intelligence"
                   style={{
-                    width: (parseInt(fighter.attributes[6].value) * 100) / 500,
+                    width: (parseInt(fighter.attributes[8].value) * 100) / 500,
                   }}
                 >
-                  {parseInt(fighter.attributes[6].value)}
+                  {parseInt(fighter.attributes[8].value)}
                 </div>
               </div>
             </div>
@@ -242,10 +242,10 @@ const HeroScreen = () => {
                 <div
                   className="stats durability"
                   style={{
-                    width: (parseInt(fighter.attributes[7].value) * 100) / 500,
+                    width: (parseInt(fighter.attributes[9].value) * 100) / 500,
                   }}
                 >
-                  {parseInt(fighter.attributes[7].value)}
+                  {parseInt(fighter.attributes[9].value)}
                 </div>
               </div>
             </div>

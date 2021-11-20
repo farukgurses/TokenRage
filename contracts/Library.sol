@@ -15,6 +15,8 @@ library lib {
         uint agility;
         uint intelligence;
         uint durability;
+        uint location;
+        string fighterType;
     } 
 
     function toString(uint _i) internal pure returns (string memory _uintAsString) {

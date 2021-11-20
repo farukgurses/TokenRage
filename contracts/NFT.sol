@@ -22,12 +22,14 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     address private fightingContract;
     uint256 private cost;
     uint256 private maxSupply;
+    string[] private fighterTypes = ["Knight", "Viking", "Undead", "Demon"];
     bool private paused;
 
     mapping(uint => lib.Fighter) public tokenIdToFighter;
     mapping(bytes32 => address) private requestIdToSender;
     mapping(bytes32 => uint256) private requestIdToTokenId;
     mapping(uint256 => uint256) private tokenIdToRandomNumber;
+
 
 
 
@@ -47,7 +49,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     function create() public payable returns(bytes32 requestId){
         require(!paused, "MNA");
         require(tokenCounter < maxSupply, "MO");
-        require(msg.value >= cost, "WP");
+        // require(msg.value >= cost, "WP");
 
         requestId = requestRandomness(keyHash, fee);
         requestIdToSender[requestId] = msg.sender;
@@ -107,9 +109,10 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     // --------------------------------------------  ON-CHAIN DATA ----------------------------------------------//
     function createFighter(uint _tokenId, uint256 _randomNumber) private {
         uint256 level = (_randomNumber % 9) + 1;
+        string memory fType = fighterTypes[(_randomNumber % 4)];
         uint256[] memory stats = lib.expand(_randomNumber, 5, level * 10);
-        string memory name = string(abi.encodePacked("CoinRage #", lib.toString(_tokenId)));
-        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, level, 0, level*20, stats[0], stats[1], stats[2], stats[3], stats[4]);
+        string memory name = string(abi.encodePacked("TokenRage #", lib.toString(_tokenId)));
+        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, level, 0, level*20, stats[0], stats[1], stats[2], stats[3], stats[4], 0, fType);
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {
@@ -131,13 +134,13 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     }
 
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//
-    function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
-        maxSupply = _newMaxSupply;
-    }
+    // function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
+    //     maxSupply = _newMaxSupply;
+    // }
 
-    function setCost(uint256 _newCost) public onlyOwner(){
-        cost = _newCost;
-    }
+    // function setCost(uint256 _newCost) public onlyOwner(){
+    //     cost = _newCost;
+    // }
 
     function setTrainingContract(address _newTrainingContract) public onlyOwner(){
         trainingContract = _newTrainingContract;
@@ -150,12 +153,12 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
         utilsContract = _newUtilsContract;
     }
 
-    function pause(bool _state) public onlyOwner(){
-        paused = _state;
-    }
+    // function pause(bool _state) public onlyOwner(){
+    //     paused = _state;
+    // }
 
-    function withdraw() public payable onlyOwner(){
-        require(payable(msg.sender).send(address(this).balance));
-    }
+    // function withdraw() public payable onlyOwner(){
+    //     require(payable(msg.sender).send(address(this).balance));
+    // }
 
 }

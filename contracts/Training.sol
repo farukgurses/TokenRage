@@ -34,7 +34,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
 
     function requestTraining (uint256 _tokenId) public payable returns(bytes32 requestId){
         require(!paused, "TNA");
-        require(msg.value >= cost, "WP");
+        // require(msg.value >= cost, "WP");
         requestId = requestRandomness(keyHash, fee);
         requestIdToTokenId[requestId] = _tokenId;
         emit RequestedTraining(requestId, _tokenId);

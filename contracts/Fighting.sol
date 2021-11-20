@@ -45,7 +45,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
         require(!paused, "Fighting is not active");
 
         lib.Fighter memory myFighter = NFT(nftContract).getFighterById(_tokenId);
-        uint256 bracket = myFighter.level / 10;
+        uint256 bracket = myFighter.level;
         lib.Fighter memory otherFighter = bracketToFighter[bracket];
         if(otherFighter.tokenId == _tokenId){
             delete bracketToFighter[bracket];
