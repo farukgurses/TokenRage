@@ -1,0 +1,53 @@
+.fighter-stats-container {
+  position: relative;
+  width: 280px;
+  height: 280px;
+}
+
+.fighter-right-stats,
+.fighter-image-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.fighter-avatar-location,
+.fighter-avatar-character {
+  width: 280px;
+  height: 280px;
+}
+
+.fighter-avatar-location-training {
+  background-image: url("../assets/location_training.png");
+}
+
+.fighter-avatar-location-cave {
+  background-image: url("../assets/location_cave.png");
+}
+
+.fighter-avatar-location-arena {
+  background-image: url("../assets/location_arena.png");
+}
+
+.fighter-image-container {
+  width: 280px;
+  height: 280px;
+  position: relative;
+  display: block;
+}
+
+.fighter-avatar-character-viking {
+  background-image: url("../assets/fighter_viking.png");
+}
+
+.fighter-avatar-character-undead {
+  background-image: url("../assets/fighter_undead.png");
+}
+
+.fighter-avatar-character-demon {
+  background-image: url("../assets/fighter_demon.png");
+}
+
+.fighter-avatar-character-knight {
+  background-image: url("../assets/fighter_knight.png");
+}

@@ -1,5 +1,15 @@
 export default {
-  NFT_CONTRACT: "0x8600E05d7efb53E196F790E1ce8Bab146CDD3a0e",
-  TRAINING_CONTRACT: "0xCD95591b8B80Ca77D268E34BE8657C4d44Aa10da",
-  FIGHTING_CONTRACT: "0x5010727694E30194F98Ac4602Bc6af3Aae266922",
-};
+  NFT_CONTRACT: "0x9e6Bab0Be470728246794a4D9f616BfF73632eda",
+  TRAINING_CONTRACT: "0x14C4b89cC9e1c7856bB8Aa806E1BaCF672a6D922",
+  FIGHTING_CONTRACT: "0x51c0fC661d67aDD1a3348634eEa0c61cD4531232",
+
+  FIGHTER_STATS_VALUES: {
+    Level: { max_value: 100, color: "#FF00B0" },
+    HP: { max_value: 2000, color: "#65AF53" },
+    Strength: { max_value: 1000, color: "#FF00B0" },
+    Dexterity: { max_value: 1000, color: "#E02020" },
+    Agility: { max_value: 1000, color: "#00ADFF" },
+    Intelligence: { max_value: 1000, color: "#FF7232" },
+    Durability: { max_value: 1000, color: "#676FFF" },
+  },
+} as const;
