@@ -34,9 +34,14 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
 
     function requestTraining (uint256 _tokenId) public payable returns(bytes32 requestId){
         require(!paused, "TNA");
-        require(msg.value >= cost, "WP");
+        // require(msg.value >= cost, "WP");
+        require(msg.sender == IERC721(nftContract).ownerOf(_tokenId), 'Not owner of this token');
         requestId = requestRandomness(keyHash, fee);
         requestIdToTokenId[requestId] = _tokenId;
+        lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
+        require(fighter.location == 0, "Fighter is busy");
+        fighter.location = 1;
+        NFT(nftContract).updateFighter(_tokenId, fighter);
         emit RequestedTraining(requestId, _tokenId);
     }
 
@@ -60,7 +65,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         if(fighter.strength > fighter.level * 10){
             fighter.strength = fighter.level * 10;
         }
-
+        fighter.location = 0;
         NFT(nftContract).updateFighter(_tokenId, fighter);
         emit TrainingDone(_tokenId, fighter, isSuccessfull);
     }    
@@ -80,7 +85,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         if(fighter.agility > fighter.level * 10){
             fighter.agility = fighter.level * 10;
         }
-                
+        fighter.location = 0;  
         NFT(nftContract).updateFighter(_tokenId, fighter);
         emit TrainingDone(_tokenId, fighter, isSuccessfull);
     } 
@@ -98,6 +103,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         if(fighter.dexterity > fighter.level * 10){
             fighter.dexterity = fighter.level * 10;
         }
+        fighter.location = 0;
                 
         NFT(nftContract).updateFighter(_tokenId, fighter);
         emit TrainingDone(_tokenId, fighter, isSuccessfull);
@@ -115,7 +121,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         if(fighter.intelligence > fighter.level * 10){
             fighter.intelligence = fighter.level * 10;
         }
-                
+        fighter.location = 0;     
         NFT(nftContract).updateFighter(_tokenId, fighter);
         emit TrainingDone(_tokenId, fighter, isSuccessfull);
     }
@@ -134,7 +140,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         if(fighter.durability > fighter.level * 10){
             fighter.durability = fighter.level * 10;
         }
-                
+        fighter.location = 0;     
         NFT(nftContract).updateFighter(_tokenId, fighter);
         emit TrainingDone(_tokenId, fighter, isSuccessfull);
     } 

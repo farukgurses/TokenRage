@@ -13,3 +13,4 @@ export default {
     Durability: { max_value: 1000, color: "#676FFF" },
   },
 } as const;
+

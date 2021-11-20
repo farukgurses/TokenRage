@@ -31,6 +31,7 @@ export const FighterCard = ({ tokenID }: { tokenID: number }) => {
     );
     try {
       const data = await contract.tokenURI(tokenID);
+      console.log(data);
       if (data === "") {
         setTokenState("pending");
       } else {

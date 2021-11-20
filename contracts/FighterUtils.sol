@@ -25,6 +25,9 @@ contract FighterUtils {
             lib.toString(_fighter.intelligence),
             "</text><text x='50%' y='82%'>Durability: ",
             lib.toString(_fighter.durability),
+            "</text><line x1='20%' y1='88%' x2='80%' y2='88%' style='stroke:white'/>",
+            "<text x='50%' y='95%'>",
+            _fighter.fighterType,
             "</text></svg>"
         ));
         return svg;
@@ -39,12 +42,14 @@ contract FighterUtils {
     }
 
     function createTokenURL(string memory _imageURL, lib.Fighter memory _fighter) public pure returns(string memory){
-        string memory baseURL = "data:application/json;base64,";
-        string memory json = Base64.encode(bytes(abi.encodePacked(
+         
+        return string(abi.encodePacked( "data:application/json;base64,", Base64.encode(bytes(abi.encodePacked(
             '{"name": "',_fighter.name,
             '","description": "An NFT fighting game",',
             '"attributes":[',
-            '{"trait_type": "Level", "max_value": 100, "value": ',lib.toString(_fighter.level),
+            '{"trait_type": "Type", "value": "', _fighter.fighterType,
+            '"},{"trait_type": "Location", "value": ',lib.toString(_fighter.location),
+            '},{"trait_type": "Level", "max_value": 100, "value": ',lib.toString(_fighter.level),
             '},{"trait_type": "Wins", "value": ',lib.toString(_fighter.wins),
             '},{"trait_type": "HP", "max_value": 2000, "value": ',lib.toString(_fighter.hp),
             '},{"trait_type": "Strength", "max_value": 1000, "value": ',lib.toString(_fighter.strength),
@@ -54,9 +59,7 @@ contract FighterUtils {
             '},{"trait_type": "Durability", "max_value": 1000, "value": ',lib.toString(_fighter.durability),
             '}], "image": "', _imageURL,
             '"}'
-        )));
-        string memory tokenURL = string(abi.encodePacked(baseURL, json));
-        return tokenURL;
+        )))));
     }
 }
 
