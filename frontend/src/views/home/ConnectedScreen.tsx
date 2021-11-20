@@ -32,11 +32,12 @@ export default function ConnectedScreen() {
       const firstAccount = (await provider.listAccounts())[0];
       const data = await contract.tokensOfOwner(firstAccount);
       setTokens(data);
-    } catch (error) {
-      setLoading(true);
-      message.info("Your token is getting minted please be patient", 2);
-      await sleep(30000);
-      await loadNFTs();
+    } catch (error: any) {
+      // setLoading(true);
+      // message.info("Your token is getting minted please be patient", 2);
+      // await sleep(30000);
+      // await loadNFTs();
+      message.error(error.message, 2);
       setLoading(false);
     }
 
@@ -62,6 +63,7 @@ export default function ConnectedScreen() {
         2
       );
       await transaction.wait();
+      sleep(60000);
       await loadNFTs();
     } catch (error: any) {
       message.error(error.message, 2);

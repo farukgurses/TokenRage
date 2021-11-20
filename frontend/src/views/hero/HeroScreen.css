@@ -13,11 +13,13 @@
 .hero-mid {
   border-radius: 16px;
   width: 50%;
-  background-color: green;
 }
 .hero-mid img {
   border-radius: 16px;
   width: 100%;
+}
+button {
+  color: #1c1d21;
 }
 
 /* Make sure that padding behaves as expected */

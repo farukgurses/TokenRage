@@ -60,7 +60,12 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await fund_tx.wait(1);
 
   log("Set Fighting contract in NFT contract");
-  await nft.setFightingContract(Fighting.address);
+  log(Fighting.address);
+
+  await nft.setFightingContract(Fighting.address, {
+    gasLimit: 444444,
+  });
+
   if (chainId == 31337) {
     await fighting.toggleOpenToFight(1, { gasLimit: 300000 });
     log(`You are making token 1 openToFight`);
@@ -95,4 +100,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log(newFighter2);
   }
 };
-module.exports.tags = ["all", "prod", "fighting"];
+module.exports.tags = ["fighting"];

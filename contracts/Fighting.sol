@@ -14,6 +14,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
     uint256 public fee;
     bytes32 public keyHash;
     uint256 public matchCounter;
+    uint256 public finishedMatches;
     bool public paused;
 
     mapping(bytes32 => uint256) private requestIdToMatchId;
@@ -36,27 +37,65 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
         fee = _fee;
         keyHash = _keyHash;
         nftContract = _nftContract;
-        matchCounter = 1;
+        matchCounter = 0;
+        finishedMatches = 0;
         paused = false;
     }
 
     function toggleOpenToFight(uint256 _tokenId) public nonReentrant{
         require(msg.sender == IERC721(nftContract).ownerOf(_tokenId), 'Not owner of this token');
         require(!paused, "Fighting is not active");
+        
 
         lib.Fighter memory myFighter = NFT(nftContract).getFighterById(_tokenId);
         uint256 bracket = myFighter.level / 10;
         lib.Fighter memory otherFighter = bracketToFighter[bracket];
         if(otherFighter.tokenId == _tokenId){
+            require(myFighter.location == 2, "Fighter is not in arena");
+            myFighter.location = 0;
+            NFT(nftContract).updateFighter(_tokenId, myFighter);
             delete bracketToFighter[bracket];
         }else if(otherFighter.tokenId < 1){
+            require(myFighter.location == 0, "Fighter is busy");
+            myFighter.location = 2;
+            NFT(nftContract).updateFighter(_tokenId, myFighter);
             bracketToFighter[bracket] = myFighter;
         }else{
+            require(myFighter.location == 0, "Fighter is busy");
+            myFighter.location = 2;
+            NFT(nftContract).updateFighter(_tokenId, myFighter);
             requestMatch(otherFighter, myFighter);
             delete bracketToFighter[bracket];
         }
     }
+    
+    function getFinishedMatchIds(uint tokenId) public view returns(uint[] memory){
+        uint[] memory matches = new uint[](finishedMatches);
+        uint currentIndex = 0;
+        for(uint i=0; i < matchCounter; i++){
+           if(matchIdToMatch[i].end==true){
+               if(matchIdToMatch[i].fighterOne == tokenId || matchIdToMatch[i].fighterTwo == tokenId){
+                    matches[currentIndex] = matchIdToMatch[i].matchId;
+                    currentIndex++;
+               }
+           }
+        }
+        return matches;
+    }
 
+   function getUnFinishedMatchIds(uint tokenId) public view returns(uint[] memory){
+        uint[] memory matches = new uint[](matchCounter - finishedMatches);
+        uint currentIndex = 0;
+        for(uint i=0; i < matchCounter - finishedMatches; i++){
+           if(matchIdToMatch[i].end==false){
+                if(matchIdToMatch[i].fighterOne == tokenId || matchIdToMatch[i].fighterTwo == tokenId){
+                    matches[currentIndex] = matchIdToMatch[i].matchId;
+                    currentIndex++;
+               }
+           }
+        }
+        return matches;
+    }
 
     function requestMatch(lib.Fighter memory _fighterOne, lib.Fighter memory _fighterTwo) private{
         bytes32 requestId = requestRandomness(keyHash, fee);
@@ -135,6 +174,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
             randomI++;
         }
         matchIdToMatch[_matchId].end = true;
+        finishedMatches++;
         matchIdToMatch[_matchId].matchLogs = Base64.encode(bytes(matchLogs));
         finaliseMatch(_matchId);
 
@@ -144,11 +184,22 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
         Match memory _match = matchIdToMatch[_matchId];
         if(_match.winner == 0){
             matchIdToMatch[_matchId].end = true;
+            lib.Fighter memory f1 = NFT(nftContract).getFighterById(_match.fighterOne);
+            lib.Fighter memory f2 = NFT(nftContract).getFighterById(_match.fighterTwo);
+            f1.location = 0;
+            f2.location =0;
+            NFT(nftContract).updateFighter(_match.fighterOne, f1);
+            NFT(nftContract).updateFighter(_match.fighterTwo, f2);
         }else{
             lib.Fighter memory winner = NFT(nftContract).getFighterById(_match.winner);
             lib.Fighter memory looser = NFT(nftContract).getFighterById(_match.looser);
             winner.wins ++;
+            winner.location = 0;
             winner.level += looser.level;
+            if(winner.level >= 100){
+                winner.level = 100;
+            }
+            winner.hp = winner.level * 20;
             NFT(nftContract).updateFighter(_match.winner, winner);
             NFT(nftContract)._BURN(_match.looser);
         }
