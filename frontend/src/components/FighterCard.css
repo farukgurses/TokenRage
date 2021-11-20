@@ -1,0 +1,18 @@
+.fighter-card {
+  background-color: #474855;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 5%;
+}
+
+.fighter-card img {
+  border-radius: 5%;
+  height: 100%;
+  width: 100%;
+}
+.fc-loading-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

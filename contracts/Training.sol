@@ -11,7 +11,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
     
     event RequestedTraining(bytes32 indexed requestId, uint256 indexed tokenId);
     event ReadyForTraining(uint256 indexed tokenId, uint256 indexed randomNumber);
-    event TrainingDone(uint256 indexed tokenId, lib.Fighter indexed fighter);
+    event TrainingDone(uint256 indexed tokenId, lib.Fighter indexed fighter, bool indexed isSuccessfull);
 
     address private nftContract;
     uint256 private cost;
@@ -52,16 +52,17 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
 
         uint256 successChance = trainingSuccessChance(fighter.level, fighter.strength, fighter.durability);
         uint256 statLimit = statIncreaseLimit(fighter.level, fighter.strength);
-
+        bool isSuccessfull = false;
         if((rns[0] % 100) < successChance){
             fighter.strength = fighter.strength + (rns[0] % statLimit) + 1;
+            isSuccessfull=true;
         }
         if(fighter.strength > fighter.level * 10){
             fighter.strength = fighter.level * 10;
         }
 
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter, isSuccessfull);
     }    
 
     function finishTrainingAgi (uint256 _tokenId) public nonReentrant {
@@ -70,67 +71,72 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
 
         uint256 successChance = trainingSuccessChance(fighter.level, fighter.agility, fighter.durability);
         uint256 statLimit = statIncreaseLimit(fighter.level, fighter.agility);
+        bool isSuccessfull = false;
 
         if((rns[0] % 100) < successChance){
             fighter.agility = fighter.agility + (rns[1] % statLimit) + 1;
+            isSuccessfull=true;
         }
         if(fighter.agility > fighter.level * 10){
             fighter.agility = fighter.level * 10;
         }
                 
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter, isSuccessfull);
     } 
 
     function finishTrainingDex (uint256 _tokenId) public nonReentrant {
         lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
         uint256[] memory rns = startTraining(_tokenId);
-
+        bool isSuccessfull = false;
         uint256 successChance = trainingSuccessChance(fighter.level, fighter.dexterity, fighter.durability);
         uint256 statLimit = statIncreaseLimit(fighter.level, fighter.dexterity); 
         if((rns[0] % 100) < successChance){
             fighter.dexterity = fighter.dexterity + (rns[1] % statLimit) + 1;
+            isSuccessfull=true;
         }
         if(fighter.dexterity > fighter.level * 10){
             fighter.dexterity = fighter.level * 10;
         }
                 
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter, isSuccessfull);
     }
     function finishTrainingInt (uint256 _tokenId) public nonReentrant {
         lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
         uint256[] memory rns = startTraining(_tokenId);
-
+        bool isSuccessfull = false;
         uint256 successChance = trainingSuccessChance(fighter.level, fighter.intelligence, fighter.durability);
         uint256 statLimit = statIncreaseLimit(fighter.level, fighter.intelligence);
         if((rns[0] % 100) < successChance){
             fighter.intelligence = fighter.intelligence + (rns[1] % statLimit) + 1;
+            isSuccessfull=true;
         }
         if(fighter.intelligence > fighter.level * 10){
             fighter.intelligence = fighter.level * 10;
         }
                 
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter, isSuccessfull);
     }
     
     function finishTrainingDur (uint256 _tokenId) public nonReentrant {
         lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
         uint256[] memory rns = startTraining(_tokenId);
-
+        bool isSuccessfull = false;
         uint256 successChance = 50;
         uint256 statLimit = statIncreaseLimit(fighter.level, fighter.durability);
         
         if((rns[0] % 100) < successChance){
             fighter.durability = fighter.durability + (rns[1] % statLimit) + 1;
+            isSuccessfull=true;
         }
         if(fighter.durability > fighter.level * 10){
             fighter.durability = fighter.level * 10;
         }
                 
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter);
+        emit TrainingDone(_tokenId, fighter, isSuccessfull);
     } 
 
     function startTraining(uint256 _tokenId) internal returns(uint256[] memory){

@@ -1,19 +1,30 @@
 import { message } from "antd";
-import React, { useEffect } from "react";
-import { useConnectToWallet } from "ethereal-react";
+import { ethers } from "ethers";
+import React, { useEffect, useState } from "react";
 
-export default function WelcomeScreen() {
-  const [connect, { error }] = useConnectToWallet();
+import Web3Modal from "web3modal";
+import ConnectedScreen from "./ConnectedScreen";
+export default function LandingScreen() {
+  const [connected, setConnected] = useState(false);
 
-  useEffect(() => {
-    if (error) {
-      console.error("Error while connecting wallet", error);
+  async function connect() {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const { chainId } = await provider.getNetwork();
+    if (chainId !== 80001) {
       message.error(
-        "Unable to connect to the wallet. Make sure MetaMask extension is installed/activated in your browser or refresh the page and try again.",
-        0
+        "Unable to connect to the wallet. Make sure you are on the Mumbai Testnet",
+        2
       );
+    } else {
+      setConnected(true);
     }
-  }, [error]);
+  }
+
+  if (connected) {
+    return <ConnectedScreen />;
+  }
 
   return (
     <main className="main-container welcome-container">
