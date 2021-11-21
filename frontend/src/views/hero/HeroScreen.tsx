@@ -12,6 +12,7 @@ import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
 import FighterImage from "../../components/FighterImage";
+import { FighterName } from "../../components/FighterName";
 enum Stat {
   STR,
   DEX,
@@ -292,7 +293,7 @@ const HeroScreen = () => {
 
           <div className="hero-section hero-mid">
             <div>
-              <FighterImage fighter={fighter} showName={false} />
+              <FighterImage fighter={fighter} showName={true} />
 
               <div className="hero-button-container">
                 <button onClick={goToTraining}>Training Range</button>

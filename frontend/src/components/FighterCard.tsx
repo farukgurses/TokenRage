@@ -19,6 +19,7 @@ export const FighterCard = ({
 }) => {
   const [url, setUrl] = useState("");
   const [fighter, setFighter] = useState({
+    name: "",
     attributes: [{ value: "" }],
     image: "",
   });
