@@ -58,9 +58,6 @@ export const FighterName = ({
     setIsModalVisible(false);
   };
 
-  if (loading) {
-    return <Loading />;
-  }
   return (
     <div>
       <h1 className="fighter-name">

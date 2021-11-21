@@ -65,6 +65,14 @@ header {
   transform: translate(-50%, -64%);
 }
 
+.global-loading-indicator {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: -52px;
+  right: 85px;
+}
+
 .tokenrage-text-logo {
   background-image: url("./assets/text_logo.png");
   background-repeat: no-repeat;

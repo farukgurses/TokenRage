@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Suspense, useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import config from "../../config";
 import { ethers } from "ethers";
 import nftContractABI from "../../artifacts/NFT.json";
@@ -10,11 +10,10 @@ import fightingContractABI from "../../artifacts/Fighting.json";
 import "./HeroScreen.css";
 import Web3Modal from "web3modal";
 import { AppContext } from "../../context/state";
-import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
 import FighterImage from "../../components/FighterImage";
-
+import Header from "../../components/Header";
 enum Stat {
   STR,
   DEX,
@@ -51,6 +50,7 @@ const HeroScreen = (): JSX.Element => {
   }, []);
 
   async function loadNFT() {
+    setLoading(true);
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
@@ -65,7 +65,6 @@ const HeroScreen = (): JSX.Element => {
     const base64ToString = Buffer.from(data.split(",")[1], "base64").toString();
     const obj = JSON.parse(base64ToString) as any;
     setFighter(obj);
-    console.log(obj);
     setLoading(false);
   }
 
@@ -221,22 +220,12 @@ const HeroScreen = (): JSX.Element => {
     );
 
     const m = await fightingContract.finishMatch(id);
-    console.log(m);
-  }
-  if (loading) {
-    return <Loading />;
   }
 
   return (
     <Suspense fallback={<>LOADING...</>}>
       <main className="main-container">
-        <Link to="/">
-          <img
-            srcSet="/assets/logo@2x.png 2x"
-            src="/assets/logo.png"
-            className="tokenrage-logo"
-          />
-        </Link>
+        <Header />
         <div className="hero-container">
           <div className="hero-section hero-side">
             <div className="stat-container stat-bold">

@@ -67,7 +67,7 @@ export default function ConnectedScreen(): JSX.Element {
         2
       );
       await transaction.wait();
-      await sleep(30000);
+      sleep(100_000);
       await loadNFTs();
     } catch (error: any) {
       message.error(error.message, 2);
@@ -77,12 +77,9 @@ export default function ConnectedScreen(): JSX.Element {
     setLoading(false);
   }
 
-  if (loading) {
-    return <Loading />;
-  }
   return (
     <main className="main-container">
-      <Header />
+      <Header onLogoPress={loadNFTs} />
       <section className="main-content">
         <h1>Your NFTs</h1>
         <div className="my-wallet-container">
