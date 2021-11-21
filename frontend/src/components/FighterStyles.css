@@ -11,10 +11,15 @@
   left: 0;
 }
 
+.fighter-image-layer.bottom {
+  bottom: 0;
+}
+
 .fighter-avatar-location,
 .fighter-avatar-character {
   width: 280px;
   height: 280px;
+  background-repeat: no-repeat;
 }
 
 .fighter-avatar-location-training {
@@ -31,9 +36,78 @@
 
 .fighter-image-container {
   width: 280px;
-  height: 280px;
+  height: 360px;
   position: relative;
   display: block;
+}
+
+.create-new-image {
+  cursor: pointer;
+  position: absolute;
+  width: 280px;
+  height: 360px;
+  background: url("../assets/create_new_button.png") no-repeat;
+  background-position: center center;
+}
+
+.finish-minting-button {
+  cursor: pointer;
+  position: absolute;
+  width: 280px;
+  height: 360px;
+  background: url("../assets/minting_finished_button.png") no-repeat;
+  background-position: center center;
+}
+
+.fighter-card {
+  width: 280px;
+  height: 360px;
+  background: #2e2f36;
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(0, 0, 0, 0.06) 100%
+  );
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.3), 0 2px 2px 0 rgba(0, 0, 0, 0.11);
+  border-radius: 9px;
+  transition: background-color 0.3s ease-in-out, box-shadow 500ms ease;
+}
+
+.fighter-card:hover {
+  background-color: #373840;
+  box-shadow: 0 2px 55px 0 rgba(0, 0, 0, 0.5), 0 2px 7px 0 rgba(0, 0, 0, 0.3),
+    0 2px 2px 0 rgba(0, 0, 0, 0.11);
+}
+
+.fighter-card.inverted {
+  background: #131415;
+  box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+}
+
+.fighter-card.inverted:hover {
+  background-color: #181819;
+}
+
+.fighter-card img {
+  border-radius: 5%;
+  height: 100%;
+  width: 100%;
+}
+.fc-loading-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fighter-name-small {
+  font-family: "ShareTechMono";
+  font-size: 26px;
+  color: #ffffff;
+  letter-spacing: 0.31px;
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .fighter-avatar-character-viking {

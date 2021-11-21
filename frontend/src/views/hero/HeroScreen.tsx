@@ -291,7 +291,7 @@ const HeroScreen = () => {
 
           <div className="hero-section hero-mid">
             <div>
-              <FighterImage fighter={fighter} />
+              <FighterImage fighter={fighter} showName={false} />
 
               <div className="connect-button-container">
                 <button onClick={goToTraining}>Go To Training Range</button>
