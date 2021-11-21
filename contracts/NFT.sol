@@ -67,13 +67,13 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
         emit CreatedUnfinishedRandomSVG(tokenId, _randomNumber);
     }
 
-    function finishMint (uint256 _tokenId) public {
+    function finishMint (uint256 _tokenId, string memory _name) public {
         require(bytes(tokenURI(_tokenId)).length <= 0, "TUS");
         require(tokenCounter > _tokenId, "TNM");
         require(tokenIdToRandomNumber[_tokenId] > 0 , "CNR");
         uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
 
-        createFighter(_tokenId, randomNumber);
+        createFighter(_tokenId, randomNumber, _name);
         string memory imageURL =  FighterUtils(utilsContract).createImageURL(tokenIdToFighter[_tokenId]);
         string memory tokenURL = FighterUtils(utilsContract).createTokenURL(imageURL, tokenIdToFighter[_tokenId]);
         _setTokenURI(_tokenId, tokenURL);
@@ -107,12 +107,11 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     }
 
     // --------------------------------------------  ON-CHAIN DATA ----------------------------------------------//
-    function createFighter(uint _tokenId, uint256 _randomNumber) private {
-        uint256 level = (_randomNumber % 9) + 1;
+    function createFighter(uint _tokenId, uint256 _randomNumber, string memory _name) private {
+        uint256 level = (_randomNumber % 29) + 1;
         string memory fType = fighterTypes[(_randomNumber % 4)];
         uint256[] memory stats = lib.expand(_randomNumber, 5, level * 10);
-        string memory name = string(abi.encodePacked("TokenRage #", lib.toString(_tokenId)));
-        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, name, level, 0, level*20, stats[0], stats[1], stats[2], stats[3], stats[4], 0, fType);
+        tokenIdToFighter[_tokenId] = lib.Fighter(_tokenId, _name, level, 0, level*20, stats[0], stats[1], stats[2], stats[3], stats[4], 0, fType);
     }
 
     function updateFighter(uint _tokenId, lib.Fighter memory _fighter) public {

@@ -57,12 +57,12 @@ export default function FighterStats({ fighter }: Props) {
     <div className="fighter-stats-container">
       <div className="fighter-left-stats">
         <CircularProgressbarWithChildren
-          value={getAttributeValue("Durability")}
-          maxValue={getAttributeMaxValue("Durability")}
+          value={getAttributeValue("Dexterity")}
+          maxValue={getAttributeMaxValue("Dexterity")}
           strokeWidth={2}
           circleRatio={0.48}
           styles={buildStyles({
-            pathColor: getAttributeColor("Durability"),
+            pathColor: getAttributeColor("Dexterity"),
             rotation: 0.51,
             trailColor: "transparent",
           })}
@@ -73,14 +73,14 @@ export default function FighterStats({ fighter }: Props) {
         */}
           <div style={{ width: "94%" }}>
             <CircularProgressbarWithChildren
-              value={getAttributeValue("Agility")}
+              value={getAttributeValue("Strength")}
               circleRatio={0.482}
               strokeWidth={2}
-              maxValue={getAttributeMaxValue("Agility")}
+              maxValue={getAttributeMaxValue("Strength")}
               styles={buildStyles({
                 rotation: 0.509,
                 trailColor: "transparent",
-                pathColor: getAttributeColor("Agility"),
+                pathColor: getAttributeColor("Strength"),
               })}
             >
               <div style={{ width: "94%" }}>
@@ -102,13 +102,13 @@ export default function FighterStats({ fighter }: Props) {
       </div>
       <div className="fighter-right-stats">
         <CircularProgressbarWithChildren
-          value={getAttributeValue("Strength")}
-          maxValue={getAttributeMaxValue("Strength")}
+          value={getAttributeValue("Agility")}
+          maxValue={getAttributeMaxValue("Agility")}
           strokeWidth={2}
           counterClockwise
           circleRatio={0.48}
           styles={buildStyles({
-            pathColor: getAttributeColor("Strength"),
+            pathColor: getAttributeColor("Agility"),
             rotation: 0.49,
             trailColor: "transparent",
           })}
@@ -119,28 +119,28 @@ export default function FighterStats({ fighter }: Props) {
         */}
           <div style={{ width: "94%" }}>
             <CircularProgressbarWithChildren
-              value={getAttributeValue("Dexterity")}
+              value={getAttributeValue("Intelligence")}
               circleRatio={0.478}
               strokeWidth={2}
               counterClockwise
-              maxValue={getAttributeMaxValue("Dexterity")}
+              maxValue={getAttributeMaxValue("Intelligence")}
               styles={buildStyles({
                 rotation: 0.489,
                 trailColor: "transparent",
-                pathColor: getAttributeColor("Dexterity"),
+                pathColor: getAttributeColor("Intelligence"),
               })}
             >
               <div style={{ width: "94%" }}>
                 <CircularProgressbar
-                  value={getAttributeValue("Intelligence")}
+                  value={getAttributeValue("Durability")}
                   circleRatio={0.48}
-                  maxValue={getAttributeMaxValue("Intelligence")}
+                  maxValue={getAttributeMaxValue("Durability")}
                   strokeWidth={2}
                   counterClockwise
                   styles={buildStyles({
                     rotation: 0.49,
                     trailColor: "transparent",
-                    pathColor: getAttributeColor("Intelligence"),
+                    pathColor: getAttributeColor("Durability"),
                   })}
                 />
               </div>

@@ -21,6 +21,7 @@ export default function ConnectedScreen() {
     loadNFTs();
   }, []);
   async function loadNFTs() {
+    setLoading(true);
     try {
       const web3Modal = new Web3Modal();
       const connection = await web3Modal.connect();
@@ -65,7 +66,7 @@ export default function ConnectedScreen() {
         2
       );
       await transaction.wait();
-      sleep(60000);
+      await sleep(30000);
       await loadNFTs();
     } catch (error: any) {
       message.error(error.message, 2);
