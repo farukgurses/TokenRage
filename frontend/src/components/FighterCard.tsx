@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import Loading from "./Loading";
 import { Link } from "react-router-dom";
-import { sleep } from "../utils/";
+import { genRandomName, sleep } from "../utils/";
 import { message } from "antd";
 import FighterImage from "./FighterImage";
 
@@ -18,7 +18,10 @@ export const FighterCard = ({
   tokenID: number;
 }) => {
   const [url, setUrl] = useState("");
-  const [fighter, setFighter] = useState(null);
+  const [fighter, setFighter] = useState({
+    attributes: [{ value: "" }],
+    image: "",
+  });
   const [cardLoading, setcardLoading] = useState(true);
   const [tokenState, setTokenState] = useState("");
   useEffect(() => {
@@ -70,7 +73,7 @@ export const FighterCard = ({
         nftContractABI,
         signer
       );
-      await contract.finishMint(tokenID);
+      await contract.finishMint(tokenID, genRandomName());
       await sleep(20000);
       await loadNFT();
     } catch (error: any) {

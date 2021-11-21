@@ -5,17 +5,13 @@ import { ethers } from "ethers";
 import nftContractABI from "../../artifacts/NFT.json";
 import trainingContractABI from "../../artifacts/Training.json";
 import fightingContractABI from "../../artifacts/Fighting.json";
-
 import "./HeroScreen.css";
 import Web3Modal from "web3modal";
 import { AppContext } from "../../context/state";
 import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
-import FighterStats from "../../components/FighterStats";
-import { FighterCard } from "../../components/FighterCard";
 import FighterImage from "../../components/FighterImage";
-
 enum Stat {
   STR,
   DEX,
@@ -66,6 +62,7 @@ const HeroScreen = () => {
     const base64ToString = Buffer.from(data.split(",")[1], "base64").toString();
     const obj = JSON.parse(base64ToString) as any;
     setFighter(obj);
+    console.log(obj);
     setLoading(false);
   }
 
@@ -237,9 +234,13 @@ const HeroScreen = () => {
             className="tokenrage-logo"
           />
         </Link>
-        <h1 className="fighter-name">{fighter.name}</h1>
         <div className="hero-container">
           <div className="hero-section hero-side">
+            <div className="stat-container stat-bold">
+              <span className="stat-name">
+                Level: {parseInt(fighter.attributes[2].value)}
+              </span>
+            </div>
             <div className="stat-container">
               <span className="stat-name">Hp</span>
               <div className="hero-bar-container">
@@ -293,36 +294,42 @@ const HeroScreen = () => {
             <div>
               <FighterImage fighter={fighter} showName={false} />
 
-              <div className="connect-button-container">
-                <button onClick={goToTraining}>Go To Training Range</button>
-                <button onClick={goToArena}>Go To Fighting Arena</button>
-                <button onClick={() => startFight(0)}>START</button>
-                <button onClick={() => unfinishedMatches()}>
+              <div className="hero-button-container">
+                <button onClick={goToTraining}>Training Range</button>
+                <button onClick={goToArena}>Arena</button>
+                {/* <button onClick={() => startFight(0)}>START</button> */}
+                {/* <button onClick={() => unfinishedMatches()}>
                   ready matches
                 </button>
 
-                <button onClick={() => finishedMatches()}>match history</button>
+                <button onClick={() => finishedMatches()}>match history</button> */}
               </div>
             </div>
           </div>
 
           <div className="hero-section hero-side">
+            <div className="stat-container">
+              <span className="stat-name stat-bold">
+                Wins: {parseInt(fighter.attributes[3].value)}
+              </span>
+            </div>
             <div
               className="stat-container"
-              onClick={() => finishTraining(Stat.AGI)}
+              onClick={() => finishTraining(Stat.DUR)}
             >
-              <span className="stat-name">Agility</span>
+              <span className="stat-name">Durability</span>
               <div className="hero-bar-container">
                 <div
-                  className="stats agility"
+                  className="stats durability"
                   style={{
-                    width: (parseInt(fighter.attributes[7].value) * 100) / 500,
+                    width: (parseInt(fighter.attributes[9].value) * 100) / 500,
                   }}
                 >
-                  {parseInt(fighter.attributes[7].value)}
+                  {parseInt(fighter.attributes[9].value)}
                 </div>
               </div>
             </div>
+
             <div
               className="stat-container"
               onClick={() => finishTraining(Stat.INT)}
@@ -341,17 +348,17 @@ const HeroScreen = () => {
             </div>
             <div
               className="stat-container"
-              onClick={() => finishTraining(Stat.DUR)}
+              onClick={() => finishTraining(Stat.AGI)}
             >
-              <span className="stat-name">Durability</span>
+              <span className="stat-name">Agility</span>
               <div className="hero-bar-container">
                 <div
-                  className="stats durability"
+                  className="stats agility"
                   style={{
-                    width: (parseInt(fighter.attributes[9].value) * 100) / 500,
+                    width: (parseInt(fighter.attributes[7].value) * 100) / 500,
                   }}
                 >
-                  {parseInt(fighter.attributes[9].value)}
+                  {parseInt(fighter.attributes[7].value)}
                 </div>
               </div>
             </div>

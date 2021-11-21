@@ -1,15 +1,16 @@
 .fighter-name {
   color: white;
-  margin-top: 5rem;
+  margin-top: 3rem;
 }
 
 .hero-container {
   display: flex;
   flex-direction: row;
-  margin-bottom: 5rem;
+  min-width: 50rem;
+  margin-bottom: 3rem;
 }
 .hero-section {
-  /* height: 400px; */
+  height: 400px;
 }
 .hero-side {
   width: 25%;
@@ -23,9 +24,6 @@
 .hero-mid img {
   border-radius: 16px;
   width: 100%;
-}
-button {
-  color: #1c1d21;
 }
 
 /* Make sure that padding behaves as expected */
@@ -43,6 +41,28 @@ button {
   margin: 1rem 1rem 0 1rem;
   cursor: pointer;
 }
+.stat-bold {
+  font-weight: bold;
+  cursor: default;
+}
+
+.hero-button-container {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  display: flex;
+  justify-content: space-between;
+  height: 2rem;
+  width: 100%;
+}
+.hero-button-container button {
+  color: #1c1d21;
+  background-color: #fff39e;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+}
 
 .stats {
   text-align: right; /* Right-align text */
@@ -53,25 +73,25 @@ button {
 
 .hp {
   border-radius: 10px;
-  background-color: #f44336;
+  background-color: #e02020;
 } /* Green */
 .strength {
   border-radius: 10px;
-  background-color: #2196f3;
+  background-color: #ff00b0;
 } /* Blue */
 .dexterity {
   border-radius: 10px;
-  background-color: #22f5fc;
+  background-color: #65af53;
 } /* Red */
 .agility {
   border-radius: 10px;
-  background-color: #1afd1a;
+  background-color: #00adff;
 }
 .intelligence {
   border-radius: 10px;
-  background-color: #e51ff7;
+  background-color: #ff7232;
 }
 .durability {
   border-radius: 10px;
-  background-color: #f2f526;
+  background-color: #676fff;
 }
