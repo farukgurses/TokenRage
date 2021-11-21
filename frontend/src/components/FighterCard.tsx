@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { genRandomName, sleep } from "../utils/";
 import { message } from "antd";
 import FighterImage from "./FighterImage";
+import { Fighter } from "./FighterStats";
 
 export const FighterCard = ({
   tokenID,
@@ -16,7 +17,7 @@ export const FighterCard = ({
   showName?: boolean;
   tokenID: number;
 }): JSX.Element => {
-  const [fighter, setFighter] = useState({
+  const [fighter, setFighter] = useState<Fighter>({
     name: "",
     attributes: [{ value: "" }],
     image: "",
@@ -79,7 +80,15 @@ export const FighterCard = ({
     setcardLoading(false);
   }
 
-  if (tokenState === "pending" || cardLoading || !fighter) {
+  if (cardLoading) {
+    return (
+      <div className="fighter-card inverted">
+        <div className="nft-loading-state fighter-image-container"></div>
+      </div>
+    );
+  }
+
+  if (tokenState === "pending" || fighter === null) {
     return (
       <div className="fighter-card inverted" onClick={finishMint}>
         <div className="finish-minting-button fighter-image-container"></div>
@@ -89,7 +98,7 @@ export const FighterCard = ({
 
   return (
     <div className="fighter-card">
-      <Link to={`/hero/${tokenID}`}>
+      <Link to={`/fighter/${tokenID}`}>
         <FighterImage fighter={fighter} showName={showName} />
       </Link>
     </div>

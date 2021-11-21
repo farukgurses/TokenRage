@@ -59,6 +59,14 @@
   background-position: center center;
 }
 
+.nft-loading-state {
+  position: absolute;
+  width: 280px;
+  height: 360px;
+  background: url("../assets/nft_loading.png") no-repeat;
+  background-position: center center;
+}
+
 .fighter-card {
   width: 280px;
   height: 360px;

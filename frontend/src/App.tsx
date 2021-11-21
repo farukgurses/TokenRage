@@ -14,7 +14,7 @@ function App(): JSX.Element {
       <AppContext.Provider value={value}>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/hero/:id" element={<Hero />} />
+          <Route path="/fighter/:id" element={<Hero />} />
         </Routes>
       </AppContext.Provider>
     </div>
