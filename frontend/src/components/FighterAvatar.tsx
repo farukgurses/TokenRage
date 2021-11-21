@@ -14,7 +14,12 @@ export default function FighterAvatar({ fighter }: { fighter: Fighter }) {
     (attr) => attr.trait_type === "Type"
   );
 
-  if (!locationTrait || !characterTypeTrait) return null;
+  const characterLevelTrait = fighter.attributes.find(
+    (attr) => attr.trait_type === "Level"
+  );
+
+  if (!locationTrait || !characterTypeTrait || !characterLevelTrait)
+    return null;
 
   const location =
     parseInt(locationTrait.value) === 0
@@ -25,6 +30,9 @@ export default function FighterAvatar({ fighter }: { fighter: Fighter }) {
 
   const characterType = characterTypeTrait.value.toLowerCase();
 
+  const level = parseInt(characterLevelTrait.value);
+  const levelImage = level < 25 ? 1 : level < 50 ? 2 : level < 75 ? 3 : 4;
+
   return (
     <>
       <div
@@ -32,7 +40,7 @@ export default function FighterAvatar({ fighter }: { fighter: Fighter }) {
       ></div>
       <div className="fighter-image-layer">
         <div
-          className={`fighter-avatar-character fighter-avatar-character-${characterType}`}
+          className={`fighter-avatar-character fighter-avatar-character-${characterType}-level-${levelImage}`}
         ></div>
       </div>
     </>

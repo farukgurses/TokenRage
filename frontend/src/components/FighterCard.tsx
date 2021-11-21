@@ -81,7 +81,7 @@ export const FighterCard = ({ tokenID }: { tokenID: number }) => {
         <button onClick={finishMint}>Reveal Fighter</button>
       )}
       <Link to={`/hero/${tokenID}`}>
-        {cardLoading ? (
+        {cardLoading || !fighter ? (
           <div className="fc-loading-container">
             <Loading />
           </div>
