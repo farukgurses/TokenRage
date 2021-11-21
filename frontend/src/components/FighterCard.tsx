@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./FighterCard.css";
 import "./FighterStyles.css";
 import config from "../config";
 import nftContractABI from "../artifacts/NFT.json";
@@ -11,7 +10,13 @@ import { sleep } from "../utils/";
 import { message } from "antd";
 import FighterImage from "./FighterImage";
 
-export const FighterCard = ({ tokenID }: { tokenID: number }) => {
+export const FighterCard = ({
+  tokenID,
+  showName = true,
+}: {
+  showName?: boolean;
+  tokenID: number;
+}) => {
   const [url, setUrl] = useState("");
   const [fighter, setFighter] = useState(null);
   const [cardLoading, setcardLoading] = useState(true);
@@ -31,7 +36,6 @@ export const FighterCard = ({ tokenID }: { tokenID: number }) => {
     );
     try {
       const data = await contract.tokenURI(tokenID);
-      console.log(data);
       if (data === "") {
         setTokenState("pending");
       } else {
@@ -75,19 +79,18 @@ export const FighterCard = ({ tokenID }: { tokenID: number }) => {
     setcardLoading(false);
   }
 
+  if (tokenState === "pending" || cardLoading || !fighter) {
+    return (
+      <div className="fighter-card inverted" onClick={finishMint}>
+        <div className="finish-minting-button fighter-image-container"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="fighter-card">
-      {tokenState === "pending" && (
-        <button onClick={finishMint}>Reveal Fighter</button>
-      )}
       <Link to={`/hero/${tokenID}`}>
-        {cardLoading || !fighter ? (
-          <div className="fc-loading-container">
-            <Loading />
-          </div>
-        ) : (
-          <FighterImage fighter={fighter} />
-        )}
+        <FighterImage fighter={fighter} showName={showName} />
       </Link>
     </div>
   );

@@ -27,6 +27,7 @@ export type FighterStats = Array<{
 }>;
 
 export type Fighter = {
+  name: string;
   attributes: FighterStats;
   image: string;
 };

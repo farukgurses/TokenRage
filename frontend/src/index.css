@@ -18,6 +18,12 @@
   src: local("Lato-Thin"), url(./fonts/Lato-Thin.ttf) format("truetype");
 }
 
+@font-face {
+  font-family: "ShareTechMono";
+  src: local("ShareTechMono"),
+    url(./fonts/ShareTechMono-Regular.ttf) format("truetype");
+}
+
 body {
   margin: 0;
   font-family: "Lato-Regular", -apple-system, "Ubuntu", "Helvetica Neue",
@@ -30,21 +36,18 @@ body {
   height: 100%;
 }
 
-#root {
-  height: 100%;
-}
-
 .App {
-  height: 100%;
+  margin-top: 10rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-bottom: 5rem;
 }
 
 .main-container {
   background: #1c1d21;
   border-radius: 16px;
-  max-width: 88rem;
+  /* max-width: 88rem; */
   position: relative;
 }
 
@@ -52,10 +55,35 @@ body {
   max-width: 40rem;
 }
 
+header {
+  position: relative;
+}
+
 .tokenrage-logo {
   position: absolute;
   left: 50%;
   transform: translate(-50%, -64%);
+}
+
+.tokenrage-text-logo {
+  background-image: url("./assets/text_logo.png");
+  background-repeat: no-repeat;
+  width: 115px;
+  height: 19px;
+  position: absolute;
+  top: -30px;
+  left: 15px;
+}
+
+.tokenrage-settings-icon {
+  background-image: url("./assets/settings.png");
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: -30px;
+  right: 15px;
+  cursor: pointer;
 }
 
 .welcome-text-content {
@@ -98,25 +126,43 @@ ul.tokenrage-features li img {
   transform: translate(-50%, 50%);
 }
 
-.my-wallet-container {
-  margin-top: 5rem;
-  padding: 0 6rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 5rem;
-  height: 50rem;
+section.main-content {
+  padding: 3rem 2rem;
+}
 
-  overflow-y: auto;
+h1 {
+  color: white;
+  text-align: left;
+  font-family: "Lato-Bold";
+  font-size: 24px;
+  color: #dddee4;
+  letter-spacing: 0.27px;
+  text-align: left;
+}
+
+.my-wallet-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 2rem;
 }
 
 /* smaller screens */
 @media screen and (max-width: 540px) {
+  .App {
+    margin-top: 0rem;
+  }
+
   .welcome-text-content {
     padding: 0 2rem;
   }
 
+  section.main-content {
+    padding: 0;
+    padding-top: 4rem;
+  }
+
   .main-container {
-    margin-top: 15rem;
+    margin-top: 5rem;
   }
 
   ul.tokenrage-features {
@@ -136,5 +182,19 @@ ul.tokenrage-features li img {
   .connect-button-container {
     position: fixed;
     bottom: 3rem;
+  }
+
+  .my-wallet-container {
+    padding: 0 1rem;
+    grid-template-columns: 1fr;
+    padding-bottom: 2rem;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  .tokenrage-text-logo {
+    opacity: 0;
   }
 }

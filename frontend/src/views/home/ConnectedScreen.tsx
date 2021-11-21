@@ -9,6 +9,8 @@ import Web3Modal from "web3modal";
 import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
+import CreateNewCharacter from "../../components/CreateNewCharacter";
+import Header from "../../components/Header";
 
 export default function ConnectedScreen() {
   const { loading, setLoading } = useContext(AppContext);
@@ -78,17 +80,16 @@ export default function ConnectedScreen() {
   }
   return (
     <main className="main-container">
-      <img
-        srcSet="/assets/logo@2x.png 2x"
-        src="/assets/logo.png"
-        className="tokenrage-logo"
-      />
-      <div className="my-wallet-container">
-        {tokens.map((tokenID: number, i: number) => (
-          <FighterCard tokenID={tokenID} key={i} />
-        ))}
-      </div>
-      <button onClick={mintNFT}>mint</button>
+      <Header />
+      <section className="main-content">
+        <h1>Your NFTs</h1>
+        <div className="my-wallet-container">
+          {tokens.map((tokenID: number, i: number) => (
+            <FighterCard tokenID={tokenID} key={i} />
+          ))}
+          <CreateNewCharacter onClick={mintNFT} />
+        </div>
+      </section>
     </main>
   );
 }
