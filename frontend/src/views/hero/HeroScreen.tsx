@@ -12,6 +12,9 @@ import { AppContext } from "../../context/state";
 import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
+import FighterStats from "../../components/FighterStats";
+import { FighterCard } from "../../components/FighterCard";
+import FighterImage from "../../components/FighterImage";
 
 enum Stat {
   STR,
@@ -37,7 +40,7 @@ const HeroScreen = () => {
       { value: "100" },
       { value: "100" },
     ],
-
+    name: "",
     image:
       "https://st.depositphotos.com/2885805/3842/v/600/depositphotos_38422667-stock-illustration-coming-soon-message-illuminated-with.jpg",
   });
@@ -63,7 +66,6 @@ const HeroScreen = () => {
     const base64ToString = Buffer.from(data.split(",")[1], "base64").toString();
     const obj = JSON.parse(base64ToString) as any;
     setFighter(obj);
-    console.log(obj);
     setLoading(false);
   }
 
@@ -224,6 +226,7 @@ const HeroScreen = () => {
   if (loading) {
     return <Loading />;
   }
+
   return (
     <Suspense fallback={<>LOADING...</>}>
       <main className="main-container">
@@ -234,6 +237,7 @@ const HeroScreen = () => {
             className="tokenrage-logo"
           />
         </Link>
+        <h1 className="fighter-name">{fighter.name}</h1>
         <div className="hero-container">
           <div className="hero-section hero-side">
             <div className="stat-container">
@@ -287,9 +291,8 @@ const HeroScreen = () => {
 
           <div className="hero-section hero-mid">
             <div>
-              <p>Location : {fighter.attributes[1].value}</p>
+              <FighterImage fighter={fighter} />
 
-              <img src={fighter.image} alt="" />
               <div className="connect-button-container">
                 <button onClick={goToTraining}>Go To Training Range</button>
                 <button onClick={goToArena}>Go To Fighting Arena</button>

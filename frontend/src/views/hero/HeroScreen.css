@@ -1,7 +1,11 @@
+.fighter-name {
+  color: white;
+  margin-top: 5rem;
+}
+
 .hero-container {
   display: flex;
   flex-direction: row;
-  margin-top: 5rem;
   margin-bottom: 5rem;
 }
 .hero-section {
@@ -13,6 +17,8 @@
 .hero-mid {
   border-radius: 16px;
   width: 50%;
+  display: flex;
+  justify-content: center;
 }
 .hero-mid img {
   border-radius: 16px;

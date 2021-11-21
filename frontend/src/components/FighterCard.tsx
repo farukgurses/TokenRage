@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./FighterCard.css";
+import "./FighterStyles.css";
 import config from "../config";
 import nftContractABI from "../artifacts/NFT.json";
 import { ethers } from "ethers";
@@ -8,8 +9,11 @@ import Loading from "./Loading";
 import { Link } from "react-router-dom";
 import { sleep } from "../utils/";
 import { message } from "antd";
+import FighterImage from "./FighterImage";
+
 export const FighterCard = ({ tokenID }: { tokenID: number }) => {
   const [url, setUrl] = useState("");
+  const [fighter, setFighter] = useState(null);
   const [cardLoading, setcardLoading] = useState(true);
   const [tokenState, setTokenState] = useState("");
   useEffect(() => {
@@ -37,8 +41,9 @@ export const FighterCard = ({ tokenID }: { tokenID: number }) => {
         data.split(",")[1],
         "base64"
       ).toString();
-      const obj = JSON.parse(base64ToString) as any;
-      setUrl(obj.image);
+      const fighterData = JSON.parse(base64ToString) as any;
+      setUrl(fighterData.image);
+      setFighter(fighterData);
     } catch (error) {
       setUrl(
         "https://st.depositphotos.com/2885805/3842/v/600/depositphotos_38422667-stock-illustration-coming-soon-message-illuminated-with.jpg"
@@ -48,6 +53,7 @@ export const FighterCard = ({ tokenID }: { tokenID: number }) => {
 
     setcardLoading(false);
   }
+
   async function finishMint() {
     setcardLoading(true);
     try {
@@ -68,36 +74,21 @@ export const FighterCard = ({ tokenID }: { tokenID: number }) => {
     }
     setcardLoading(false);
   }
-  if (tokenState === "pending") {
-    return (
-      <div className="fighter-card">
-        {cardLoading ? (
-          <div className="fc-loading-container">
-            <Loading />
-          </div>
-        ) : (
-          <img src={url} />
-        )}
 
-        <button onClick={finishMint}>Reveal Fighter</button>
-      </div>
-    );
-  }
   return (
     <div className="fighter-card">
-      <Link to={`/hero/${tokenID}`}>
-        {cardLoading ? (
-          <div className="fc-loading-container">
-            <Loading />
-          </div>
-        ) : (
-          <img src={url} />
-        )}
-      </Link>
-
       {tokenState === "pending" && (
         <button onClick={finishMint}>Reveal Fighter</button>
       )}
+      <Link to={`/hero/${tokenID}`}>
+        {cardLoading || !fighter ? (
+          <div className="fc-loading-container">
+            <Loading />
+          </div>
+        ) : (
+          <FighterImage fighter={fighter} />
+        )}
+      </Link>
     </div>
   );
 };

@@ -7,8 +7,16 @@ import ConnectedScreen from "./ConnectedScreen";
 export default function LandingScreen() {
   const [connected, setConnected] = useState(false);
 
-  async function connect() {
+  useEffect(() => {
     const web3Modal = new Web3Modal();
+
+    if (web3Modal.cachedProvider !== "") {
+      connect();
+    }
+  }, []);
+
+  async function connect() {
+    const web3Modal = new Web3Modal({ cacheProvider: true });
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const { chainId } = await provider.getNetwork();

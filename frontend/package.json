@@ -10,6 +10,7 @@
     "ethereal-react": "^0.4.0",
     "history": "5",
     "react": "^17.0.2",
+    "react-circular-progressbar": "^2.0.4",
     "react-dom": "^17.0.2",
     "react-error-boundary": "^3.1.4",
     "react-loading": "^2.0.3",
