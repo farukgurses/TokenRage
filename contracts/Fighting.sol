@@ -56,12 +56,12 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
             NFT(nftContract).updateFighter(_tokenId, myFighter);
             delete bracketToFighter[bracket];
         }else if(otherFighter.tokenId < 1){
-            require(myFighter.location == 0, "Fighter is busy");
+            require(myFighter.location == 0, "Fighter is busy or dead");
             myFighter.location = 2;
             NFT(nftContract).updateFighter(_tokenId, myFighter);
             bracketToFighter[bracket] = myFighter;
         }else{
-            require(myFighter.location == 0, "Fighter is busy");
+            require(myFighter.location == 0, "Fighter is busy or dead");
             myFighter.location = 2;
             NFT(nftContract).updateFighter(_tokenId, myFighter);
             requestMatch(otherFighter, myFighter);
@@ -84,10 +84,10 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
     }
 
    function getUnFinishedMatchIds(uint tokenId) public view returns(uint[] memory){
-        uint[] memory matches = new uint[](matchCounter - finishedMatches);
+        uint[] memory matches = new uint[](matchCounter);
         uint currentIndex = 0;
-        for(uint i=0; i < matchCounter - finishedMatches; i++){
-           if(matchIdToMatch[i].end==false){
+        for(uint i=0; i < matchCounter; i++){
+           if(matchIdToMatch[i].end == false){
                 if(matchIdToMatch[i].fighterOne == tokenId || matchIdToMatch[i].fighterTwo == tokenId){
                     matches[currentIndex] = matchIdToMatch[i].matchId;
                     currentIndex++;
@@ -191,17 +191,26 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
             NFT(nftContract).updateFighter(_match.fighterOne, f1);
             NFT(nftContract).updateFighter(_match.fighterTwo, f2);
         }else{
+            uint randomNum = matchIdToRandomNumber[_matchId] % 100;
             lib.Fighter memory winner = NFT(nftContract).getFighterById(_match.winner);
             lib.Fighter memory looser = NFT(nftContract).getFighterById(_match.looser);
             winner.wins ++;
             winner.location = 0;
-            winner.level += looser.level;
+            // this is just a concept and will be improved
+            if(randomNum > 50){
+                winner.level += looser.level;
+                looser.location = 999;
+            }else{
+                winner.level += looser.level / 3;
+                looser.location = 0;
+            }
             if(winner.level >= 100){
                 winner.level = 100;
             }
             winner.hp = winner.level * 20;
             NFT(nftContract).updateFighter(_match.winner, winner);
-            NFT(nftContract)._BURN(_match.looser);
+            NFT(nftContract).updateFighter(_match.looser, looser);
+
         }
     }
 

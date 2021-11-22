@@ -7,7 +7,6 @@
   "event RequestedRandomSVG(bytes32 indexed requestId, uint256 indexed tokenId)",
   "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
   "event UpdatedNFT(uint256 indexed tokenId, string tokenURL)",
-  "function _BURN(uint256 _tokenId)",
   "function approve(address to, uint256 tokenId)",
   "function balanceOf(address owner) view returns (uint256)",
   "function create() payable returns (bytes32 requestId)",

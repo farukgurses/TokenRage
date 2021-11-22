@@ -38,8 +38,10 @@ const HeroScreen = (): JSX.Element => {
   });
   const { id } = useParams();
   const { setLoading } = useContext(AppContext);
+  const [readyMatchId, setReadyMatchId] = useState();
 
   useEffect(() => {
+    unfinishedMatches();
     loadNFT();
   }, []);
 
@@ -91,11 +93,12 @@ const HeroScreen = (): JSX.Element => {
       provider
     );
     const m = await fightingContract.getUnFinishedMatchIds(id);
-
     console.log(m);
+    if (m.length) {
+      setReadyMatchId(m[0].toNumber());
+    }
   }
-  async function startFight(id: number) {
-    console.log(id);
+  async function startFight() {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
@@ -106,7 +109,7 @@ const HeroScreen = (): JSX.Element => {
       signer
     );
 
-    const m = await fightingContract.finishMatch(id);
+    const m = await fightingContract.finishMatch(readyMatchId);
   }
 
   const characterType = fighter.attributes.find(
@@ -198,7 +201,7 @@ const HeroScreen = (): JSX.Element => {
             <div className="hero-section hero-side shown-unless-small-screen">
               {leftBlock}
             </div>
-
+            <button onClick={startFight}>Start Fight</button>
             <div className="hero-section hero-mid character-image-section">
               <div>
                 <FighterImage fighter={fighter} showName={true} />
