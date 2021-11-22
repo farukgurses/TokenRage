@@ -239,7 +239,10 @@ const HeroScreen = (): JSX.Element => {
                 <div
                   className="stats hp"
                   style={{
-                    width: (parseInt(fighter.attributes[4].value) * 100) / 2000,
+                    width:
+                      (parseInt(fighter.attributes[4].value) * 100) /
+                      config.FIGHTER_STATS_VALUES.HP.max_value,
+                    backgroundColor: config.FIGHTER_STATS_VALUES.HP.color,
                   }}
                 >
                   {parseInt(fighter.attributes[4].value)}
@@ -256,7 +259,10 @@ const HeroScreen = (): JSX.Element => {
                 <div
                   className="stats strength"
                   style={{
-                    width: (parseInt(fighter.attributes[5].value) * 100) / 500,
+                    width:
+                      (parseInt(fighter.attributes[5].value) * 100) /
+                      config.FIGHTER_STATS_VALUES.Strength.max_value,
+                    backgroundColor: config.FIGHTER_STATS_VALUES.Strength.color,
                   }}
                 >
                   {parseInt(fighter.attributes[5].value)}
@@ -273,7 +279,11 @@ const HeroScreen = (): JSX.Element => {
                 <div
                   className="stats dexterity"
                   style={{
-                    width: (parseInt(fighter.attributes[6].value) * 100) / 500,
+                    width:
+                      (parseInt(fighter.attributes[6].value) * 100) /
+                      config.FIGHTER_STATS_VALUES.Dexterity.max_value,
+                    backgroundColor:
+                      config.FIGHTER_STATS_VALUES.Dexterity.color,
                   }}
                 >
                   {parseInt(fighter.attributes[6].value)}
@@ -314,7 +324,11 @@ const HeroScreen = (): JSX.Element => {
                 <div
                   className="stats durability"
                   style={{
-                    width: (parseInt(fighter.attributes[9].value) * 100) / 500,
+                    width:
+                      (parseInt(fighter.attributes[9].value) * 100) /
+                      config.FIGHTER_STATS_VALUES.Durability.max_value,
+                    backgroundColor:
+                      config.FIGHTER_STATS_VALUES.Durability.color,
                   }}
                 >
                   {parseInt(fighter.attributes[9].value)}
@@ -331,7 +345,11 @@ const HeroScreen = (): JSX.Element => {
                 <div
                   className="stats intelligence"
                   style={{
-                    width: (parseInt(fighter.attributes[8].value) * 100) / 500,
+                    width:
+                      (parseInt(fighter.attributes[8].value) * 100) /
+                      config.FIGHTER_STATS_VALUES.Intelligence.max_value,
+                    backgroundColor:
+                      config.FIGHTER_STATS_VALUES.Intelligence.color,
                   }}
                 >
                   {parseInt(fighter.attributes[8].value)}
@@ -347,7 +365,10 @@ const HeroScreen = (): JSX.Element => {
                 <div
                   className="stats agility"
                   style={{
-                    width: (parseInt(fighter.attributes[7].value) * 100) / 500,
+                    width:
+                      (parseInt(fighter.attributes[7].value) * 100) /
+                      config.FIGHTER_STATS_VALUES.Agility.max_value,
+                    backgroundColor: config.FIGHTER_STATS_VALUES.Agility.color,
                   }}
                 >
                   {parseInt(fighter.attributes[7].value)}

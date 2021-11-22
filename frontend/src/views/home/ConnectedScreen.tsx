@@ -67,7 +67,7 @@ export default function ConnectedScreen(): JSX.Element {
         2
       );
       await transaction.wait();
-      sleep(100_000);
+      await sleep(30_000);
       await loadNFTs();
     } catch (error: any) {
       message.error(error.message, 2);

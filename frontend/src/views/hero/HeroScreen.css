@@ -73,29 +73,5 @@
   color: white; /* White text color */
   height: 5px;
   padding-top: 10px;
-}
-
-.hp {
   border-radius: 10px;
-  background-color: #e02020;
-} /* Green */
-.strength {
-  border-radius: 10px;
-  background-color: #ff00b0;
-} /* Blue */
-.dexterity {
-  border-radius: 10px;
-  background-color: #65af53;
-} /* Red */
-.agility {
-  border-radius: 10px;
-  background-color: #00adff;
-}
-.intelligence {
-  border-radius: 10px;
-  background-color: #ff7232;
-}
-.durability {
-  border-radius: 10px;
-  background-color: #676fff;
 }

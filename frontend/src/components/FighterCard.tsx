@@ -98,7 +98,7 @@ export const FighterCard = ({
 
   return (
     <div className="fighter-card">
-      <Link to={`/fighter/${tokenID}`}>
+      <Link to={`/hero/${tokenID}`}>
         <FighterImage fighter={fighter} showName={showName} />
       </Link>
     </div>

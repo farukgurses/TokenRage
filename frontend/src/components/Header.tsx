@@ -46,7 +46,9 @@ export default function Header({
           className="tokenrage-logo"
         />
       </Link>
-      <div className="tokenrage-text-logo"></div>
+      <Link to="/" title="Navigate home">
+        <div className="tokenrage-text-logo"></div>
+      </Link>
       <Dropdown overlay={menu}>
         <div className="tokenrage-settings-icon"></div>
       </Dropdown>
