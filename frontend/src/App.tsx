@@ -5,7 +5,8 @@ import Hero from "./views/hero/HeroScreen";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { AppContext } from "./context/state";
-function App() {
+
+function App(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const value = useMemo(() => ({ loading, setLoading }), [loading]);
   return (

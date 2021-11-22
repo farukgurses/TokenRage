@@ -10,7 +10,7 @@ export default function FighterImage({
 }: {
   showName?: boolean;
   fighter: Fighter;
-}) {
+}): JSX.Element {
   return (
     <div className="fighter-image-container">
       <div className="fighter-image-layer">

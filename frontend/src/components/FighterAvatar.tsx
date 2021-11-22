@@ -3,7 +3,11 @@ import { Fighter } from "./FighterStats";
 
 import "./FighterStyles.css";
 
-export default function FighterAvatar({ fighter }: { fighter: Fighter }) {
+export default function FighterAvatar({
+  fighter,
+}: {
+  fighter: Fighter;
+}): JSX.Element | null {
   if (!fighter?.attributes) return null;
 
   const locationTrait = fighter.attributes.find(

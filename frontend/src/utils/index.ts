@@ -1,12 +1,12 @@
-export const sleep = (ms: number) => {
+export const sleep = (ms: number): Promise<null> => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-function random(arr: any) {
+function random(arr: Array<string>) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export const genRandomName = () => {
+export const genRandomName = (): string => {
   let name = "";
   for (let i = 0; i < lor.length; i++) {
     name += random(lor[i]);

@@ -4,7 +4,6 @@ import config from "../config";
 import nftContractABI from "../artifacts/NFT.json";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
-import Loading from "./Loading";
 import { Link } from "react-router-dom";
 import { genRandomName, sleep } from "../utils/";
 import { message } from "antd";
@@ -16,8 +15,7 @@ export const FighterCard = ({
 }: {
   showName?: boolean;
   tokenID: number;
-}) => {
-  const [url, setUrl] = useState("");
+}): JSX.Element => {
   const [fighter, setFighter] = useState({
     name: "",
     attributes: [{ value: "" }],
@@ -49,13 +47,10 @@ export const FighterCard = ({
         data.split(",")[1],
         "base64"
       ).toString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fighterData = JSON.parse(base64ToString) as any;
-      setUrl(fighterData.image);
       setFighter(fighterData);
     } catch (error) {
-      setUrl(
-        "https://st.depositphotos.com/2885805/3842/v/600/depositphotos_38422667-stock-illustration-coming-soon-message-illuminated-with.jpg"
-      );
       setcardLoading(false);
     }
 
@@ -77,6 +72,7 @@ export const FighterCard = ({
       await contract.finishMint(tokenID, genRandomName());
       await sleep(20000);
       await loadNFT();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       message.error(error.message, 2);
     }

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Suspense, useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import config from "../../config";
@@ -12,7 +14,7 @@ import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
 import FighterImage from "../../components/FighterImage";
-import { FighterName } from "../../components/FighterName";
+
 enum Stat {
   STR,
   DEX,
@@ -21,7 +23,7 @@ enum Stat {
   DUR,
 }
 
-const HeroScreen = () => {
+const HeroScreen = (): JSX.Element => {
   const [fighter, setFighter] = useState({
     attributes: [
       { value: "100" },

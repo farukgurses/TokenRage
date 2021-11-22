@@ -18,7 +18,6 @@ type AttributeTrait =
   | "Agility"
   | "Intelligence"
   | "Durability";
-type FighterTraits = "Type" | "Location" | AttributeTrait;
 
 export type FighterStats = Array<{
   trait_type?: string;
@@ -41,7 +40,7 @@ const getAttributeMaxValue = (name: AttributeTrait) =>
 const getAttributeColor = (name: AttributeTrait) =>
   configs.FIGHTER_STATS_VALUES[name].color;
 
-export default function FighterStats({ fighter }: Props) {
+export default function FighterStats({ fighter }: Props): JSX.Element | null {
   const getAttributeValue = (name: AttributeTrait) =>
     parseInt(
       fighter?.attributes?.find((attr) => attr.trait_type === name)?.value || ""

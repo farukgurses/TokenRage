@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext, useEffect, useState } from "react";
 
 import { ethers } from "ethers";
@@ -12,7 +13,7 @@ import { sleep } from "../../utils";
 import CreateNewCharacter from "../../components/CreateNewCharacter";
 import Header from "../../components/Header";
 
-export default function ConnectedScreen() {
+export default function ConnectedScreen(): JSX.Element {
   const { loading, setLoading } = useContext(AppContext);
   const [tokens, setTokens] = useState([]);
 

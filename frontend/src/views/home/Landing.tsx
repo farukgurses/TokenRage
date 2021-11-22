@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 import Web3Modal from "web3modal";
 import ConnectedScreen from "./ConnectedScreen";
-export default function LandingScreen() {
+export default function LandingScreen(): JSX.Element {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
