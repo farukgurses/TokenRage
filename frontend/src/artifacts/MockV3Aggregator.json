@@ -1,0 +1,16 @@
+[
+  "event AnswerUpdated(int256 indexed current, uint256 indexed roundId, uint256 updatedAt)",
+  "event NewRound(uint256 indexed roundId, address indexed startedBy, uint256 startedAt)",
+  "function decimals() view returns (uint8)",
+  "function description() pure returns (string)",
+  "function getAnswer(uint256) view returns (int256)",
+  "function getRoundData(uint80 _roundId) view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
+  "function getTimestamp(uint256) view returns (uint256)",
+  "function latestAnswer() view returns (int256)",
+  "function latestRound() view returns (uint256)",
+  "function latestRoundData() view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
+  "function latestTimestamp() view returns (uint256)",
+  "function updateAnswer(int256 _answer)",
+  "function updateRoundData(uint80 _roundId, int256 _answer, uint256 _timestamp, uint256 _startedAt)",
+  "function version() view returns (uint256)"
+]

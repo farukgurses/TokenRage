@@ -1,0 +1,4 @@
+[
+  "function createImageURL(tuple(uint256 tokenId, string name, uint256 level, uint256 wins, uint256 hp, uint256 strength, uint256 dexterity, uint256 agility, uint256 intelligence, uint256 durability, uint256 location, string fighterType) _fighter) pure returns (string)",
+  "function createTokenURL(string _imageURL, tuple(uint256 tokenId, string name, uint256 level, uint256 wins, uint256 hp, uint256 strength, uint256 dexterity, uint256 agility, uint256 intelligence, uint256 durability, uint256 location, string fighterType) _fighter) pure returns (string)"
+]

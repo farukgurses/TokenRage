@@ -1,0 +1,6 @@
+[
+  "event RandomnessRequest(address indexed sender, bytes32 indexed keyHash, uint256 indexed seed)",
+  "function LINK() view returns (address)",
+  "function callBackWithRandomness(bytes32 requestId, uint256 randomness, address consumerContract)",
+  "function onTokenTransfer(address sender, uint256 fee, bytes _data)"
+]
