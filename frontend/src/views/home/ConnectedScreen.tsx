@@ -7,14 +7,13 @@ import nftContractABI from "../../artifacts/NFT.json";
 import { FighterCard } from "../../components/FighterCard";
 import { AppContext } from "../../context/state";
 import Web3Modal from "web3modal";
-import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
 import CreateNewCharacter from "../../components/CreateNewCharacter";
 import Header from "../../components/Header";
 
 export default function ConnectedScreen(): JSX.Element {
-  const { loading, setLoading } = useContext(AppContext);
+  const { setLoading } = useContext(AppContext);
   const [tokens, setTokens] = useState([]);
 
   useEffect(() => {

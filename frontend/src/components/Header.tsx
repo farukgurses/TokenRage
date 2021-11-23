@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import "../../node_modules/antd/dist/antd.dark.css";
 
 import Web3Modal from "web3modal";
@@ -14,7 +14,7 @@ export default function Header({
 }): JSX.Element {
   const [walletAddress, setWalletAddress] = React.useState("");
 
-  const { loading, setLoading } = useContext(AppContext);
+  const { loading } = useContext(AppContext);
 
   useEffect(() => {
     (async () => {
