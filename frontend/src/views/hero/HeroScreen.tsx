@@ -12,29 +12,28 @@ import { AppContext } from "../../context/state";
 import FighterImage from "../../components/FighterImage";
 import Header from "../../components/Header";
 import Navigator from "./Navigator";
-import { Fighter } from "../../components/FighterStats";
+import { Fighter, FighterStat } from "../../components/FighterStats";
 import TrainingMode from "./TrainingMode";
 import { getPercentage } from "../../utils";
 
 const HeroScreen = (): JSX.Element => {
   const [fighter, setFighter] = useState<Fighter>({
     attributes: [
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
-      { value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
+      { value: "0", max_value: "0" },
     ],
     name: "",
-    image:
-      "https://st.depositphotos.com/2885805/3842/v/600/depositphotos_38422667-stock-illustration-coming-soon-message-illuminated-with.jpg",
+    image: "",
   });
   const { id } = useParams();
   const { setLoading } = useContext(AppContext);
@@ -58,6 +57,13 @@ const HeroScreen = (): JSX.Element => {
 
     const base64ToString = Buffer.from(data.split(",")[1], "base64").toString();
     const obj = JSON.parse(base64ToString) as any;
+    obj.attributes.map((stat: FighterStat, i: number) => {
+      if (i > 4) {
+        stat.max_value = (parseInt(obj.attributes[2].value) * 10).toString();
+      }
+      return stat;
+    });
+    console.log(obj);
     setFighter(obj);
     setLoading(false);
   }
@@ -141,9 +147,9 @@ const HeroScreen = (): JSX.Element => {
 
       <div
         className="stat-container"
-        title={`${parseInt(fighter.attributes[5].value)}/${
-          config.FIGHTER_STATS_VALUES.Strength.max_value
-        }`}
+        title={`${parseInt(fighter.attributes[5].value)}/${parseInt(
+          fighter.attributes[5].max_value
+        )}`}
       >
         <span className="stat-name">Strength</span>
         <div className="hero-bar-container">
@@ -153,7 +159,7 @@ const HeroScreen = (): JSX.Element => {
               width:
                 getPercentage(
                   parseInt(fighter.attributes[5].value),
-                  config.FIGHTER_STATS_VALUES.Strength.max_value
+                  parseInt(fighter.attributes[5].max_value)
                 ) + "%",
               backgroundColor: config.FIGHTER_STATS_VALUES.Strength.color,
             }}
@@ -165,9 +171,9 @@ const HeroScreen = (): JSX.Element => {
 
       <div
         className="stat-container"
-        title={`${parseInt(fighter.attributes[6].value)}/${
-          config.FIGHTER_STATS_VALUES.Dexterity.max_value
-        }`}
+        title={`${parseInt(fighter.attributes[6].value)}/${parseInt(
+          fighter.attributes[6].max_value
+        )}`}
       >
         <span className="stat-name">Dexterity</span>
         <div className="hero-bar-container">
@@ -177,7 +183,7 @@ const HeroScreen = (): JSX.Element => {
               width:
                 getPercentage(
                   parseInt(fighter.attributes[6].value),
-                  config.FIGHTER_STATS_VALUES.Dexterity.max_value
+                  parseInt(fighter.attributes[6].max_value)
                 ) + "%",
               backgroundColor: config.FIGHTER_STATS_VALUES.Dexterity.color,
             }}
@@ -214,9 +220,9 @@ const HeroScreen = (): JSX.Element => {
               <div className="hidden-unless-small-screen">{leftBlock}</div>
               <div
                 className="stat-container"
-                title={`${parseInt(fighter.attributes[9].value)}/${
-                  config.FIGHTER_STATS_VALUES.Durability.max_value
-                }`}
+                title={`${parseInt(fighter.attributes[9].value)}/$${parseInt(
+                  fighter.attributes[9].max_value
+                )}`}
               >
                 <span className="stat-name">Durability</span>
                 <div className="hero-bar-container">
@@ -226,7 +232,7 @@ const HeroScreen = (): JSX.Element => {
                       width:
                         getPercentage(
                           parseInt(fighter.attributes[9].value),
-                          config.FIGHTER_STATS_VALUES.Durability.max_value
+                          parseInt(fighter.attributes[9].max_value)
                         ) + "%",
                       backgroundColor:
                         config.FIGHTER_STATS_VALUES.Durability.color,
@@ -239,9 +245,9 @@ const HeroScreen = (): JSX.Element => {
 
               <div
                 className="stat-container"
-                title={`${parseInt(fighter.attributes[8].value)}/${
-                  config.FIGHTER_STATS_VALUES.Intelligence.max_value
-                }`}
+                title={`${parseInt(fighter.attributes[8].value)}/$${parseInt(
+                  fighter.attributes[8].max_value
+                )}`}
               >
                 <span className="stat-name">Intelligence</span>
                 <div className="hero-bar-container">
@@ -251,7 +257,7 @@ const HeroScreen = (): JSX.Element => {
                       width:
                         getPercentage(
                           parseInt(fighter.attributes[8].value),
-                          config.FIGHTER_STATS_VALUES.Intelligence.max_value
+                          parseInt(fighter.attributes[8].max_value)
                         ) + "%",
                       backgroundColor:
                         config.FIGHTER_STATS_VALUES.Intelligence.color,
@@ -263,9 +269,9 @@ const HeroScreen = (): JSX.Element => {
               </div>
               <div
                 className="stat-container"
-                title={`${parseInt(fighter.attributes[7].value)}/${
-                  config.FIGHTER_STATS_VALUES.Agility.max_value
-                }`}
+                title={`${parseInt(fighter.attributes[7].value)}/${parseInt(
+                  fighter.attributes[7].max_value
+                )}`}
               >
                 <span className="stat-name">Agility</span>
                 <div className="hero-bar-container">
@@ -274,8 +280,8 @@ const HeroScreen = (): JSX.Element => {
                     style={{
                       width:
                         getPercentage(
-                          parseInt(fighter.attributes[6].value),
-                          config.FIGHTER_STATS_VALUES.Agility.max_value
+                          parseInt(fighter.attributes[7].value),
+                          parseInt(fighter.attributes[7].max_value)
                         ) + "%",
                       backgroundColor:
                         config.FIGHTER_STATS_VALUES.Agility.color,

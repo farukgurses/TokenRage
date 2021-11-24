@@ -19,15 +19,15 @@ export type AttributeTrait =
   | "Intelligence"
   | "Durability";
 
-export type FighterStats = Array<{
+export type FighterStat = {
   trait_type?: string;
-  max_value?: string;
+  max_value: string;
   value: string;
-}>;
+};
 
 export type Fighter = {
   name: string;
-  attributes: FighterStats;
+  attributes: Array<FighterStat>;
   image: string;
 };
 
@@ -35,8 +35,6 @@ type Props = {
   fighter: Fighter;
 };
 
-const getAttributeMaxValue = (name: AttributeTrait) =>
-  configs.FIGHTER_STATS_VALUES[name].max_value;
 const getAttributeColor = (name: AttributeTrait) =>
   configs.FIGHTER_STATS_VALUES[name].color;
 
@@ -46,7 +44,10 @@ export default function FighterStats({ fighter }: Props): JSX.Element | null {
       fighter?.attributes?.find((attr) => attr.trait_type === name)?.value || ""
     );
   const HP = getAttributeValue("HP");
-
+  const getAttributeMaxValue = (stat: string) =>
+    stat === "HP"
+      ? configs.FIGHTER_STATS_VALUES["HP"].max_value
+      : getAttributeValue("Level") * 10;
   if (!fighter?.attributes || !HP) {
     // if HP is not returned it means that the stats are not available
     return null;
