@@ -6,7 +6,7 @@ function random(arr: Array<string>) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export function getPercentage(value: number, maxValue: number) {
+export function getPercentage(value: number, maxValue: number): number {
   return (value / maxValue) * 100;
 }
 

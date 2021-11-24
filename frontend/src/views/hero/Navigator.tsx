@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useContext, useState } from "react";
 import Web3Modal from "web3modal";
 import { AppContext } from "../../context/state";
@@ -16,9 +17,13 @@ type Props = {
   fighter: Fighter;
 };
 
-export default function Navigator({ id, loadNFT, fighter }: Props) {
+export default function Navigator({
+  id,
+  loadNFT,
+  fighter,
+}: Props): JSX.Element {
   const [isNavigating, setIsNavigating] = useState(false);
-  const { loading, setLoading } = useContext(AppContext);
+  const { setLoading } = useContext(AppContext);
 
   const currentLocation = parseInt(
     fighter.attributes.find((attr) => attr.trait_type === "Location")?.value ||

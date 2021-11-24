@@ -133,6 +133,7 @@ export default function TrainingMode({
         }
         await sleep(20000);
         await loadNFT();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error.code === -32603) {
           message.error(
