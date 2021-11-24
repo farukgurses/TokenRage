@@ -5,9 +5,9 @@ export default {
 
   FIGHTER_STATS_VALUES: {
     Level: { max_value: 100, color: "#FF00B0" },
-    HP: { max_value: 2000, color: "#E02020" },
+    HP: { max_value: 2000, color: "#65AF53" },
     Strength: { max_value: 1000, color: "#FF00B0" },
-    Dexterity: { max_value: 1000, color: "#65AF53" },
+    Dexterity: { max_value: 1000, color: "#E02020" },
     Agility: { max_value: 1000, color: "#00ADFF" },
     Intelligence: { max_value: 1000, color: "#FF7232" },
     Durability: { max_value: 1000, color: "#676FFF" },
