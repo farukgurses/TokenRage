@@ -1,34 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {
-  Suspense,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Suspense, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import config from "../../config";
 import { ethers } from "ethers";
 import nftContractABI from "../../artifacts/NFT.json";
-import trainingContractABI from "../../artifacts/Training.json";
 import fightingContractABI from "../../artifacts/Fighting.json";
 import "./HeroScreen.css";
 import Web3Modal from "web3modal";
 import { AppContext } from "../../context/state";
-import { message } from "antd";
-import { sleep } from "../../utils";
 import FighterImage from "../../components/FighterImage";
 import Header from "../../components/Header";
 import Navigator from "./Navigator";
 import { Fighter } from "../../components/FighterStats";
-enum Stat {
-  STR,
-  DEX,
-  AGI,
-  INT,
-  DUR,
-}
+import TrainingMode from "./TrainingMode";
+import { getPercentage } from "../../utils";
 
 const HeroScreen = (): JSX.Element => {
   const [fighter, setFighter] = useState<Fighter>({
@@ -51,7 +37,7 @@ const HeroScreen = (): JSX.Element => {
       "https://st.depositphotos.com/2885805/3842/v/600/depositphotos_38422667-stock-illustration-coming-soon-message-illuminated-with.jpg",
   });
   const { id } = useParams();
-  const { loading, setLoading } = useContext(AppContext);
+  const { setLoading } = useContext(AppContext);
 
   useEffect(() => {
     loadNFT();
@@ -73,56 +59,6 @@ const HeroScreen = (): JSX.Element => {
     const base64ToString = Buffer.from(data.split(",")[1], "base64").toString();
     const obj = JSON.parse(base64ToString) as any;
     setFighter(obj);
-    setLoading(false);
-  }
-
-  async function finishTraining(stat: Stat) {
-    if (parseInt(fighter.attributes[1].value) !== 1) {
-      return;
-    }
-    setLoading(true);
-
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const trainingContract = new ethers.Contract(
-      config.TRAINING_CONTRACT,
-      trainingContractABI,
-      signer
-    );
-    try {
-      switch (stat) {
-        case Stat.STR:
-          await trainingContract.finishTrainingStr(id);
-          break;
-        case Stat.DEX:
-          await trainingContract.finishTrainingDex(id);
-          break;
-        case Stat.AGI:
-          await trainingContract.finishTrainingAgi(id);
-          break;
-        case Stat.INT:
-          await trainingContract.finishTrainingInt(id);
-          break;
-        case Stat.DUR:
-          await trainingContract.finishTrainingDur(id);
-          break;
-      }
-      await sleep(20000);
-      await loadNFT();
-    } catch (error: any) {
-      if (error.code === -32603) {
-        message.error(
-          "Your Fighter is getting ready for training, please try again soon",
-          2
-        );
-      } else {
-        message.error(error.message, 2);
-      }
-      await loadNFT();
-    }
-
     setLoading(false);
   }
 
@@ -179,15 +115,22 @@ const HeroScreen = (): JSX.Element => {
 
   const leftBlock = (
     <>
-      <div className="stat-container">
+      <div
+        className="stat-container"
+        title={`${parseInt(fighter.attributes[4].value)}/${
+          config.FIGHTER_STATS_VALUES.HP.max_value
+        }`}
+      >
         <span className="stat-name">Hp</span>
         <div className="hero-bar-container">
           <div
             className="stats hp"
             style={{
               width:
-                (parseInt(fighter.attributes[4].value) * 100) /
-                config.FIGHTER_STATS_VALUES.HP.max_value,
+                getPercentage(
+                  parseInt(fighter.attributes[4].value),
+                  config.FIGHTER_STATS_VALUES.HP.max_value
+                ) + "%",
               backgroundColor: config.FIGHTER_STATS_VALUES.HP.color,
             }}
           >
@@ -196,15 +139,22 @@ const HeroScreen = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="stat-container" onClick={() => finishTraining(Stat.STR)}>
+      <div
+        className="stat-container"
+        title={`${parseInt(fighter.attributes[5].value)}/${
+          config.FIGHTER_STATS_VALUES.Strength.max_value
+        }`}
+      >
         <span className="stat-name">Strength</span>
         <div className="hero-bar-container">
           <div
             className="stats strength"
             style={{
               width:
-                (parseInt(fighter.attributes[5].value) * 100) /
-                config.FIGHTER_STATS_VALUES.Strength.max_value,
+                getPercentage(
+                  parseInt(fighter.attributes[5].value),
+                  config.FIGHTER_STATS_VALUES.Strength.max_value
+                ) + "%",
               backgroundColor: config.FIGHTER_STATS_VALUES.Strength.color,
             }}
           >
@@ -213,15 +163,22 @@ const HeroScreen = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="stat-container" onClick={() => finishTraining(Stat.DEX)}>
+      <div
+        className="stat-container"
+        title={`${parseInt(fighter.attributes[6].value)}/${
+          config.FIGHTER_STATS_VALUES.Dexterity.max_value
+        }`}
+      >
         <span className="stat-name">Dexterity</span>
         <div className="hero-bar-container">
           <div
             className="stats dexterity"
             style={{
               width:
-                (parseInt(fighter.attributes[6].value) * 100) /
-                config.FIGHTER_STATS_VALUES.Dexterity.max_value,
+                getPercentage(
+                  parseInt(fighter.attributes[6].value),
+                  config.FIGHTER_STATS_VALUES.Dexterity.max_value
+                ) + "%",
               backgroundColor: config.FIGHTER_STATS_VALUES.Dexterity.color,
             }}
           >
@@ -257,7 +214,9 @@ const HeroScreen = (): JSX.Element => {
               <div className="hidden-unless-small-screen">{leftBlock}</div>
               <div
                 className="stat-container"
-                onClick={() => finishTraining(Stat.DUR)}
+                title={`${parseInt(fighter.attributes[9].value)}/${
+                  config.FIGHTER_STATS_VALUES.Durability.max_value
+                }`}
               >
                 <span className="stat-name">Durability</span>
                 <div className="hero-bar-container">
@@ -265,8 +224,10 @@ const HeroScreen = (): JSX.Element => {
                     className="stats durability"
                     style={{
                       width:
-                        (parseInt(fighter.attributes[9].value) * 100) /
-                        config.FIGHTER_STATS_VALUES.Durability.max_value,
+                        getPercentage(
+                          parseInt(fighter.attributes[9].value),
+                          config.FIGHTER_STATS_VALUES.Durability.max_value
+                        ) + "%",
                       backgroundColor:
                         config.FIGHTER_STATS_VALUES.Durability.color,
                     }}
@@ -278,7 +239,9 @@ const HeroScreen = (): JSX.Element => {
 
               <div
                 className="stat-container"
-                onClick={() => finishTraining(Stat.INT)}
+                title={`${parseInt(fighter.attributes[8].value)}/${
+                  config.FIGHTER_STATS_VALUES.Intelligence.max_value
+                }`}
               >
                 <span className="stat-name">Intelligence</span>
                 <div className="hero-bar-container">
@@ -286,8 +249,10 @@ const HeroScreen = (): JSX.Element => {
                     className="stats intelligence"
                     style={{
                       width:
-                        (parseInt(fighter.attributes[8].value) * 100) /
-                        config.FIGHTER_STATS_VALUES.Intelligence.max_value,
+                        getPercentage(
+                          parseInt(fighter.attributes[8].value),
+                          config.FIGHTER_STATS_VALUES.Intelligence.max_value
+                        ) + "%",
                       backgroundColor:
                         config.FIGHTER_STATS_VALUES.Intelligence.color,
                     }}
@@ -298,7 +263,9 @@ const HeroScreen = (): JSX.Element => {
               </div>
               <div
                 className="stat-container"
-                onClick={() => finishTraining(Stat.AGI)}
+                title={`${parseInt(fighter.attributes[7].value)}/${
+                  config.FIGHTER_STATS_VALUES.Agility.max_value
+                }`}
               >
                 <span className="stat-name">Agility</span>
                 <div className="hero-bar-container">
@@ -306,8 +273,10 @@ const HeroScreen = (): JSX.Element => {
                     className="stats agility"
                     style={{
                       width:
-                        (parseInt(fighter.attributes[7].value) * 100) /
-                        config.FIGHTER_STATS_VALUES.Agility.max_value,
+                        getPercentage(
+                          parseInt(fighter.attributes[6].value),
+                          config.FIGHTER_STATS_VALUES.Agility.max_value
+                        ) + "%",
                       backgroundColor:
                         config.FIGHTER_STATS_VALUES.Agility.color,
                     }}
@@ -319,6 +288,7 @@ const HeroScreen = (): JSX.Element => {
             </div>
           </div>
         </section>
+        <TrainingMode id={id} fighter={fighter} loadNFT={loadNFT} />
         <Navigator id={id} loadNFT={loadNFT} fighter={fighter} />
       </main>
     </Suspense>
