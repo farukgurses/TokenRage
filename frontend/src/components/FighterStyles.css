@@ -78,13 +78,15 @@
   );
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.3), 0 2px 2px 0 rgba(0, 0, 0, 0.11);
   border-radius: 9px;
-  transition: background-color 0.3s ease-in-out, box-shadow 500ms ease;
+  transition: background-color 0.3s ease-in-out, box-shadow 500ms ease,
+    transform 500ms ease;
 }
 
 .fighter-card:hover {
   background-color: #373840;
   box-shadow: 0 2px 55px 0 rgba(0, 0, 0, 0.5), 0 2px 7px 0 rgba(0, 0, 0, 0.3),
     0 2px 2px 0 rgba(0, 0, 0, 0.11);
+  transform: translateY(-4px);
 }
 
 .fighter-card.inverted {

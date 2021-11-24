@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Suspense, useContext, useEffect, useState } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import config from "../../config";
 import { ethers } from "ethers";
@@ -14,6 +20,7 @@ import { message } from "antd";
 import { sleep } from "../../utils";
 import FighterImage from "../../components/FighterImage";
 import Header from "../../components/Header";
+import Navigator from "./Navigator";
 enum Stat {
   STR,
   DEX,
@@ -25,18 +32,18 @@ enum Stat {
 const HeroScreen = (): JSX.Element => {
   const [fighter, setFighter] = useState({
     attributes: [
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
-      { value: "100" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
+      { value: "0" },
     ],
     name: "",
     image:
@@ -68,67 +75,9 @@ const HeroScreen = (): JSX.Element => {
     setLoading(false);
   }
 
-  async function goToTraining() {
-    setLoading(true);
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const signer = provider.getSigner();
-      const trainingContract = new ethers.Contract(
-        config.TRAINING_CONTRACT,
-        trainingContractABI,
-        signer
-      );
-      const price = ethers.utils.parseUnits("0.01", "ether");
-      const transaction = await trainingContract.requestTraining(id, {
-        value: price,
-      });
-      await transaction.wait();
-      await sleep(10000);
-      await loadNFT();
-    } catch (error: any) {
-      if (error.data.message) {
-        message.error(error.data.message, 2);
-      } else {
-        message.error(error.message, 2);
-      }
-    }
-
-    setLoading(false);
-  }
-  async function goToArena() {
-    setLoading(true);
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const signer = provider.getSigner();
-      const fightingContract = new ethers.Contract(
-        config.FIGHTING_CONTRACT,
-        fightingContractABI,
-        signer
-      );
-      const transaction = await fightingContract.toggleOpenToFight(id);
-      await transaction.wait();
-      await sleep(10000);
-      await loadNFT();
-    } catch (error: any) {
-      if (error.data.message) {
-        message.error(error.data.message, 2);
-      } else {
-        message.error(error.message, 2);
-      }
-    }
-
-    setLoading(false);
-  }
   async function finishTraining(stat: Stat) {
     if (parseInt(fighter.attributes[1].value) !== 1) {
-      return message.error(
-        "You need to be in Training Range to train your stats",
-        2
-      );
+      return;
     }
     setLoading(true);
 
@@ -175,6 +124,7 @@ const HeroScreen = (): JSX.Element => {
 
     setLoading(false);
   }
+
   async function finishedMatches() {
     // const web3Modal = new Web3Modal();
     // const connection = await web3Modal.connect();
@@ -222,161 +172,148 @@ const HeroScreen = (): JSX.Element => {
     const m = await fightingContract.finishMatch(id);
   }
 
-  return (
-    <Suspense fallback={<>LOADING...</>}>
-      <main className="main-container">
-        <Header />
-        <div className="hero-container">
-          <div className="hero-section hero-side">
-            <div className="stat-container stat-bold">
-              <span className="stat-name">
-                Level: {parseInt(fighter.attributes[2].value)}
-              </span>
-            </div>
-            <div className="stat-container">
-              <span className="stat-name">Hp</span>
-              <div className="hero-bar-container">
-                <div
-                  className="stats hp"
-                  style={{
-                    width:
-                      (parseInt(fighter.attributes[4].value) * 100) /
-                      config.FIGHTER_STATS_VALUES.HP.max_value,
-                    backgroundColor: config.FIGHTER_STATS_VALUES.HP.color,
-                  }}
-                >
-                  {parseInt(fighter.attributes[4].value)}
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="stat-container"
-              onClick={() => finishTraining(Stat.STR)}
-            >
-              <span className="stat-name">Strength</span>
-              <div className="hero-bar-container">
-                <div
-                  className="stats strength"
-                  style={{
-                    width:
-                      (parseInt(fighter.attributes[5].value) * 100) /
-                      config.FIGHTER_STATS_VALUES.Strength.max_value,
-                    backgroundColor: config.FIGHTER_STATS_VALUES.Strength.color,
-                  }}
-                >
-                  {parseInt(fighter.attributes[5].value)}
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="stat-container"
-              onClick={() => finishTraining(Stat.DEX)}
-            >
-              <span className="stat-name">Dexterity</span>
-              <div className="hero-bar-container">
-                <div
-                  className="stats dexterity"
-                  style={{
-                    width:
-                      (parseInt(fighter.attributes[6].value) * 100) /
-                      config.FIGHTER_STATS_VALUES.Dexterity.max_value,
-                    backgroundColor:
-                      config.FIGHTER_STATS_VALUES.Dexterity.color,
-                  }}
-                >
-                  {parseInt(fighter.attributes[6].value)}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-section hero-mid">
-            <div>
-              <FighterImage fighter={fighter} showName={true} />
-
-              <div className="hero-button-container">
-                <button onClick={goToTraining}>Training Range</button>
-                <button onClick={goToArena}>Arena</button>
-                {/* <button onClick={() => startFight(0)}>START</button> */}
-                {/* <button onClick={() => unfinishedMatches()}>
-                  ready matches
-                </button>
-
-                <button onClick={() => finishedMatches()}>match history</button> */}
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-section hero-side">
-            <div className="stat-container">
-              <span className="stat-name stat-bold">
-                Wins: {parseInt(fighter.attributes[3].value)}
-              </span>
-            </div>
-            <div
-              className="stat-container"
-              onClick={() => finishTraining(Stat.DUR)}
-            >
-              <span className="stat-name">Durability</span>
-              <div className="hero-bar-container">
-                <div
-                  className="stats durability"
-                  style={{
-                    width:
-                      (parseInt(fighter.attributes[9].value) * 100) /
-                      config.FIGHTER_STATS_VALUES.Durability.max_value,
-                    backgroundColor:
-                      config.FIGHTER_STATS_VALUES.Durability.color,
-                  }}
-                >
-                  {parseInt(fighter.attributes[9].value)}
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="stat-container"
-              onClick={() => finishTraining(Stat.INT)}
-            >
-              <span className="stat-name">Intelligence</span>
-              <div className="hero-bar-container">
-                <div
-                  className="stats intelligence"
-                  style={{
-                    width:
-                      (parseInt(fighter.attributes[8].value) * 100) /
-                      config.FIGHTER_STATS_VALUES.Intelligence.max_value,
-                    backgroundColor:
-                      config.FIGHTER_STATS_VALUES.Intelligence.color,
-                  }}
-                >
-                  {parseInt(fighter.attributes[8].value)}
-                </div>
-              </div>
-            </div>
-            <div
-              className="stat-container"
-              onClick={() => finishTraining(Stat.AGI)}
-            >
-              <span className="stat-name">Agility</span>
-              <div className="hero-bar-container">
-                <div
-                  className="stats agility"
-                  style={{
-                    width:
-                      (parseInt(fighter.attributes[7].value) * 100) /
-                      config.FIGHTER_STATS_VALUES.Agility.max_value,
-                    backgroundColor: config.FIGHTER_STATS_VALUES.Agility.color,
-                  }}
-                >
-                  {parseInt(fighter.attributes[7].value)}
-                </div>
-              </div>
-            </div>
+  const leftBlock = (
+    <>
+      <div className="stat-container">
+        <span className="stat-name">Hp</span>
+        <div className="hero-bar-container">
+          <div
+            className="stats hp"
+            style={{
+              width:
+                (parseInt(fighter.attributes[4].value) * 100) /
+                config.FIGHTER_STATS_VALUES.HP.max_value,
+              backgroundColor: config.FIGHTER_STATS_VALUES.HP.color,
+            }}
+          >
+            {parseInt(fighter.attributes[4].value)}
           </div>
         </div>
+      </div>
+
+      <div className="stat-container" onClick={() => finishTraining(Stat.STR)}>
+        <span className="stat-name">Strength</span>
+        <div className="hero-bar-container">
+          <div
+            className="stats strength"
+            style={{
+              width:
+                (parseInt(fighter.attributes[5].value) * 100) /
+                config.FIGHTER_STATS_VALUES.Strength.max_value,
+              backgroundColor: config.FIGHTER_STATS_VALUES.Strength.color,
+            }}
+          >
+            {parseInt(fighter.attributes[5].value)}
+          </div>
+        </div>
+      </div>
+
+      <div className="stat-container" onClick={() => finishTraining(Stat.DEX)}>
+        <span className="stat-name">Dexterity</span>
+        <div className="hero-bar-container">
+          <div
+            className="stats dexterity"
+            style={{
+              width:
+                (parseInt(fighter.attributes[6].value) * 100) /
+                config.FIGHTER_STATS_VALUES.Dexterity.max_value,
+              backgroundColor: config.FIGHTER_STATS_VALUES.Dexterity.color,
+            }}
+          >
+            {parseInt(fighter.attributes[6].value)}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <Suspense fallback={<>LOADING...</>}>
+      <main className="main-centered-content">
+        <section className="main-container">
+          <Header />
+          <div className="hero-container">
+            <div className="hero-section hero-side shown-unless-small-screen">
+              {leftBlock}
+            </div>
+
+            <div className="hero-section hero-mid character-image-section">
+              <div>
+                <FighterImage fighter={fighter} showName={true} />
+                <div className="fighter-main-stats">
+                  <div>{parseInt(fighter.attributes[2].value)} level</div>
+                  <div>{parseInt(fighter.attributes[3].value)} wins</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="hero-section hero-side">
+              <div className="hidden-unless-small-screen">{leftBlock}</div>
+              <div
+                className="stat-container"
+                onClick={() => finishTraining(Stat.DUR)}
+              >
+                <span className="stat-name">Durability</span>
+                <div className="hero-bar-container">
+                  <div
+                    className="stats durability"
+                    style={{
+                      width:
+                        (parseInt(fighter.attributes[9].value) * 100) /
+                        config.FIGHTER_STATS_VALUES.Durability.max_value,
+                      backgroundColor:
+                        config.FIGHTER_STATS_VALUES.Durability.color,
+                    }}
+                  >
+                    {parseInt(fighter.attributes[9].value)}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="stat-container"
+                onClick={() => finishTraining(Stat.INT)}
+              >
+                <span className="stat-name">Intelligence</span>
+                <div className="hero-bar-container">
+                  <div
+                    className="stats intelligence"
+                    style={{
+                      width:
+                        (parseInt(fighter.attributes[8].value) * 100) /
+                        config.FIGHTER_STATS_VALUES.Intelligence.max_value,
+                      backgroundColor:
+                        config.FIGHTER_STATS_VALUES.Intelligence.color,
+                    }}
+                  >
+                    {parseInt(fighter.attributes[8].value)}
+                  </div>
+                </div>
+              </div>
+              <div
+                className="stat-container"
+                onClick={() => finishTraining(Stat.AGI)}
+              >
+                <span className="stat-name">Agility</span>
+                <div className="hero-bar-container">
+                  <div
+                    className="stats agility"
+                    style={{
+                      width:
+                        (parseInt(fighter.attributes[7].value) * 100) /
+                        config.FIGHTER_STATS_VALUES.Agility.max_value,
+                      backgroundColor:
+                        config.FIGHTER_STATS_VALUES.Agility.color,
+                    }}
+                  >
+                    {parseInt(fighter.attributes[7].value)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <Navigator id={id} loadNFT={loadNFT} fighter={fighter} />
       </main>
     </Suspense>
   );

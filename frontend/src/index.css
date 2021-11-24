@@ -170,6 +170,7 @@ h1 {
 @media screen and (max-width: 674px) {
   .App {
     margin-top: 0rem;
+    justify-content: flex-start;
   }
 
   .welcome-text-content {
@@ -183,6 +184,11 @@ h1 {
 
   .main-container {
     margin-top: 5rem;
+  }
+
+  .main-centered-content {
+    width: 100%;
+    padding: 0 20px;
   }
 
   ul.tokenrage-features {
@@ -208,6 +214,7 @@ h1 {
     padding: 0 1rem;
     grid-template-columns: 1fr;
     padding-bottom: 2rem;
+    justify-items: center;
   }
 
   h1 {

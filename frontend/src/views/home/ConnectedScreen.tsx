@@ -77,17 +77,19 @@ export default function ConnectedScreen(): JSX.Element {
   }
 
   return (
-    <main className="main-container">
-      <Header onLogoPress={loadNFTs} />
-      <section className="main-content">
-        <h1>Your NFTs</h1>
-        <div className="my-wallet-container">
-          {tokens.map((tokenID: number, i: number) => (
-            <FighterCard tokenID={tokenID} key={i} />
-          ))}
-          <CreateNewCharacter onClick={mintNFT} />
-        </div>
-      </section>
-    </main>
+    <div className="main-centered-content">
+      <main className="main-container">
+        <Header onLogoPress={loadNFTs} />
+        <section className="main-content">
+          <h1>Your NFTs</h1>
+          <div className="my-wallet-container">
+            {tokens.map((tokenID: number, i: number) => (
+              <FighterCard tokenID={tokenID} key={i} />
+            ))}
+            <CreateNewCharacter onClick={mintNFT} />
+          </div>
+        </section>
+      </main>
+    </div>
   );
 }
