@@ -58,6 +58,15 @@
   cursor: default;
 }
 
+.stat-name {
+  display: block;
+  padding-bottom: 8px;
+}
+
+.hero-side:last-of-type .stat-name {
+  text-align: right;
+}
+
 .stats {
   text-align: right; /* Right-align text */
   /* padding-top: 10px; Add top padding */

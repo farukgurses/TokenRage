@@ -21,6 +21,7 @@ import { sleep } from "../../utils";
 import FighterImage from "../../components/FighterImage";
 import Header from "../../components/Header";
 import Navigator from "./Navigator";
+import { Fighter } from "../../components/FighterStats";
 enum Stat {
   STR,
   DEX,
@@ -30,7 +31,7 @@ enum Stat {
 }
 
 const HeroScreen = (): JSX.Element => {
-  const [fighter, setFighter] = useState({
+  const [fighter, setFighter] = useState<Fighter>({
     attributes: [
       { value: "0" },
       { value: "0" },
@@ -172,6 +173,10 @@ const HeroScreen = (): JSX.Element => {
     const m = await fightingContract.finishMatch(id);
   }
 
+  const characterType = fighter.attributes.find(
+    (attr) => attr.trait_type === "Type"
+  )?.value;
+
   const leftBlock = (
     <>
       <div className="stat-container">
@@ -241,6 +246,7 @@ const HeroScreen = (): JSX.Element => {
               <div>
                 <FighterImage fighter={fighter} showName={true} />
                 <div className="fighter-main-stats">
+                  <div>{characterType}</div>
                   <div>{parseInt(fighter.attributes[2].value)} level</div>
                   <div>{parseInt(fighter.attributes[3].value)} wins</div>
                 </div>

@@ -26,9 +26,8 @@ export default function Header({
 
   const menu = (
     <Menu>
-      <Menu.Item disabled>Connected as {walletAddress}</Menu.Item>
-      <Menu.Item danger onClick={() => null}>
-        Disconnect Wallet
+      <Menu.Item key="connected-as" disabled>
+        Connected as {walletAddress}
       </Menu.Item>
     </Menu>
   );

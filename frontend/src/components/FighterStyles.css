@@ -34,6 +34,10 @@
   background-image: url("../assets/location_arena.png");
 }
 
+.fighter-avatar-location-cemetery {
+  background-image: url("../assets/location_cemetery.png");
+}
+
 .fighter-image-container {
   width: 280px;
   height: 360px;
