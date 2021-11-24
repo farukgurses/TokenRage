@@ -13,10 +13,10 @@ import FAQ from "../../config/FAQ.json";
 
 const traits: AttributeTrait[] = [
   "HP",
-  "Strength",
-  "Dexterity",
   "Durability",
+  "Strength",
   "Intelligence",
+  "Dexterity",
   "Agility",
 ];
 
