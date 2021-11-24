@@ -2,10 +2,10 @@
   "traits": {
     "Level": "Level is assigned randomly during the minting phase. It can be grown via fighting on Arena. Maximum level is 100.",
     "HP": "HP reflects the health of your hero. This is one of a few stats that you can't train on the Training Range (along with level and number of wins). Your character may lose HP during fights, and if the HP is low (below 600) your character is risking to die.",
-    "Strength": "Here we need to write how it affects the battle",
-    "Dexterity": "Here we need to write how it affects the battle",
-    "Durability": "Here we need to write how it affects the battle",
-    "Intelligence": "Here we need to write how it affects the battle",
-    "Agility": "Here we need to write how it affects the battle"
+    "Strength": "The harm you can give to your enemy with every successfull hit depends on your strength",
+    "Dexterity": "How likely your attacks succesffully deal damage depends on the dexterity",
+    "Durability": "Durability does not affect your matches but it increases succesfull training chance",
+    "Intelligence": "Depending on your intelligence you can deal critical damage and avoid getting critical hits",
+    "Agility": "Agility helps you to avoid enemy attacks"
   }
 }

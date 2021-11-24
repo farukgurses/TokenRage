@@ -37,7 +37,7 @@ export default function FighterAvatar({
     case 2:
       location = "arena";
       break;
-    case -1:
+    case 999:
       location = "cemetery";
       break;
   }
@@ -52,7 +52,7 @@ export default function FighterAvatar({
       <div
         className={`fighter-avatar-location fighter-avatar-location-${location}`}
       ></div>
-      {locationValue >= 0 && (
+      {locationValue !== 999 && (
         <div className="fighter-image-layer">
           <div
             className={`fighter-avatar-character fighter-avatar-character-${characterType}-level-${levelImage}`}
