@@ -6,19 +6,28 @@
 .hero-container {
   display: flex;
   flex-direction: row;
-  min-width: 50rem;
   margin-top: 5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+  min-width: 80rem;
 }
-.hero-section {
-  height: 400px;
+
+.character-image-section {
+  margin-top: 3rem;
+  margin-bottom: 2.5rem;
 }
+
 .hero-side {
-  width: 25%;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+  margin-top: -3rem;
 }
+
 .hero-mid {
   border-radius: 16px;
-  width: 50%;
+  width: 40%;
   display: flex;
   justify-content: center;
 }
@@ -35,64 +44,271 @@
 /* Container for skill bars */
 .hero-bar-container {
   border-radius: 10px;
-  min-width: 10rem;
   background-color: #2e2f36;
 }
 .stat-container {
-  margin: 1rem 1rem 0 1rem;
-  cursor: pointer;
+  margin-bottom: 3rem;
+  text-align: left;
+  font-family: "ShareTechMono";
+  align-self: stretch;
 }
 .stat-bold {
   font-weight: bold;
   cursor: default;
 }
 
-.hero-button-container {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, 50%);
-  display: flex;
-  justify-content: space-between;
-  height: 2rem;
-  width: 100%;
+.stat-name {
+  display: block;
+  padding-bottom: 8px;
 }
-.hero-button-container button {
-  color: #1c1d21;
-  background-color: #fff39e;
-  border-radius: 5px;
-  font-weight: 500;
-  cursor: pointer;
+
+.hero-side:last-of-type .stat-name {
+  text-align: right;
 }
 
 .stats {
   text-align: right; /* Right-align text */
   /* padding-top: 10px; Add top padding */
   /* padding-bottom: 10px; Add bottom padding */
-  color: #1c1d21; /* White text color */
+  color: white; /* White text color */
+  height: 5px;
+  padding-top: 10px;
+  border-radius: 10px;
 }
 
-.hp {
-  border-radius: 10px;
-  background-color: #e02020;
-} /* Green */
-.strength {
-  border-radius: 10px;
-  background-color: #ff00b0;
-} /* Blue */
-.dexterity {
-  border-radius: 10px;
-  background-color: #65af53;
-} /* Red */
-.agility {
-  border-radius: 10px;
-  background-color: #00adff;
+.hero-navigation-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  transition: opacity 1s ease-in-out;
 }
-.intelligence {
-  border-radius: 10px;
-  background-color: #ff7232;
+
+.hero-navigation-buttons.navigating {
+  opacity: 0.3;
 }
-.durability {
-  border-radius: 10px;
-  background-color: #676fff;
+
+.fighter-main-stats {
+  font-family: "ShareTechMono";
+}
+
+.go-training-range-button,
+.go-arena-button {
+  width: 47%;
+  border-radius: 16px;
+  background: url("../../assets/send_to_training_bg.png") 0 -60px;
+  height: 100px;
+  box-shadow: none;
+  border: none;
+  cursor: pointer;
+  transition: background-position 1s ease-in-out, box-shadow 500ms ease,
+    transform 500ms ease;
+  animation-name: MOVE-BG-LEFT;
+  animation-duration: 120s;
+  animation-play-state: running;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  font-family: "ShareTechMono";
+  box-shadow: 0 2px 11px 0 rgba(0, 0, 0, 0.25),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(0, 0, 0, 0.24),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 1px 5px 0 rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  letter-spacing: 1.92px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.go-training-range-button.in-progress,
+.go-arena-button.in-progress {
+  opacity: 0.2 !important;
+  transform: none !important;
+  cursor: default;
+  animation-play-state: paused;
+}
+
+.hero-navigation-buttons.navigating .go-training-range-button,
+.hero-navigation-buttons.navigating .go-arena-button {
+  animation-play-state: paused;
+  transform: translateY(0px) !important;
+  box-shadow: none;
+  cursor: default;
+  opacity: 1;
+}
+
+.go-training-range-button:hover,
+.go-arena-button:hover {
+  box-shadow: 0 2px 21px 0 rgba(0, 0, 0, 0.5);
+  animation-play-state: paused;
+  transform: translateY(-4px);
+}
+
+.go-training-range-button:hover,
+.go-arena-button:active {
+  opacity: 0.9;
+}
+
+.go-arena-button {
+  background-image: url("../../assets//send_to_arena_bg.png");
+  background-position: 0px -60px;
+  animation-name: MOVE-BG-RIGHT;
+}
+
+@keyframes MOVE-BG-LEFT {
+  from {
+    background-position: 0 -60px;
+  }
+  to {
+    background-position: -969px -60px;
+  }
+}
+
+@keyframes MOVE-BG-RIGHT {
+  from {
+    background-position: -969px -60px;
+  }
+  to {
+    background-position: 0px -60px;
+  }
+}
+
+.hidden-unless-small-screen {
+  display: none;
+}
+
+.shown-unless-small-screen {
+  display: flex;
+}
+
+.training-mode-container {
+  max-width: 80rem;
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  padding-top: 3rem;
+  position: relative;
+}
+
+.training-icon {
+  left: 24;
+  top: -48px;
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: transparent;
+}
+
+h1 {
+  letter-spacing: 1px;
+  font-family: "ShareTechMono";
+}
+
+p.hint {
+  text-align: left;
+  line-height: 32px;
+}
+
+.traits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 5rem;
+}
+
+.train-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.train-trait-container {
+  margin: 1rem 0;
+  max-width: 80rem;
+}
+
+.current-trait-value {
+  font-family: "ShareTechMono";
+  width: 100px;
+}
+
+.current-trait-value > span {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.train-trait-button {
+  font-family: "ShareTechMono";
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin-left: 1rem;
+  width: 200px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 11px 0 rgba(0, 0, 0, 0.25),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(0, 0, 0, 0.24),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 1px 5px 0 rgba(255, 255, 255, 0.2);
+}
+
+.train-trait-button[disabled] {
+  background: #2e2f36 !important;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.trait-progressbar {
+  background: #2e2f36;
+  width: 100px;
+  overflow: hidden;
+  border-radius: 50px;
+}
+
+.trait-progress {
+  height: 5px;
+  border-radius: 5px;
+}
+
+h3 {
+  font-family: "ShareTechMono";
+  text-align: left;
+}
+
+@media screen and (max-width: 674px) {
+  .traits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-container {
+    flex-direction: column;
+    min-width: 10vw;
+  }
+
+  .training-mode-container {
+    max-width: 100vw;
+  }
+
+  .hero-side {
+    width: 100%;
+  }
+
+  .character-image-section {
+    width: 100%;
+  }
+  .hidden-unless-small-screen {
+    display: block;
+  }
+
+  .shown-unless-small-screen {
+    display: none;
+  }
+
+  .hero-navigation-buttons {
+    flex-direction: column;
+  }
+
+  .go-training-range-button,
+  .go-arena-button {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
 }

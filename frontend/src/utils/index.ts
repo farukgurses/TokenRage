@@ -6,6 +6,10 @@ function random(arr: Array<string>) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+export function getPercentage(value: number, maxValue: number): number {
+  return (value / maxValue) * 100;
+}
+
 export const genRandomName = (): string => {
   let name = "";
   for (let i = 0; i < lor.length; i++) {

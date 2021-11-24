@@ -25,12 +25,22 @@ export default function FighterAvatar({
   if (!locationTrait || !characterTypeTrait || !characterLevelTrait)
     return null;
 
-  const location =
-    parseInt(locationTrait.value) === 0
-      ? "cave"
-      : parseInt(locationTrait.value) === 1
-      ? "training"
-      : "arena";
+  let location;
+  const locationValue = parseInt(locationTrait.value);
+  switch (locationValue) {
+    case 0:
+      location = "cave";
+      break;
+    case 1:
+      location = "training";
+      break;
+    case 2:
+      location = "arena";
+      break;
+    case 999:
+      location = "cemetery";
+      break;
+  }
 
   const characterType = characterTypeTrait.value.toLowerCase();
 
@@ -42,11 +52,13 @@ export default function FighterAvatar({
       <div
         className={`fighter-avatar-location fighter-avatar-location-${location}`}
       ></div>
-      <div className="fighter-image-layer">
-        <div
-          className={`fighter-avatar-character fighter-avatar-character-${characterType}-level-${levelImage}`}
-        ></div>
-      </div>
+      {locationValue !== 999 && (
+        <div className="fighter-image-layer">
+          <div
+            className={`fighter-avatar-character fighter-avatar-character-${characterType}-level-${levelImage}`}
+          ></div>
+        </div>
+      )}
     </>
   );
 }

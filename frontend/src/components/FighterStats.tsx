@@ -10,7 +10,7 @@ import "./FighterStyles.css";
 
 import configs from "../config";
 
-type AttributeTrait =
+export type AttributeTrait =
   | "Level"
   | "HP"
   | "Strength"

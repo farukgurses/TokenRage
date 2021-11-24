@@ -7,14 +7,13 @@ import nftContractABI from "../../artifacts/NFT.json";
 import { FighterCard } from "../../components/FighterCard";
 import { AppContext } from "../../context/state";
 import Web3Modal from "web3modal";
-import Loading from "../../components/Loading";
 import { message } from "antd";
 import { sleep } from "../../utils";
 import CreateNewCharacter from "../../components/CreateNewCharacter";
 import Header from "../../components/Header";
 
 export default function ConnectedScreen(): JSX.Element {
-  const { loading, setLoading } = useContext(AppContext);
+  const { setLoading } = useContext(AppContext);
   const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
@@ -67,7 +66,7 @@ export default function ConnectedScreen(): JSX.Element {
         2
       );
       await transaction.wait();
-      await sleep(30000);
+      await sleep(30_000);
       await loadNFTs();
     } catch (error: any) {
       message.error(error.message, 2);
@@ -77,21 +76,20 @@ export default function ConnectedScreen(): JSX.Element {
     setLoading(false);
   }
 
-  if (loading) {
-    return <Loading />;
-  }
   return (
-    <main className="main-container">
-      <Header />
-      <section className="main-content">
-        <h1>Your NFTs</h1>
-        <div className="my-wallet-container">
-          {tokens.map((tokenID: number, i: number) => (
-            <FighterCard tokenID={tokenID} key={i} />
-          ))}
-          <CreateNewCharacter onClick={mintNFT} />
-        </div>
-      </section>
-    </main>
+    <div className="main-centered-content">
+      <main className="main-container">
+        <Header onLogoPress={loadNFTs} />
+        <section className="main-content">
+          <h1>Your NFTs</h1>
+          <div className="my-wallet-container">
+            {tokens.map((tokenID: number, i: number) => (
+              <FighterCard tokenID={tokenID} key={i} />
+            ))}
+            <CreateNewCharacter onClick={mintNFT} />
+          </div>
+        </section>
+      </main>
+    </div>
   );
 }
