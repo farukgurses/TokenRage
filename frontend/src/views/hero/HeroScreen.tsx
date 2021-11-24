@@ -41,7 +41,7 @@ const HeroScreen = (): JSX.Element => {
   const [readyMatchId, setReadyMatchId] = useState();
 
   useEffect(() => {
-    unfinishedMatches();
+    getLastMatch();
     loadNFT();
   }, []);
 
@@ -77,10 +77,9 @@ const HeroScreen = (): JSX.Element => {
       provider
     );
     const m = await fightingContract.getFinishedMatchIds(id);
-
-    console.log(m);
   }
-  async function unfinishedMatches() {
+
+  async function getLastMatch() {
     // const web3Modal = new Web3Modal();
     // const connection = await web3Modal.connect();
     const provider = new ethers.providers.JsonRpcProvider(
@@ -92,12 +91,16 @@ const HeroScreen = (): JSX.Element => {
       fightingContractABI,
       provider
     );
-    const m = await fightingContract.getUnFinishedMatchIds(id);
-    console.log(m);
-    if (m.length) {
-      setReadyMatchId(m[0].toNumber());
+    const matches = await fightingContract.getMatchesByTokenId(id);
+    const match = await fightingContract.matchIdToMatch(
+      matches[matches.length - 1]
+    );
+    if (match.end === false) {
+      setReadyMatchId(match.matchId);
     }
+    console.log(match);
   }
+
   async function startFight() {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
@@ -108,8 +111,10 @@ const HeroScreen = (): JSX.Element => {
       fightingContractABI,
       signer
     );
-
-    const m = await fightingContract.finishMatch(readyMatchId);
+    console.log(readyMatchId);
+    const transaction = await fightingContract.finishMatch(readyMatchId);
+    const receipt = await transaction.wait();
+    console.log(receipt);
   }
 
   const characterType = fighter.attributes.find(

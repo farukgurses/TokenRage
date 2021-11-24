@@ -4,8 +4,7 @@
   "function fee() view returns (uint256)",
   "function finishMatch(uint256 _matchId)",
   "function finishedMatches() view returns (uint256)",
-  "function getFinishedMatchIds(uint256 tokenId) view returns (uint256[])",
-  "function getUnFinishedMatchIds(uint256 tokenId) view returns (uint256[])",
+  "function getMatchesByTokenId(uint256 _tokenId) view returns (uint256[])",
   "function keyHash() view returns (bytes32)",
   "function matchCounter() view returns (uint256)",
   "function matchIdToMatch(uint256) view returns (uint256 matchId, uint256 fighterOne, uint256 fighterTwo, uint256 winner, uint256 looser, bool end, string matchLogs)",
@@ -15,5 +14,6 @@
   "function rawFulfillRandomness(bytes32 requestId, uint256 randomness)",
   "function renounceOwnership()",
   "function toggleOpenToFight(uint256 _tokenId)",
+  "function tokenIdToMatchIds(uint256, uint256) view returns (uint256)",
   "function transferOwnership(address newOwner)"
 ]
