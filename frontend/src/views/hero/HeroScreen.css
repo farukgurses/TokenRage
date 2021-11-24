@@ -8,6 +8,7 @@
   flex-direction: row;
   margin-top: 5rem;
   margin-bottom: 2rem;
+  min-width: 80rem;
 }
 
 .character-image-section {
@@ -279,7 +280,7 @@ h3 {
 
   .hero-container {
     flex-direction: column;
-    max-width: 100vw;
+    min-width: 10vw;
   }
 
   .training-mode-container {
