@@ -92,13 +92,16 @@ const HeroScreen = (): JSX.Element => {
       provider
     );
     const matches = await fightingContract.getMatchesByTokenId(id);
-    const match = await fightingContract.matchIdToMatch(
-      matches[matches.length - 1]
-    );
-    if (match.end === false) {
-      setReadyMatchId(match.matchId);
+    console.log(matches);
+    if (matches.length > 0) {
+      const match = await fightingContract.matchIdToMatch(
+        matches[matches.length - 1]
+      );
+      if (match.end === false) {
+        setReadyMatchId(match.matchId);
+      }
+      console.log(match);
     }
-    console.log(match);
   }
 
   async function startFight() {
