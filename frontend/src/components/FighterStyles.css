@@ -20,6 +20,7 @@
   width: 280px;
   height: 280px;
   background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .fighter-avatar-location-training {
@@ -43,6 +44,22 @@
   height: 360px;
   position: relative;
   display: block;
+}
+
+.fighter-image-container.small {
+  width: 160px;
+  height: 160px;
+}
+
+.fighter-image-container.small .fighter-avatar-location,
+.fighter-image-container.small .fighter-avatar-character,
+.fighter-image-container.small .fighter-stats-container {
+  width: 160px;
+  height: 160px;
+}
+
+.fighter-image-container.reversed .fighter-avatar-character {
+  transform: scaleX(-1);
 }
 
 .create-new-image {
@@ -72,8 +89,8 @@
 }
 
 .fighter-card {
-  width: 280px;
-  height: 360px;
+  display: flex;
+  justify-content: center;
   background: #2e2f36;
   background-image: linear-gradient(
     180deg,
@@ -84,6 +101,9 @@
   border-radius: 9px;
   transition: background-color 0.3s ease-in-out, box-shadow 500ms ease,
     transform 500ms ease;
+  padding: 1rem;
+  width: 310px;
+  height: 380px;
 }
 
 .fighter-card:hover {
@@ -204,112 +224,153 @@
   background-image: url("../assets/fighter_knight_4.png");
 }
 
+@media screen and (max-width: 674px) {
+  .fighter-image-container.small {
+    width: 100px;
+    height: 100px;
+  }
+
+  .fighter-image-container.small .fighter-avatar-location,
+  .fighter-image-container.small .fighter-avatar-character,
+  .fighter-image-container.small .fighter-stats-container {
+    width: 100px;
+    height: 100px;
+  }
+}
+
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .fighter-avatar-location-training {
     background-image: url("../assets/location_training@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-location-cave {
     background-image: url("../assets/location_cave@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-location-arena {
     background-image: url("../assets/location_arena@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-location-cemetery {
     background-image: url("../assets/location_cemetery@2x.png");
+    background-size: contain;
   }
 
   .create-new-image {
     background: url("../assets/create_new_button@2x.png") no-repeat;
+    background-size: contain;
   }
 
   .finish-minting-button {
     background: url("../assets/minting_finished_button@2x.png") no-repeat;
+    background-size: contain;
   }
 
   .nft-loading-state {
     background: url("../assets/nft_loading@2x.png") no-repeat;
+    background-size: contain;
   }
 
   .fighter-avatar-character-viking {
     background-image: url("../assets/fighter_viking@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-undead {
     background-image: url("../assets/fighter_undead@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-demon {
     background-image: url("../assets/fighter_demon@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-knight {
     background-image: url("../assets/fighter_knight@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-viking-level-1 {
     background-image: url("../assets/fighter_viking_1@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-undead-level-1 {
     background-image: url("../assets/fighter_undead_1@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-demon-level-1 {
     background-image: url("../assets/fighter_demon_1@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-knight-level-1 {
     background-image: url("../assets/fighter_knight_1@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-viking-level-2 {
     background-image: url("../assets/fighter_viking_2@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-undead-level-2 {
     background-image: url("../assets/fighter_undead_2@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-demon-level-2 {
     background-image: url("../assets/fighter_demon_2@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-knight-level-2 {
     background-image: url("../assets/fighter_knight_2@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-viking-level-3 {
     background-image: url("../assets/fighter_viking_3@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-undead-level-3 {
     background-image: url("../assets/fighter_undead_3@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-demon-level-3 {
     background-image: url("../assets/fighter_demon_3@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-knight-level-3 {
     background-image: url("../assets/fighter_knight_3@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-viking-level-4 {
     background-image: url("../assets/fighter_viking_4@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-undead-level-4 {
     background-image: url("../assets/fighter_undead_4@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-demon-level-4 {
     background-image: url("../assets/fighter_demon_4@2x.png");
+    background-size: contain;
   }
 
   .fighter-avatar-character-knight-level-4 {
     background-image: url("../assets/fighter_knight_4@2x.png");
+    background-size: contain;
   }
 }

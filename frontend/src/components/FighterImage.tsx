@@ -7,12 +7,20 @@ import "./FighterStyles.css";
 export default function FighterImage({
   fighter,
   showName = true,
+  small = false,
+  reversed = false,
 }: {
-  showName?: boolean;
   fighter: Fighter;
+  showName?: boolean;
+  small?: boolean;
+  reversed?: boolean;
 }): JSX.Element {
   return (
-    <div className="fighter-image-container">
+    <div
+      className={`fighter-image-container ${small && "small"} ${
+        reversed && "reversed"
+      }`}
+    >
       <div className="fighter-image-layer">
         <FighterAvatar fighter={fighter} />
       </div>

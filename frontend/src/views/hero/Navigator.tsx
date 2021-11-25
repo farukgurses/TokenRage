@@ -15,13 +15,15 @@ type Props = {
   id?: string;
   loadNFT(): void;
   fighter: Fighter;
+  alreadMatched: boolean;
 };
 
 export default function Navigator({
   id,
   loadNFT,
   fighter,
-}: Props): JSX.Element {
+  alreadMatched,
+}: Props): JSX.Element | null {
   const [isNavigating, setIsNavigating] = useState(false);
   const { setLoading } = useContext(AppContext);
 
@@ -31,6 +33,7 @@ export default function Navigator({
   );
   const isTraining = currentLocation === 1;
   const isArena = currentLocation === 2;
+  const isDead = currentLocation === 999;
 
   const goToTraining = useCallback(
     async function () {
@@ -71,7 +74,7 @@ export default function Navigator({
 
   const goToArena = useCallback(
     async function () {
-      if (isNavigating) return;
+      if (isNavigating || isTraining || (isArena && alreadMatched)) return;
 
       setLoading(true);
       setIsNavigating(true);
@@ -100,32 +103,42 @@ export default function Navigator({
 
       setLoading(false);
     },
-    [isNavigating, isArena]
+    [isNavigating, isTraining, isArena, alreadMatched]
   );
+
+  if (isDead) return null;
 
   return (
     <section
       className={`hero-navigation-buttons ${isNavigating ? "navigating" : ""}`}
     >
-      <button
-        onClick={goToTraining}
-        className={`go-training-range-button ${
-          (isTraining || isArena) && "in-progress"
-        }`}
-        key={`training-animation-${fighter.name}`}
-      >
-        {isTraining
-          ? `${fighter.name} is already training`
-          : `Send ${fighter.name} for Training`}
-      </button>
+      {!isArena && (
+        <button
+          onClick={goToTraining}
+          className={`go-training-range-button ${
+            (isTraining || isArena) && "in-progress"
+          }`}
+          key={`training-animation-${fighter.name}`}
+        >
+          {isTraining
+            ? `Please complete training first`
+            : `Send ${fighter.name} for Training`}
+        </button>
+      )}
 
       <button
         onClick={goToArena}
-        className={`go-arena-button ${isTraining && `in-progress`}`}
+        className={`${isArena ? `go-cave-button` : "go-arena-button"} ${
+          (isTraining || (isArena && alreadMatched)) && `in-progress`
+        }`}
         key={`arena-animation-${fighter.name}`}
       >
         {isArena
-          ? `Call ${fighter.name} back from Arena`
+          ? alreadMatched
+            ? `An opponent is ready for the fight. No way back.`
+            : `Call ${fighter.name} back from Arena`
+          : isTraining
+          ? `Please complete training first`
           : `Send ${fighter.name} to Arena`}
       </button>
     </section>
