@@ -345,6 +345,7 @@ const HeroScreen = (): JSX.Element | null => {
           otherFighters={otherFightersMap}
           matches={matches}
           readyMatchId={readyMatchId}
+          loadNFT={loadNFT}
         />
         <Navigator
           id={id}

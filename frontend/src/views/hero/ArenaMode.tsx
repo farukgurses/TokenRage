@@ -94,8 +94,9 @@ type ArenaModeProps = {
   id: string;
   fighter: Fighter;
   otherFighters: OtherFighters;
-  matches: Array<any>;
+  matches: unknown;
   readyMatchId?: string;
+  loadNFT(): void;
 };
 export default function ArenaMode({
   id,
@@ -103,7 +104,8 @@ export default function ArenaMode({
   otherFighters,
   matches,
   readyMatchId,
-}: ArenaModeProps) {
+  loadNFT,
+}: ArenaModeProps): JSX.Element {
   const { setLoading } = useContext(AppContext);
   const alreadyMatched = readyMatchId !== null && readyMatchId !== undefined;
 
@@ -123,10 +125,10 @@ export default function ArenaMode({
       const transaction = await fightingContract.finishMatch(readyMatchId);
       callback();
       const receipt = await transaction.wait();
-      console.log(">>>receipt", receipt);
+      await loadNFT();
       setLoading(false);
     },
-    [readyMatchId]
+    [readyMatchId, loadNFT]
   );
 
   const currentLocation = parseInt(

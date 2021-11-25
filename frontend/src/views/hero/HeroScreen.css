@@ -484,10 +484,12 @@ h3 {
   .match-is-ready-icon {
     width: 48px;
     margin-top: 25px;
+    height: 48px;
   }
 
   .fight-started-progress {
     width: 48px;
+
     margin-top: -20px;
   }
 
