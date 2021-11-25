@@ -92,7 +92,8 @@
 }
 
 .go-training-range-button,
-.go-arena-button {
+.go-arena-button,
+.go-cave-button {
   width: 47%;
   border-radius: 16px;
   background: url("../../assets/send_to_training_bg.png") 0 -60px;
@@ -117,14 +118,16 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+.go-cave-button.in-progress,
 .go-training-range-button.in-progress,
 .go-arena-button.in-progress {
-  opacity: 0.2 !important;
+  opacity: 0.4 !important;
   transform: none !important;
   cursor: default;
   animation-play-state: paused;
 }
 
+.hero-navigation-buttons.navigating .go-cave-button,
 .hero-navigation-buttons.navigating .go-training-range-button,
 .hero-navigation-buttons.navigating .go-arena-button {
   animation-play-state: paused;
@@ -134,6 +137,7 @@
   opacity: 1;
 }
 
+.go-cave-button:hover,
 .go-training-range-button:hover,
 .go-arena-button:hover {
   box-shadow: 0 2px 21px 0 rgba(0, 0, 0, 0.5);
@@ -141,15 +145,23 @@
   transform: translateY(-4px);
 }
 
+.go-cave-button:active,
 .go-training-range-button:hover,
 .go-arena-button:active {
   opacity: 0.9;
 }
 
 .go-arena-button {
-  background-image: url("../../assets//send_to_arena_bg.png");
+  background-image: url("../../assets/send_to_arena_bg.png");
   background-position: 0px -60px;
   animation-name: MOVE-BG-RIGHT;
+}
+
+.go-cave-button {
+  background-image: url("../../assets/send_to_cave.png");
+  background-position: 0px -60px;
+  animation-name: MOVE-BG-LEFT;
+  width: 100%;
 }
 
 @keyframes MOVE-BG-LEFT {
@@ -248,12 +260,23 @@ p.hint {
     inset 0 -1px 2px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(0, 0, 0, 0.24),
     inset 0 2px 0 0 rgba(255, 255, 255, 0.1),
     inset 0 1px 5px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 500ms ease;
 }
 
 .train-trait-button[disabled] {
   background: #2e2f36 !important;
   opacity: 0.5;
   cursor: default;
+  transform: none !important;
+  box-shadow: 0 2px 11px 0 rgba(0, 0, 0, 0.25),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(0, 0, 0, 0.24),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 1px 5px 0 rgba(255, 255, 255, 0.2);
+}
+
+.train-trait-button:hover {
+  box-shadow: 0 2px 21px 0 rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
 }
 
 .trait-progressbar {
@@ -273,7 +296,319 @@ h3 {
   text-align: left;
 }
 
+.arena-mode {
+  background: #ad868c url("../../assets/arena_parallax_bg.png") bottom center
+    repeat-x;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  min-height: 25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.arena-mode-parallax {
+  position: absolute;
+  width: 100%;
+  height: 240px;
+  bottom: 0;
+  left: 0;
+}
+
+.arena-mode-parallax > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  /* background: url("../../assets/arena_parallax_close.png") center bottom
+    repeat-x; */
+  background-position: center bottom;
+  background-repeat: repeat-x;
+  animation-name: PARALLAX;
+  animation-duration: 240s;
+  animation-play-state: running;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.arena-mode-parallax-close {
+  background-image: url("../../assets/arena_parallax_close.png");
+}
+
+.arena-mode-parallax-mid {
+  background-image: url("../../assets/arena_parallax_mid.png");
+  animation-duration: 340s !important;
+}
+
+.arena-mode-parallax-far {
+  background-image: url("../../assets/arena_parallax_far.png");
+  animation-duration: 560s !important;
+}
+
+@keyframes PARALLAX {
+  from {
+    background-position: 0 bottom;
+  }
+  to {
+    background-position: -969px bottom;
+  }
+}
+
+.looking-for-opponent {
+  z-index: 3;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.arena-mode h2,
+.arena-mode p {
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: "ShareTechMono";
+}
+.arena-mode h2 {
+  font-weight: bold;
+}
+
+.arena-mode a {
+  color: #2182cb;
+  padding: 5px 20px;
+  padding-right: 40px;
+  border-radius: 8px;
+  background: white url("../../assets/more-info-link.png") calc(100% - 15px)
+    10px no-repeat;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.5);
+  transition: transform 500ms ease-in-out;
+}
+
+.arena-mode a.cleared {
+  background-color: transparent;
+  box-shadow: none;
+  text-decoration: underline;
+  color: white;
+  transform: none !important;
+}
+
+.arena-mode a:hover {
+  transform: translateY(-2px);
+}
+
+.fighters-showcase {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.fight-started-progress {
+  width: 160px;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 2rem;
+}
+
+.match-is-ready-icon {
+  width: 160px;
+  height: 160px;
+  background: url("../../assets/match_is_ready.png") no-repeat;
+  background-size: contain;
+  margin: 0 2rem;
+}
+
+.matched-view {
+  z-index: 3;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.start-fight-button {
+  background: white url("../../assets/start-the-fight-icon.png") 24px 17px
+    no-repeat;
+  color: red;
+  font-family: "ShareTechMono";
+  padding: 15px 2rem;
+  padding-left: 4rem;
+  font-size: 24px;
+  letter-spacing: 2px;
+  border-radius: 100px;
+  border: none;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+
+  box-shadow: 0 0 45px 0 rgba(255, 0, 0, 0.5);
+  text-shadow: 0 2px 4px rgba(190, 70, 70, 0.5);
+
+  animation-name: BUTTON_SHADOW;
+  animation-duration: 2s;
+  animation-play-state: running;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+  transition: background 0.2s ease-in-out;
+}
+
+.start-fight-button:hover {
+  background: red url("../../assets/start-the-fight-icon-active.png") 24px 17px
+    no-repeat;
+  color: white;
+}
+
+@keyframes BUTTON_SHADOW {
+  0% {
+    box-shadow: 0 0 45px 0 rgba(255, 0, 0, 0.3);
+  }
+
+  50% {
+    transform: translateY(-4px);
+    box-shadow: 0 0 45px 2px rgba(255, 0, 0, 0.8);
+  }
+
+  100% {
+    box-shadow: 0 0 45px 0 rgba(255, 0, 0, 0.3);
+  }
+}
+
+.match-history {
+  margin-top: 5rem;
+  padding: 2rem;
+  padding-top: 4rem;
+}
+
+.logs-list {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 2rem;
+}
+
+.location-cemetery-icon {
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("../../assets/location_cemetery_icon.png");
+}
+
+.match-log-item {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.avatars-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+}
+
+.logs-fighter-name {
+  margin-top: 10px;
+  font-family: "ShareTechMono";
+  font-weight: bold;
+}
+
+.winner-font-color {
+  color: #70c2a2;
+}
+
+.logs-fighter-name.loser-font-color {
+  text-decoration: line-through;
+  font-weight: normal;
+}
+
+.loser-font-color {
+  color: #e02020;
+}
+
+.vs-icon {
+  width: 48px;
+  height: 48px;
+  background: url("../../assets/vs-icon.png") no-repeat;
+  background-size: contain;
+}
+
+.logs-stats-container {
+  padding-top: 80px;
+}
+
+.log-border {
+  padding-top: 150px;
+  border: 5px solid #2e2f36;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  padding-bottom: 30px;
+}
+
+.round-left {
+  text-align: left;
+}
+
+.round-right {
+  text-align: right;
+}
+
+.round-text {
+  font-size: 13px;
+  font-family: "ShareTechMono";
+  padding: 10px 40px;
+  border-bottom: 1px solid #2e2f36;
+  transition: background 0.2s ease-in-out;
+  border-radius: 5px;
+}
+
+.round-text:last-of-type {
+  border-bottom: none;
+}
+
+.round-text:hover {
+  background-color: #2c2d34;
+}
+
+.critical-hit-round {
+  color: #f7b500;
+}
+
+.round-nr {
+  color: #5e5f68;
+}
+
 @media screen and (max-width: 674px) {
+  .logs-list {
+    grid-template-columns: 1fr;
+  }
+  .log-border {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+
+  .match-is-ready-icon {
+    width: 48px;
+    margin-top: 25px;
+    height: 48px;
+  }
+
+  .fight-started-progress {
+    width: 48px;
+
+    margin-top: -20px;
+  }
+
+  .arena-mode {
+    height: 35rem;
+  }
+
   .traits-grid {
     grid-template-columns: 1fr;
   }
@@ -307,8 +642,26 @@ h3 {
   }
 
   .go-training-range-button,
-  .go-arena-button {
+  .go-arena-button,
+  .go-cave-button {
     width: 100%;
     margin-bottom: 1rem;
+  }
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .go-arena-button {
+    background-image: url("../../assets/send_to_arena_bg@2x.png");
+    background-size: contain;
+  }
+
+  .go-cave-button {
+    background-image: url("../../assets/send_to_arena_bg@2x.png");
+    background-size: contain;
+  }
+
+  .go-training-range-button {
+    background: url("../../assets/send_to_training_bg@2x.png") 0 -60px;
+    background-size: contain;
   }
 }

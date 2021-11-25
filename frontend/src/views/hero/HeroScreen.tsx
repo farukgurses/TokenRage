@@ -15,8 +15,10 @@ import Navigator from "./Navigator";
 import { Fighter, FighterStat } from "../../components/FighterStats";
 import TrainingMode from "./TrainingMode";
 import { getPercentage } from "../../utils";
+import ArenaMode from "./ArenaMode";
+import MatchHistory, { Match } from "./MatchHistory";
 
-const HeroScreen = (): JSX.Element => {
+const HeroScreen = (): JSX.Element | null => {
   const [fighter, setFighter] = useState<Fighter>({
     attributes: [
       { value: "0", max_value: "0" },
@@ -38,11 +40,21 @@ const HeroScreen = (): JSX.Element => {
   const { id } = useParams();
   const { setLoading } = useContext(AppContext);
   const [readyMatchId, setReadyMatchId] = useState();
+  const alreadyMatched = readyMatchId !== null && readyMatchId !== undefined;
+
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [otherFightersMap, setOtherFighters] = useState<{
+    [key: number]: Fighter;
+  }>({});
 
   useEffect(() => {
-    getLastMatch();
     loadNFT();
-  }, []);
+    loadMatches();
+  }, [id]);
+
+  useEffect(() => {
+    loadFightersInvolved();
+  }, [matches]);
 
   async function loadNFT() {
     setLoading(true);
@@ -85,7 +97,7 @@ const HeroScreen = (): JSX.Element => {
     const m = await fightingContract.getFinishedMatchIds(id);
   }
 
-  async function getLastMatch() {
+  async function loadMatches() {
     // const web3Modal = new Web3Modal();
     // const connection = await web3Modal.connect();
     const provider = new ethers.providers.JsonRpcProvider(
@@ -97,34 +109,59 @@ const HeroScreen = (): JSX.Element => {
       fightingContractABI,
       provider
     );
-    const matches = await fightingContract.getMatchesByTokenId(id);
-    console.log(matches);
+
+    const mIds = await fightingContract.getMatchesByTokenId(id);
+    const matches = [];
+
+    for (const mId of mIds) {
+      const matchData = await fightingContract.matchIdToMatch(mId);
+      matches.push(matchData);
+    }
+
+    setMatches(matches);
+
     if (matches.length > 0) {
-      const match = await fightingContract.matchIdToMatch(
-        matches[matches.length - 1]
-      );
-      if (match.end === false) {
-        setReadyMatchId(match.matchId);
+      const mostRecentMatch = matches[matches.length - 1];
+
+      if (mostRecentMatch.end === false) {
+        setReadyMatchId(mostRecentMatch.matchId);
       }
-      console.log(match);
     }
   }
 
-  async function startFight() {
+  async function loadFightersInvolved() {
+    const newFighters: any = {};
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-    const fightingContract = new ethers.Contract(
-      config.FIGHTING_CONTRACT,
-      fightingContractABI,
+    const nftContract = new ethers.Contract(
+      config.NFT_CONTRACT,
+      nftContractABI,
       signer
     );
-    console.log(readyMatchId);
-    const transaction = await fightingContract.finishMatch(readyMatchId);
-    const receipt = await transaction.wait();
-    console.log(receipt);
+
+    for (const currentMatch of matches) {
+      for (const fighterN of ["fighterOne", "fighterTwo"]) {
+        const currentFighterId = (currentMatch as any)[fighterN].toNumber();
+
+        if (currentFighterId != id && !(currentFighterId in newFighters)) {
+          const data = await nftContract.tokenURI(currentFighterId);
+          const base64ToString = Buffer.from(
+            data.split(",")[1],
+            "base64"
+          ).toString();
+          const fighterData = JSON.parse(base64ToString) as any;
+
+          newFighters[currentFighterId] = fighterData;
+        }
+      }
+    }
+
+    setOtherFighters(newFighters);
   }
+
+  if (!id) return null;
 
   const characterType = fighter.attributes.find(
     (attr) => attr.trait_type === "Type"
@@ -215,7 +252,6 @@ const HeroScreen = (): JSX.Element => {
             <div className="hero-section hero-side shown-unless-small-screen">
               {leftBlock}
             </div>
-            <button onClick={startFight}>Start Fight</button>
             <div className="hero-section hero-mid character-image-section">
               <div>
                 <FighterImage fighter={fighter} showName={true} />
@@ -231,7 +267,7 @@ const HeroScreen = (): JSX.Element => {
               <div className="hidden-unless-small-screen">{leftBlock}</div>
               <div
                 className="stat-container"
-                title={`${parseInt(fighter.attributes[9].value)}/$${parseInt(
+                title={`${parseInt(fighter.attributes[9].value)}/${parseInt(
                   fighter.attributes[9].max_value
                 )}`}
               >
@@ -256,7 +292,7 @@ const HeroScreen = (): JSX.Element => {
 
               <div
                 className="stat-container"
-                title={`${parseInt(fighter.attributes[8].value)}/$${parseInt(
+                title={`${parseInt(fighter.attributes[8].value)}/${parseInt(
                   fighter.attributes[8].max_value
                 )}`}
               >
@@ -306,7 +342,26 @@ const HeroScreen = (): JSX.Element => {
           </div>
         </section>
         <TrainingMode id={id} fighter={fighter} loadNFT={loadNFT} />
-        <Navigator id={id} loadNFT={loadNFT} fighter={fighter} />
+        <ArenaMode
+          id={id}
+          fighter={fighter}
+          otherFighters={otherFightersMap}
+          matches={matches}
+          readyMatchId={readyMatchId}
+          loadNFT={loadNFT}
+        />
+        <Navigator
+          id={id}
+          loadNFT={loadNFT}
+          fighter={fighter}
+          alreadMatched={alreadyMatched}
+        />
+        <MatchHistory
+          id={id}
+          fighter={fighter}
+          matches={matches}
+          otherFighters={otherFightersMap}
+        />
       </main>
     </Suspense>
   );
