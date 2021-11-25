@@ -38,7 +38,10 @@ const Trait = ({
   if (!currentTrait) return null;
 
   const value = parseInt(currentTrait.value);
-  const maxValue = config.FIGHTER_STATS_VALUES[trait].max_value;
+  const maxValue =
+    trait === "HP"
+      ? config.FIGHTER_STATS_VALUES["HP"].max_value
+      : parseInt(fighter.attributes[2].value) * 10;
   const canTrain = trait !== "HP";
 
   const onPressTrain = () => {
@@ -168,7 +171,7 @@ export default function TrainingMode({
         Training allows you to gain important skills that will be used during
         Arena Deathmatches.
         <br />
-        Each stat impacts characters battle abilities.
+        Upper limit of the stats are determined by the level.
       </p>
       <div className="traits-grid">
         {traits.map((trait) => (

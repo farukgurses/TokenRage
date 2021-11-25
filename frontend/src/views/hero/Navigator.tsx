@@ -71,7 +71,7 @@ export default function Navigator({
 
   const goToArena = useCallback(
     async function () {
-      if (isNavigating || isArena) return;
+      if (isNavigating) return;
 
       setLoading(true);
       setIsNavigating(true);
@@ -109,7 +109,9 @@ export default function Navigator({
     >
       <button
         onClick={goToTraining}
-        className={`go-training-range-button ${isTraining && "in-progress"}`}
+        className={`go-training-range-button ${
+          (isTraining || isArena) && "in-progress"
+        }`}
         key={`training-animation-${fighter.name}`}
       >
         {isTraining
@@ -119,11 +121,11 @@ export default function Navigator({
 
       <button
         onClick={goToArena}
-        className={`go-arena-button ${isArena && `in-progress`}`}
+        className={`go-arena-button ${isTraining && `in-progress`}`}
         key={`arena-animation-${fighter.name}`}
       >
         {isArena
-          ? `${fighter.name} is already on Arena`
+          ? `Call ${fighter.name} back from Arena`
           : `Send ${fighter.name} to Arena`}
       </button>
     </section>

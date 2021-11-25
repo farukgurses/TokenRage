@@ -19,7 +19,7 @@ export const FighterCard = ({
 }): JSX.Element => {
   const [fighter, setFighter] = useState<Fighter>({
     name: "",
-    attributes: [{ value: "" }],
+    attributes: [{ value: "", max_value: "" }],
     image: "",
   });
   const [cardLoading, setcardLoading] = useState(true);
