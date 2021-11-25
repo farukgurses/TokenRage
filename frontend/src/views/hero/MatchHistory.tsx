@@ -33,8 +33,6 @@ const MatchLogItem = ({
     .filter((s) => s.trim() !== "")
     .map((r) => r.split(" ").map((x) => Number(x)));
 
-  console.log(">roundLogs", roundLogs);
-
   const getFighterById = (fId: number) =>
     parseInt(id) === fId ? fighter : otherFighters[fId];
 

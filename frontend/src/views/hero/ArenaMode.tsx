@@ -152,8 +152,6 @@ export default function ArenaMode({
         : matchedFight.fighterOne.toNumber()
     ];
 
-  console.log(">opponent", otherFighters, opponent);
-
   return (
     <section className="arena-mode main-container">
       <div className="arena-mode-content">
