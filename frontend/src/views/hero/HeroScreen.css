@@ -147,7 +147,7 @@
 }
 
 .go-arena-button {
-  background-image: url("../../assets//send_to_arena_bg.png");
+  background-image: url("../../assets/send_to_arena_bg.png");
   background-position: 0px -60px;
   animation-name: MOVE-BG-RIGHT;
 }
@@ -310,5 +310,16 @@ h3 {
   .go-arena-button {
     width: 100%;
     margin-bottom: 1rem;
+  }
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .go-arena-button {
+    background-image: url("../../assets/send_to_arena_bg@2x.png");
+  }
+
+  .go-training-range-button,
+  .go-arena-button {
+    background: url("../../assets/send_to_training_bg@2x.png") 0 -60px;
   }
 }
