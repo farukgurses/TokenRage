@@ -16,6 +16,7 @@ import { Fighter, FighterStat } from "../../components/FighterStats";
 import TrainingMode from "./TrainingMode";
 import { getPercentage } from "../../utils";
 import ArenaMode from "./ArenaMode";
+import MatchHistory, { Match } from "./MatchHistory";
 
 const HeroScreen = (): JSX.Element | null => {
   const [fighter, setFighter] = useState<Fighter>({
@@ -41,8 +42,10 @@ const HeroScreen = (): JSX.Element | null => {
   const [readyMatchId, setReadyMatchId] = useState();
   const alreadyMatched = readyMatchId !== null && readyMatchId !== undefined;
 
-  const [matches, setMatches] = useState<any>([]);
-  const [otherFightersMap, setOtherFighters] = useState<any>({});
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [otherFightersMap, setOtherFighters] = useState<{
+    [key: number]: Fighter;
+  }>({});
 
   useEffect(() => {
     loadNFT();
@@ -140,9 +143,9 @@ const HeroScreen = (): JSX.Element | null => {
 
     for (const currentMatch of matches) {
       for (const fighterN of ["fighterOne", "fighterTwo"]) {
-        const currentFighterId = currentMatch[fighterN].toNumber();
+        const currentFighterId = (currentMatch as any)[fighterN].toNumber();
 
-        if (currentFighterId != id) {
+        if (currentFighterId != id && !(currentFighterId in newFighters)) {
           const data = await nftContract.tokenURI(currentFighterId);
           const base64ToString = Buffer.from(
             data.split(",")[1],
@@ -352,6 +355,12 @@ const HeroScreen = (): JSX.Element | null => {
           loadNFT={loadNFT}
           fighter={fighter}
           alreadMatched={alreadyMatched}
+        />
+        <MatchHistory
+          id={id}
+          fighter={fighter}
+          matches={matches}
+          otherFighters={otherFightersMap}
         />
       </main>
     </Suspense>

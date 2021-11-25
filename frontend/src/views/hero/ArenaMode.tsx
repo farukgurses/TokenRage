@@ -7,6 +7,7 @@ import config from "../../config";
 import { AppContext } from "../../context/state";
 import ReactLoading from "react-loading";
 import FighterImage from "../../components/FighterImage";
+import { Match } from "./MatchHistory";
 
 type OtherFighters = { [key: number]: Fighter };
 
@@ -94,7 +95,7 @@ type ArenaModeProps = {
   id: string;
   fighter: Fighter;
   otherFighters: OtherFighters;
-  matches: unknown;
+  matches: Match[];
   readyMatchId?: string;
   loadNFT(): void;
 };
@@ -105,7 +106,7 @@ export default function ArenaMode({
   matches,
   readyMatchId,
   loadNFT,
-}: ArenaModeProps): JSX.Element {
+}: ArenaModeProps): JSX.Element | null {
   const { setLoading } = useContext(AppContext);
   const alreadyMatched = readyMatchId !== null && readyMatchId !== undefined;
 
@@ -124,7 +125,7 @@ export default function ArenaMode({
       setLoading(true);
       const transaction = await fightingContract.finishMatch(readyMatchId);
       callback();
-      const receipt = await transaction.wait();
+      await transaction.wait();
       await loadNFT();
       setLoading(false);
     },
@@ -144,17 +145,19 @@ export default function ArenaMode({
     ? matches.find((m) => m.matchId === readyMatchId)
     : null;
   const opponent =
-    matchedFight &&
+    !!matchedFight &&
     otherFighters[
       matchedFight.fighterOne.toNumber() == +id
         ? matchedFight.fighterTwo.toNumber()
         : matchedFight.fighterOne.toNumber()
     ];
 
+  console.log(">opponent", otherFighters, opponent);
+
   return (
     <section className="arena-mode main-container">
       <div className="arena-mode-content">
-        {alreadyMatched ? (
+        {alreadyMatched && !!opponent ? (
           <MatchedView
             startFight={startFight}
             opponent={opponent}

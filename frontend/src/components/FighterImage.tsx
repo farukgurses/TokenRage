@@ -14,7 +14,15 @@ export default function FighterImage({
   showName?: boolean;
   small?: boolean;
   reversed?: boolean;
-}): JSX.Element {
+}): JSX.Element | null {
+  const locationTrait = fighter.attributes.find(
+    (attr) => attr.trait_type === "Location"
+  );
+
+  if (!locationTrait) return null;
+
+  const isDead = parseInt(locationTrait.value) === 999;
+
   return (
     <div
       className={`fighter-image-container ${small && "small"} ${
@@ -26,7 +34,11 @@ export default function FighterImage({
       </div>
       <div className="fighter-image-layer">
         <FighterStats fighter={fighter} />
-        {showName && <div className="fighter-name-small">{fighter.name}</div>}
+        {showName && (
+          <div className={`fighter-name-small ${isDead && "dead"}`}>
+            {fighter.name}
+          </div>
+        )}
       </div>
     </div>
   );

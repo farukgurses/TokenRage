@@ -144,6 +144,10 @@
   margin-top: 20px;
 }
 
+.fighter-name-small.dead {
+  text-decoration: line-through;
+}
+
 .fighter-avatar-character-viking {
   background-image: url("../assets/fighter_viking.png");
 }
