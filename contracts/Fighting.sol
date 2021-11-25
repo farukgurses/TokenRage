@@ -21,6 +21,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
     mapping(uint256 => uint256) private matchIdToRandomNumber;
     mapping(uint256 => lib.Fighter) private bracketToFighter;
     mapping(uint256 => Match) public matchIdToMatch;
+    mapping(uint256 => uint256[]) public tokenIdToMatchIds;
 
     struct Match {
         uint256 matchId;
@@ -56,50 +57,29 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
             NFT(nftContract).updateFighter(_tokenId, myFighter);
             delete bracketToFighter[bracket];
         }else if(otherFighter.tokenId < 1){
-            require(myFighter.location == 0, "Fighter is busy");
+            require(myFighter.location == 0, "Fighter is busy or dead");
             myFighter.location = 2;
             NFT(nftContract).updateFighter(_tokenId, myFighter);
             bracketToFighter[bracket] = myFighter;
         }else{
-            require(myFighter.location == 0, "Fighter is busy");
+            require(myFighter.location == 0, "Fighter is busy or dead");
             myFighter.location = 2;
             NFT(nftContract).updateFighter(_tokenId, myFighter);
             requestMatch(otherFighter, myFighter);
             delete bracketToFighter[bracket];
         }
     }
-    
-    function getFinishedMatchIds(uint tokenId) public view returns(uint[] memory){
-        uint[] memory matches = new uint[](finishedMatches);
-        uint currentIndex = 0;
-        for(uint i=0; i < matchCounter; i++){
-           if(matchIdToMatch[i].end==true){
-               if(matchIdToMatch[i].fighterOne == tokenId || matchIdToMatch[i].fighterTwo == tokenId){
-                    matches[currentIndex] = matchIdToMatch[i].matchId;
-                    currentIndex++;
-               }
-           }
-        }
-        return matches;
-    }
 
-   function getUnFinishedMatchIds(uint tokenId) public view returns(uint[] memory){
-        uint[] memory matches = new uint[](matchCounter - finishedMatches);
-        uint currentIndex = 0;
-        for(uint i=0; i < matchCounter - finishedMatches; i++){
-           if(matchIdToMatch[i].end==false){
-                if(matchIdToMatch[i].fighterOne == tokenId || matchIdToMatch[i].fighterTwo == tokenId){
-                    matches[currentIndex] = matchIdToMatch[i].matchId;
-                    currentIndex++;
-               }
-           }
-        }
-        return matches;
+    function getMatchesByTokenId(uint256 _tokenId) public view returns(uint256[] memory){
+        return tokenIdToMatchIds[_tokenId];
     }
+    
 
     function requestMatch(lib.Fighter memory _fighterOne, lib.Fighter memory _fighterTwo) private{
         bytes32 requestId = requestRandomness(keyHash, fee);
         matchIdToMatch[matchCounter] = Match(matchCounter, _fighterOne.tokenId, _fighterTwo.tokenId, 0, 0, false, "");
+        tokenIdToMatchIds[_fighterOne.tokenId].push(matchCounter);
+        tokenIdToMatchIds[_fighterTwo.tokenId].push(matchCounter);
         requestIdToMatchId[requestId] = matchCounter;
         emit RequestedMatch(requestId, matchCounter);
         matchCounter++;
@@ -195,13 +175,22 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
             lib.Fighter memory looser = NFT(nftContract).getFighterById(_match.looser);
             winner.wins ++;
             winner.location = 0;
-            winner.level += looser.level;
+            // this is just a concept and will be improved
+            if(looser.hp < 200){
+                winner.level += looser.level;
+                looser.location = 999;
+            }else{
+                winner.level += looser.level / 3;
+                looser.location = 0;
+                looser.hp = looser.hp - (looser.hp / 4);
+            }
             if(winner.level >= 100){
                 winner.level = 100;
             }
             winner.hp = winner.level * 20;
             NFT(nftContract).updateFighter(_match.winner, winner);
-            NFT(nftContract)._BURN(_match.looser);
+            NFT(nftContract).updateFighter(_match.looser, looser);
+
         }
     }
 

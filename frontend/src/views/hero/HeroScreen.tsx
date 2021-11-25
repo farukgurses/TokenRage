@@ -38,8 +38,10 @@ const HeroScreen = (): JSX.Element => {
   });
   const { id } = useParams();
   const { setLoading } = useContext(AppContext);
+  const [readyMatchId, setReadyMatchId] = useState();
 
   useEffect(() => {
+    getLastMatch();
     loadNFT();
   }, []);
 
@@ -75,10 +77,9 @@ const HeroScreen = (): JSX.Element => {
       provider
     );
     const m = await fightingContract.getFinishedMatchIds(id);
-
-    console.log(m);
   }
-  async function unfinishedMatches() {
+
+  async function getLastMatch() {
     // const web3Modal = new Web3Modal();
     // const connection = await web3Modal.connect();
     const provider = new ethers.providers.JsonRpcProvider(
@@ -90,12 +91,20 @@ const HeroScreen = (): JSX.Element => {
       fightingContractABI,
       provider
     );
-    const m = await fightingContract.getUnFinishedMatchIds(id);
-
-    console.log(m);
+    const matches = await fightingContract.getMatchesByTokenId(id);
+    console.log(matches);
+    if (matches.length > 0) {
+      const match = await fightingContract.matchIdToMatch(
+        matches[matches.length - 1]
+      );
+      if (match.end === false) {
+        setReadyMatchId(match.matchId);
+      }
+      console.log(match);
+    }
   }
-  async function startFight(id: number) {
-    console.log(id);
+
+  async function startFight() {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
@@ -105,8 +114,10 @@ const HeroScreen = (): JSX.Element => {
       fightingContractABI,
       signer
     );
-
-    const m = await fightingContract.finishMatch(id);
+    console.log(readyMatchId);
+    const transaction = await fightingContract.finishMatch(readyMatchId);
+    const receipt = await transaction.wait();
+    console.log(receipt);
   }
 
   const characterType = fighter.attributes.find(
@@ -198,7 +209,7 @@ const HeroScreen = (): JSX.Element => {
             <div className="hero-section hero-side shown-unless-small-screen">
               {leftBlock}
             </div>
-
+            <button onClick={startFight}>Start Fight</button>
             <div className="hero-section hero-mid character-image-section">
               <div>
                 <FighterImage fighter={fighter} showName={true} />

@@ -127,11 +127,6 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
         return tokenIdToFighter[_tokenId];
     }
 
-    function _BURN(uint _tokenId) public {
-        require(msg.sender == fightingContract, "AE2");
-        super._burn(_tokenId);
-    }
-
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//
     // function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
     //     maxSupply = _newMaxSupply;
