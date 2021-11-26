@@ -5,7 +5,7 @@ import nftContractABI from "../artifacts/NFT.json";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import { Link } from "react-router-dom";
-import { genRandomName, sleep } from "../utils/";
+import { genRandomName } from "../utils/";
 import { message } from "antd";
 import FighterImage from "./FighterImage";
 import { Fighter } from "./FighterStats";
@@ -70,8 +70,8 @@ export const FighterCard = ({
         nftContractABI,
         signer
       );
-      await contract.finishMint(tokenID, genRandomName());
-      await sleep(20000);
+      const tx = await contract.finishMint(tokenID, genRandomName());
+      await tx.wait();
       await loadNFT();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

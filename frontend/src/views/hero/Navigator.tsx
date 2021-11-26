@@ -8,7 +8,6 @@ import { ethers } from "ethers";
 import trainingContractABI from "../../artifacts/Training.json";
 import fightingContractABI from "../../artifacts/Fighting.json";
 import config from "../../config";
-import { sleep } from "../../utils";
 import { Fighter } from "../../components/FighterStats";
 
 type Props = {
@@ -16,6 +15,7 @@ type Props = {
   loadNFT(): void;
   fighter: Fighter;
   alreadMatched: boolean;
+  loadMatches(): void;
 };
 
 export default function Navigator({
@@ -23,6 +23,7 @@ export default function Navigator({
   loadNFT,
   fighter,
   alreadMatched,
+  loadMatches,
 }: Props): JSX.Element | null {
   const [isNavigating, setIsNavigating] = useState(false);
   const { setLoading } = useContext(AppContext);
@@ -56,7 +57,6 @@ export default function Navigator({
           value: price,
         });
         await transaction.wait();
-        await sleep(10000);
         await loadNFT();
         setIsNavigating(false);
       } catch (error: any) {
@@ -90,8 +90,8 @@ export default function Navigator({
         );
         const transaction = await fightingContract.toggleOpenToFight(id);
         await transaction.wait();
-        await sleep(10000);
         await loadNFT();
+        await loadMatches();
         setIsNavigating(false);
       } catch (error: any) {
         if (error.data.message) {

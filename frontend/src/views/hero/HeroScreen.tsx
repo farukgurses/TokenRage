@@ -82,28 +82,10 @@ const HeroScreen = (): JSX.Element | null => {
     setLoading(false);
   }
 
-  async function finishedMatches() {
-    // const web3Modal = new Web3Modal();
-    // const connection = await web3Modal.connect();
-    const provider = new ethers.providers.JsonRpcProvider(
-      "https://matic-mumbai.chainstacklabs.com"
-    );
-    // const provider = new ethers.providers.Web3Provider(connection);
-    const fightingContract = new ethers.Contract(
-      config.FIGHTING_CONTRACT,
-      fightingContractABI,
-      provider
-    );
-    const m = await fightingContract.getFinishedMatchIds(id);
-  }
-
   async function loadMatches() {
-    // const web3Modal = new Web3Modal();
-    // const connection = await web3Modal.connect();
     const provider = new ethers.providers.JsonRpcProvider(
       "https://matic-mumbai.chainstacklabs.com"
     );
-    // const provider = new ethers.providers.Web3Provider(connection);
     const fightingContract = new ethers.Contract(
       config.FIGHTING_CONTRACT,
       fightingContractABI,
@@ -370,6 +352,7 @@ const HeroScreen = (): JSX.Element | null => {
           loadNFT={loadNFT}
           fighter={fighter}
           alreadMatched={alreadyMatched}
+          loadMatches={loadMatches}
         />
         <MatchHistory
           id={id}
