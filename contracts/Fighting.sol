@@ -111,7 +111,8 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
         uint[] memory randomArray = lib.expand(randomNumber, 200, 100);
         string memory matchLogs = "";
         uint256 randomI = 0;
-        for(uint i = 1; i <= 40; i ++){
+        uint256 hpLeft;
+        for(uint i = 1; i <= 50; i ++){
             MatchData memory data = MatchData(i, 0, 0, 0);
             if(i % 2 == 1){
                 data.hit = successfullHit(f1.dexterity, f2.agility, randomArray[randomI]) ? 1 : 0;
@@ -129,7 +130,8 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
                     matchIdToMatch[_matchId].looser = f2.tokenId;
                     break;
                 }
-                f2.hp -= data.dmg;
+                hpLeft = f2.hp - data.dmg;
+                f2.hp = hpLeft 
             }else{
                 data.hit = successfullHit(f2.dexterity, f1.agility, randomArray[randomI]) ? 1 : 0;
                 if(data.hit == 1){
@@ -146,10 +148,11 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
                     matchIdToMatch[_matchId].looser = f1.tokenId;
                     break;
                 }
-                f1.hp -= data.dmg;
+                hpLeft = f1.hp - data.dmg;
+                f1.hp = hpLeft 
             }
             matchLogs = string(abi.encodePacked(
-                matchLogs, '/' ,lib.toString(data.roundNo), ' ', lib.toString(data.hit), ' ' ,lib.toString(data.crit), ' ', lib.toString(data.dmg)
+                matchLogs, '/' ,lib.toString(data.roundNo), ' ', lib.toString(data.hit), ' ' ,lib.toString(data.crit), ' ', lib.toString(data.dmg), ' ' , lib.toString(hpLeft)
             )); 
             randomI++;
         }
@@ -180,7 +183,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
                 winner.level += looser.level;
                 looser.location = 999;
             }else{
-                winner.level += looser.level / 3;
+                winner.level += looser.level / 4;
                 looser.location = 0;
                 looser.hp = looser.hp - (looser.hp / 4);
             }
@@ -195,11 +198,11 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
     }
 
     function successfullHit(uint dex, uint agi, uint rN) private pure returns(bool){
-        return (dex * 150) / (dex + agi) > rN;
+        return (dex * 100) / (dex + agi) > rN;
     }
 
     function criticalHit(uint intAtt, uint intDef, uint dex, uint agi, uint rN) private pure returns(bool){
-        return ((intAtt * dex) / (intDef + agi)) * 40 > rN;
+        return ((intAtt + dex) / (intDef + agi)) * 20 > rN;
     }
 
     function calculateDmg(uint str, uint lvl, uint crit, uint rN) private pure returns (uint dmg){

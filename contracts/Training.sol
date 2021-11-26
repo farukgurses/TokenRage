@@ -11,7 +11,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
     
     event RequestedTraining(bytes32 indexed requestId, uint256 indexed tokenId);
     event ReadyForTraining(uint256 indexed tokenId, uint256 indexed randomNumber);
-    event TrainingDone(uint256 indexed tokenId, lib.Fighter indexed fighter, bool indexed isSuccessfull);
+    event TrainingDone(uint256 indexed tokenId, bool indexed isSuccessfull);
 
     address private nftContract;
     uint256 private cost;
@@ -34,12 +34,12 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
 
     function requestTraining (uint256 _tokenId) public payable returns(bytes32 requestId){
         require(!paused, "TNA");
-        // require(msg.value >= cost, "WP");
+        require(msg.value >= cost, "WP");
         require(msg.sender == IERC721(nftContract).ownerOf(_tokenId), 'Not owner of this token');
         requestId = requestRandomness(keyHash, fee);
         requestIdToTokenId[requestId] = _tokenId;
         lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
-        require(fighter.location == 0, "Fighter is busy");
+        require(fighter.location == 0, "Fighter is busy or dead");
         fighter.location = 1;
         NFT(nftContract).updateFighter(_tokenId, fighter);
         emit RequestedTraining(requestId, _tokenId);
@@ -67,7 +67,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         }
         fighter.location = 0;
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter, isSuccessfull);
+        emit TrainingDone(_tokenId, isSuccessfull);
     }    
 
     function finishTrainingAgi (uint256 _tokenId) public nonReentrant {
@@ -87,7 +87,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         }
         fighter.location = 0;  
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter, isSuccessfull);
+        emit TrainingDone(_tokenId, isSuccessfull);
     } 
 
     function finishTrainingDex (uint256 _tokenId) public nonReentrant {
@@ -106,7 +106,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         fighter.location = 0;
                 
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter, isSuccessfull);
+        emit TrainingDone(_tokenId, isSuccessfull);
     }
     function finishTrainingInt (uint256 _tokenId) public nonReentrant {
         lib.Fighter memory fighter = NFT(nftContract).getFighterById(_tokenId);
@@ -123,7 +123,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         }
         fighter.location = 0;     
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter, isSuccessfull);
+        emit TrainingDone(_tokenId, isSuccessfull);
     }
     
     function finishTrainingDur (uint256 _tokenId) public nonReentrant {
@@ -142,7 +142,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
         }
         fighter.location = 0;     
         NFT(nftContract).updateFighter(_tokenId, fighter);
-        emit TrainingDone(_tokenId, fighter, isSuccessfull);
+        emit TrainingDone(_tokenId, isSuccessfull);
     } 
 
     function startTraining(uint256 _tokenId) internal returns(uint256[] memory){
@@ -159,7 +159,7 @@ contract Training is ReentrancyGuard, VRFConsumerBase, Ownable{
     }
 
     function statIncreaseLimit(uint _level, uint _stat) internal pure returns(uint256){
-        return ((_level * 10 - _stat) / 10) + 1;
+        return ((_level * 10 - _stat) / 5) + 1;
     }
 
     //--------------------------------------- ONLY OWNER ---------------------------------------------

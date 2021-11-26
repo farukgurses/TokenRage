@@ -49,7 +49,7 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     function create() public payable returns(bytes32 requestId){
         require(!paused, "MNA");
         require(tokenCounter < maxSupply, "MO");
-        // require(msg.value >= cost, "WP");
+        require(msg.value >= cost, "WP");
 
         requestId = requestRandomness(keyHash, fee);
         requestIdToSender[requestId] = msg.sender;
@@ -128,13 +128,13 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
     }
 
     // --------------------------------------------  ONLY OWNER ----------------------------------------------//
-    // function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
-    //     maxSupply = _newMaxSupply;
-    // }
+    function setMaxSupply(uint256 _newMaxSupply) public onlyOwner(){
+        maxSupply = _newMaxSupply;
+    }
 
-    // function setCost(uint256 _newCost) public onlyOwner(){
-    //     cost = _newCost;
-    // }
+    function setCost(uint256 _newCost) public onlyOwner(){
+        cost = _newCost;
+    }
 
     function setTrainingContract(address _newTrainingContract) public onlyOwner(){
         trainingContract = _newTrainingContract;
@@ -147,12 +147,12 @@ contract NFT is ERC721URIStorage, Ownable, VRFConsumerBase {
         utilsContract = _newUtilsContract;
     }
 
-    // function pause(bool _state) public onlyOwner(){
-    //     paused = _state;
-    // }
+    function pause(bool _state) public onlyOwner(){
+        paused = _state;
+    }
 
-    // function withdraw() public payable onlyOwner(){
-    //     require(payable(msg.sender).send(address(this).balance));
-    // }
+    function withdraw() public payable onlyOwner(){
+        require(payable(msg.sender).send(address(this).balance));
+    }
 
 }

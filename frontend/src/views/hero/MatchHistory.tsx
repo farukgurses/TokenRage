@@ -32,7 +32,7 @@ const MatchLogItem = ({
     .split("/")
     .filter((s) => s.trim() !== "")
     .map((r) => r.split(" ").map((x) => Number(x)));
-
+  console.log(match);
   const getFighterById = (fId: number) =>
     parseInt(id) === fId ? fighter : otherFighters[fId];
 
