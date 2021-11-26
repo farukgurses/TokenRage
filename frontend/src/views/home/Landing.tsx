@@ -44,19 +44,20 @@ export default function LandingScreen(): JSX.Element {
 
       <div className="welcome-text-content">
         <div className="tokenrage-textlogo">
-          <img
-            srcSet="/assets/tokenrage-text-logo@2x.png 2x"
-            src="/assets/tokenrage-text-logo.png"
-          />
+          <img src="/assets/tokenrage-text-logo.png" />
         </div>
 
         <p className="about-tokenrage">
-          Far far away, behind the word mountains, far from the countries
-          Vokalia and Consonantia, there live the blind texts. Separated they
-          live in Bookmarksgrove right at the coast of the Semantics, a large
-          language ocean. A small river named Duden flows by their place and
-          supplies it with the necessary regelialia. It is a paradisematic
-          country, in which roasted parts (this is a dummy text)
+          Far far away, behind the tall mountains, far from the countries
+          Vokalia and Consonantia, was born TokenRage – a new Play2Earn
+          RPG/Strategy game with raids, loots and PvP. <br /> <br />
+          Demons, Vikings, Knights and Undeads meet each other for final
+          deathmatches where the strongest wins.
+          <br />
+          <br />
+          Each of the skills is crucial for the deathmatches. Train your
+          Dexterity to have more successfull attacks, Agility to avoid the hits,
+          or Intelligence - to cause critical damage.
         </p>
 
         <ul className="tokenrage-features">
@@ -72,14 +73,14 @@ export default function LandingScreen(): JSX.Element {
               srcSet="/assets/mint-icon@2x.png 2x"
               src="/assets/mint-icon.png"
             />
-            <span>Mint your first NFT character</span>
+            <span>Mint your first NFT hero</span>
           </li>
           <li>
             <img
               srcSet="/assets/train-icon@2x.png 2x"
               src="/assets/train-icon.png"
             />
-            <span>Train your character</span>
+            <span>Train your hero</span>
           </li>
           <li>
             <img

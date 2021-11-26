@@ -6,6 +6,7 @@ import { AppContext } from "../context/state";
 import { Menu, Dropdown } from "antd";
 import Loading from "./Loading";
 import { Link } from "react-router-dom";
+import FAQ from "./FAQ";
 
 export default function Header({
   onLogoPress = null,
@@ -14,7 +15,7 @@ export default function Header({
 }): JSX.Element {
   const [walletAddress, setWalletAddress] = React.useState("");
 
-  const { loading } = useContext(AppContext);
+  const { loading, setModalOpened, setModalContent } = useContext(AppContext);
 
   useEffect(() => {
     (async () => {
@@ -31,6 +32,11 @@ export default function Header({
       </Menu.Item>
     </Menu>
   );
+
+  const showFAQ = () => {
+    setModalContent(<FAQ />);
+    setModalOpened(true);
+  };
 
   return (
     <header>
@@ -59,6 +65,7 @@ export default function Header({
           <Loading />
         </div>
       )}
+      <div className="how-to-play-button" onClick={showFAQ}></div>
     </header>
   );
 }

@@ -8,6 +8,7 @@ import { AppContext } from "../../context/state";
 import ReactLoading from "react-loading";
 import FighterImage from "../../components/FighterImage";
 import { Match } from "./MatchHistory";
+import FAQ from "../../components/FAQ";
 
 type OtherFighters = { [key: number]: Fighter };
 
@@ -15,8 +16,14 @@ type MatchedViewProps = {
   startFight(fn: () => void): void;
   fighter: Fighter;
   opponent: Fighter;
+  showMoreInfo(): void;
 };
-const MatchedView = ({ startFight, fighter, opponent }: MatchedViewProps) => {
+const MatchedView = ({
+  startFight,
+  showMoreInfo,
+  fighter,
+  opponent,
+}: MatchedViewProps) => {
   const [fightStarted, setStarted] = useState(false);
 
   if (!opponent) {
@@ -66,14 +73,14 @@ const MatchedView = ({ startFight, fighter, opponent }: MatchedViewProps) => {
           </button>
         </>
       )}
-      <a className="cleared" href="#">
+      <a className="cleared" onClick={showMoreInfo}>
         More info about matchmaking and deathmatches
       </a>
     </div>
   );
 };
 
-const LookingForOpponent = () => (
+const LookingForOpponent = ({ showMoreInfo }: { showMoreInfo(): void }) => (
   <div className="looking-for-opponent">
     <div>
       <ReactLoading type="bubbles" color="#fff" height={128} width={128} />
@@ -87,7 +94,7 @@ const LookingForOpponent = () => (
       and one of you can start the fight.
       <br />
     </p>
-    <a href="#">More info about matchmaking and deathmatches</a>
+    <a onClick={showMoreInfo}>More info about matchmaking and deathmatches</a>
   </div>
 );
 
@@ -107,8 +114,14 @@ export default function ArenaMode({
   readyMatchId,
   loadNFT,
 }: ArenaModeProps): JSX.Element | null {
-  const { setLoading } = useContext(AppContext);
+  const { setLoading, setModalContent, setModalOpened } =
+    useContext(AppContext);
   const alreadyMatched = readyMatchId !== null && readyMatchId !== undefined;
+
+  const showMoreInfo = () => {
+    setModalContent(<FAQ focusedSection="Matchmaking and Deathmatches" />);
+    setModalOpened(true);
+  };
 
   const startFight = useCallback(
     async function (callback) {
@@ -160,9 +173,10 @@ export default function ArenaMode({
             startFight={startFight}
             opponent={opponent}
             fighter={fighter}
+            showMoreInfo={showMoreInfo}
           />
         ) : (
-          <LookingForOpponent />
+          <LookingForOpponent showMoreInfo={showMoreInfo} />
         )}
       </div>
       <div className="arena-mode-parallax">
