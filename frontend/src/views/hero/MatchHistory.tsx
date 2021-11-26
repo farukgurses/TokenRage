@@ -143,25 +143,25 @@ export default function MatchHistory({
   return (
     <section className="match-history main-container">
       <div className="training-icon location-cemetery-icon"></div>
-      <h1>Fighting history</h1>
+      <h1>Fight history</h1>
       {hadFights ? (
         <p className="hint">
-          {fighter.name} had {matches.length > 1 ? `` : `just`}
+          {fighter.name} had {matches.length > 1 ? `` : `just `}
           {matches.length} fight
           {matches.length > 1 ? `s` : ``}. <br />
           {isDead
             ? ` He was a true ${characterType}!`
             : isOnArena
             ? `Welcome to Arena, this should change soon...`
-            : ` Send them to the Arena to see what they worth ;)`}
+            : ` Send them to the Arena to see what they are made of`}
         </p>
       ) : (
         <p className="hint">
-          The fighting history is empty for Leochai.
+          The fight history is empty for {fighter.name}.
           <br />
           {isOnArena
             ? "Welcome to Arena, this should change soon..."
-            : "Send them to the Arena to see what they worth ;)"}
+            : "Send them to the Arena to see what they are made of"}
         </p>
       )}
       <div className="logs-list">

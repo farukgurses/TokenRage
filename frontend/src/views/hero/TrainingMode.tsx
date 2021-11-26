@@ -7,7 +7,7 @@ import { message } from "antd";
 import { ethers } from "ethers";
 import trainingContractABI from "../../artifacts/Training.json";
 import config from "../../config";
-import { getPercentage, sleep } from "../../utils";
+import { getPercentage } from "../../utils";
 import { AttributeTrait, Fighter } from "../../components/FighterStats";
 import FAQ from "../../config/FAQ.json";
 
@@ -117,24 +117,25 @@ export default function TrainingMode({
         signer
       );
       try {
+        let transaction;
         switch (stat) {
           case "Strength":
-            await trainingContract.finishTrainingStr(id);
+            transaction = await trainingContract.finishTrainingStr(id);
             break;
           case "Dexterity":
-            await trainingContract.finishTrainingDex(id);
+            transaction = await trainingContract.finishTrainingDex(id);
             break;
           case "Agility":
-            await trainingContract.finishTrainingAgi(id);
+            transaction = await trainingContract.finishTrainingAgi(id);
             break;
           case "Intelligence":
-            await trainingContract.finishTrainingInt(id);
+            transaction = await trainingContract.finishTrainingInt(id);
             break;
           case "Durability":
-            await trainingContract.finishTrainingDur(id);
+            transaction = await trainingContract.finishTrainingDur(id);
             break;
         }
-        await sleep(20000);
+        await transaction.wait();
         await loadNFT();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {

@@ -8,6 +8,7 @@ import { AppContext } from "../../context/state";
 import ReactLoading from "react-loading";
 import FighterImage from "../../components/FighterImage";
 import { Match } from "./MatchHistory";
+import { message } from "antd";
 
 type OtherFighters = { [key: number]: Fighter };
 
@@ -78,7 +79,7 @@ const LookingForOpponent = () => (
     <div>
       <ReactLoading type="bubbles" color="#fff" height={128} width={128} />
     </div>
-    <h2>Waiting for another hero...</h2>
+    <h2>Waiting for opponent...</h2>
     <p>
       We are trying to match you with a hero with a level similar to yours. You
       can still leave Arena at this point.
@@ -114,18 +115,32 @@ export default function ArenaMode({
     async function (callback) {
       const web3Modal = new Web3Modal();
       const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const signer = provider.getSigner();
-      const fightingContract = new ethers.Contract(
-        config.FIGHTING_CONTRACT,
-        fightingContractABI,
-        signer
-      );
+      try {
+        const provider = new ethers.providers.Web3Provider(connection);
+        const signer = provider.getSigner();
+        const fightingContract = new ethers.Contract(
+          config.FIGHTING_CONTRACT,
+          fightingContractABI,
+          signer
+        );
 
-      setLoading(true);
-      const transaction = await fightingContract.finishMatch(readyMatchId);
-      callback();
-      await transaction.wait();
+        setLoading(true);
+        const transaction = await fightingContract.finishMatch(readyMatchId);
+        await transaction.wait();
+
+        callback();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if (error.code === -32603) {
+          message.error(
+            "Your Fighter is getting ready for training, please try again soon",
+            2
+          );
+        } else {
+          message.error(error.message, 2);
+        }
+      }
+
       await loadNFT();
       setLoading(false);
     },
