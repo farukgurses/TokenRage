@@ -53,7 +53,7 @@ const Trait = ({
   return (
     <div className="train-trait-container">
       <h3>{trait}</h3>
-      <p className="hint">{FAQ.traits[trait]}</p>
+      <p className="hint">{FAQ.Traits[trait]}</p>
       <div className="train-button-container">
         <div className="current-trait-value">
           <span>
