@@ -265,6 +265,10 @@ const HeroScreen = (): JSX.Element | null => {
                       style={{
                         borderBottom: "1px dashed white",
                         color: "white",
+                        position: "absolute",
+                        right: "1rem",
+                        top: "1rem",
+                        fontSize: 12,
                       }}
                     >
                       See token on OpenSea

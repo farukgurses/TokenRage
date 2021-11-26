@@ -1,9 +1,14 @@
 {
   "Game mechanics": {
-    "How are stats assigned when creating a new character?": ""
+    "How are stats assigned when creating a new character?": "",
+    "What characters exist in the game?": "talk about undeads, vikings etc",
+    "What locations exist in the game?": "talk about cave, arena and what is it needed for",
+    "Why should I train stats?": ""
   },
   "Matchmaking and Deathmatches": {
-    "What is a deathmatch": ""
+    "What is a deathmatch": "",
+    "What if I lose a deathmatch": "depends on hp",
+    "Why can't I return to cave from Arena?": "you were matched"
   },
   "Traits": {
     "Level": "Level is assigned randomly during the minting phase. It can be grown via fighting on Arena. Maximum level is 100.",
