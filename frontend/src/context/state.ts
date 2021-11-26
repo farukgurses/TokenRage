@@ -6,6 +6,14 @@ const AppContext = createContext({
     _;
     return;
   },
+  setModalOpened: (_: boolean) => {
+    _;
+    return;
+  },
+  setModalContent: (_: JSX.Element | null) => {
+    _;
+    return;
+  },
 });
 
 export { AppContext };
