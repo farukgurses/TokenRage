@@ -259,6 +259,17 @@ const HeroScreen = (): JSX.Element | null => {
                   <div>{characterType}</div>
                   <div>{parseInt(fighter.attributes[2].value)} level</div>
                   <div>{parseInt(fighter.attributes[3].value)} wins</div>
+                  <div>
+                    <a
+                      href="#"
+                      style={{
+                        borderBottom: "1px dashed white",
+                        color: "white",
+                      }}
+                    >
+                      See token on OpenSea
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
