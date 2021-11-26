@@ -135,7 +135,12 @@ export default function TrainingMode({
             transaction = await trainingContract.finishTrainingDur(id);
             break;
         }
-        await transaction.wait();
+        const receipt = await transaction.wait();
+        if (receipt?.events[1]?.args[1]) {
+          message.success("Your hero trained hard, stats are increased", 3);
+        } else {
+          message.warning("Training did not increase any stats.", 3);
+        }
         await loadNFT();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
