@@ -146,7 +146,7 @@ export default function ArenaMode({
       } catch (error: any) {
         if (error.code === -32603) {
           message.error(
-            "Your Fighter is getting ready for training, please try again soon",
+            "Your Fighter is getting ready for fight, please try again soon",
             2
           );
         } else {

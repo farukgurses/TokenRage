@@ -131,7 +131,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
                     break;
                 }
                 hpLeft = f2.hp - data.dmg;
-                f2.hp = hpLeft 
+                f2.hp = hpLeft;
             }else{
                 data.hit = successfullHit(f2.dexterity, f1.agility, randomArray[randomI]) ? 1 : 0;
                 if(data.hit == 1){
@@ -149,7 +149,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
                     break;
                 }
                 hpLeft = f1.hp - data.dmg;
-                f1.hp = hpLeft 
+                f1.hp = hpLeft; 
             }
             matchLogs = string(abi.encodePacked(
                 matchLogs, '/' ,lib.toString(data.roundNo), ' ', lib.toString(data.hit), ' ' ,lib.toString(data.crit), ' ', lib.toString(data.dmg), ' ' , lib.toString(hpLeft)
@@ -202,7 +202,7 @@ contract  Fighting is ReentrancyGuard, VRFConsumerBase, Ownable{
     }
 
     function criticalHit(uint intAtt, uint intDef, uint dex, uint agi, uint rN) private pure returns(bool){
-        return ((intAtt + dex) / (intDef + agi)) * 20 > rN;
+        return (((intAtt + dex) * 20) / (intDef + agi)) > rN;
     }
 
     function calculateDmg(uint str, uint lvl, uint crit, uint rN) private pure returns (uint dmg){

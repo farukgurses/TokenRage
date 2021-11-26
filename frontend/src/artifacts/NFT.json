@@ -19,12 +19,15 @@
   "function name() view returns (string)",
   "function owner() view returns (address)",
   "function ownerOf(uint256 tokenId) view returns (address)",
+  "function pause(bool _state)",
   "function rawFulfillRandomness(bytes32 requestId, uint256 randomness)",
   "function renounceOwnership()",
   "function safeTransferFrom(address from, address to, uint256 tokenId)",
   "function safeTransferFrom(address from, address to, uint256 tokenId, bytes _data)",
   "function setApprovalForAll(address operator, bool approved)",
+  "function setCost(uint256 _newCost)",
   "function setFightingContract(address _newFightingContract)",
+  "function setMaxSupply(uint256 _newMaxSupply)",
   "function setTrainingContract(address _newTrainingContract)",
   "function setUtilsContract(address _newUtilsContract)",
   "function supportsInterface(bytes4 interfaceId) view returns (bool)",
@@ -36,5 +39,6 @@
   "function totalSupply() view returns (uint256)",
   "function transferFrom(address from, address to, uint256 tokenId)",
   "function transferOwnership(address newOwner)",
-  "function updateFighter(uint256 _tokenId, tuple(uint256 tokenId, string name, uint256 level, uint256 wins, uint256 hp, uint256 strength, uint256 dexterity, uint256 agility, uint256 intelligence, uint256 durability, uint256 location, string fighterType) _fighter)"
+  "function updateFighter(uint256 _tokenId, tuple(uint256 tokenId, string name, uint256 level, uint256 wins, uint256 hp, uint256 strength, uint256 dexterity, uint256 agility, uint256 intelligence, uint256 durability, uint256 location, string fighterType) _fighter)",
+  "function withdraw() payable"
 ]

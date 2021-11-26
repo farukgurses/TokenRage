@@ -37,17 +37,18 @@ type Props = {
 
 const getAttributeColor = (name: AttributeTrait) =>
   configs.FIGHTER_STATS_VALUES[name].color;
-
+const getAttributeMaxValue = (name: AttributeTrait) =>
+  configs.FIGHTER_STATS_VALUES[name].max_value;
 export default function FighterStats({ fighter }: Props): JSX.Element | null {
   const getAttributeValue = (name: AttributeTrait) =>
     parseInt(
       fighter?.attributes?.find((attr) => attr.trait_type === name)?.value || ""
     );
   const HP = getAttributeValue("HP");
-  const getAttributeMaxValue = (stat: string) =>
-    stat === "HP"
-      ? configs.FIGHTER_STATS_VALUES["HP"].max_value
-      : getAttributeValue("Level") * 10;
+  // const getAttributeMaxValue = (stat: string) =>
+  //   stat === "HP"
+  //     ? configs.FIGHTER_STATS_VALUES["HP"].max_value
+  //     : getAttributeValue("Level") * 10;
   if (!fighter?.attributes || !HP) {
     // if HP is not returned it means that the stats are not available
     return null;

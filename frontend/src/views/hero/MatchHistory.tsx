@@ -32,7 +32,6 @@ const MatchLogItem = ({
     .split("/")
     .filter((s) => s.trim() !== "")
     .map((r) => r.split(" ").map((x) => Number(x)));
-  console.log(match);
   const getFighterById = (fId: number) =>
     parseInt(id) === fId ? fighter : otherFighters[fId];
 
@@ -88,6 +87,7 @@ const MatchLogItem = ({
             const title = `Round ${round[0]} / ${roundLogs.length}`;
             const successfullAttack = round[1] != 0;
             const criticalHit = round[2] != 0;
+            const hpLeft = round[4];
             const damageGiven = round[3];
             const leftCol = startsFromLeft
               ? round[0] % 2 == 0
@@ -103,15 +103,16 @@ const MatchLogItem = ({
                 <div className="round-nr">{title}</div>
                 <div
                   className={`attack-round ${
-                    successfullAttack ? "winner-font-color" : "loser-font-color"
+                    successfullAttack ? "loser-font-color" : "winner-font-color"
                   }`}
                 >
-                  {successfullAttack ? "Successfull attack" : "Missed hit"}
+                  {successfullAttack ? "Hit Successful" : "Avoided hit"}
                 </div>
                 {criticalHit && (
                   <div className={`critical-hit-round`}>+Critical hit</div>
                 )}
-                Damage given: {damageGiven}
+                Damage received: {damageGiven}
+                <br /> Hp left: {hpLeft ? hpLeft : "-"}
               </div>
             );
           })}
