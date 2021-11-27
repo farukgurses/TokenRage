@@ -1,25 +1,35 @@
 {
   "Game mechanics": {
-    "How are stats assigned when creating a new character?": "",
-    "What characters exist in the game?": "talk about undeads, vikings etc",
-    "What locations exist in the game?": "talk about cave, arena and what is it needed for",
-    "Why should I train stats?": "",
-    "How can I find my token on OpenSea?": ""
+    "How TokenRage is different from other games?": "This is not another breeding game. TokenRage is a fully fledged RPG with unique mechanics. NFTs in TokenRage are prograssive and dynamic.",
+    "What does prograssive and dynamic means and why should I care?": "NFT metadata and image are created on-chain, every progress you make in the game gets reflected to your NFT. This means every win and training you successfully perform increases the value of your NFT and when it is bought by someone, they can continue from where you left.",
+    "How can I earn while enjoying the game": "There are various ways to earn money with TokenRage. You can create a hero, make some progress with it and sell it on secondary marketplaces. You can earn RAGE(in-game token) by winning deathmatches or raids and you can loot some items and chests in raids and dungeons which are also NFTs you can sell or trade.",
+    "How heroes are getting created?": "Your hero is created at minting moment and all stats are assigned randomly.",
+    "What characters exist in the game?": "Currently, there are four different characters(Knight, Viking, Undead, Demon) and each character has four different designs representing their power.",
+    "What locations exist in the game?": "In order to perform certain actions your hero needs to be in corresponding location. 'Cave' is the base location, 'Training Range' is for training your stats, 'Arena' is where you fight with other heroes and 'Cemetery' is the graveyard of fallen heroes.",
+    "Why should I train stats?": "If you want your hero to win death matches and raids you need to train it according to your strategy. Each stat has a different effect and they determine who lives and who dies.",
+    "How can I find my token on OpenSea?": "There is a link in each 'Hero Page' and you can click on that to go to OpenSea page of the hero."
   },
   "Matchmaking and Deathmatches": {
-    "What is a deathmatch": "we don't need to write text for all these faqs, just for the ones that will be used in the presentation",
-    "What if I lose a deathmatch": "depends on hp",
-    "Why can't I return to cave from Arena?": "you were matched",
-    "What is a critical hit?": "",
-    "Why my attack was unsuccessfull?": ""
+    "What is a deathmatch?": "You can join PvP battles in the Arena. These battles are called deatchmatches.",
+    "How matchmaking works?": "There are different brackets and you only get matched to an oppenent close to your level.",
+    "What if I lose a deathmatch?": "It depends on the HP of the hero. If your hero has enough HP, it will loose some HP; If the HP of the hero is low it may not leave the arena alive.",
+    "Sounds dangerous, what happens if my hero dies?": "It is sent to 'Cemetery' and can not be used until you find a way to revive it.(*loots and items)",
+    "Why can't I return to cave from Arena?": "Once you are matched with an opponent, there is no going back.",
+    "Why my attack was unsuccessfull?": "Outcome of an attack is dependent on some complex math and random values.",
+    "What is a critical hit?": "Some heroes are tallented fighters who knows where to hit and damage their enemy hard.(*intelligence stat)"
   },
   "Traits": {
     "Level": "Level is assigned randomly during the minting phase. It can be grown via fighting on Arena. Maximum level is 100.",
-    "HP": "HP reflects the health of your hero. This is one of a few stats that you can't train on the Training Range (along with level and number of wins). Your character may lose HP during fights, and if the HP is low (below 600) your character is risking to die.",
+    "HP": "HP reflects the health of your hero. This is one of a few stats that you can't train on the Training Range (along with level and number of wins). Your character may lose HP during fights, and if the HP is low your character is risking to die.",
     "Strength": "The harm you can give to your enemy with every successfull hit depends on your strength.",
     "Dexterity": "How likely your attacks succesffully deal damage depends on the dexterity.",
     "Durability": "Durability does not affect your battle abilities but it increases succesfull training chance.",
     "Intelligence": "Depending on your intelligence you can deal critical damage and avoid getting critical hits.",
     "Agility": "Agility helps you to avoid enemy attacks."
+  },
+  "Raids(WIP)": {
+    "What is a Raid": "You can explore dungeons and fight with NPC Bosses, solo or co-op with your friends.",
+    "Why should I raid": "If your raid is successful you may find rare loots in dungeons",
+    "What is Loot": "Loots are items or weapons you will find by going to Raids. You can use items to gain various advantages(temporary boosts to stats, review a dead hero) and wield your weapons or shields to fights. You can also sell or trade them as you like because Loots are also NFTs."
   }
 }

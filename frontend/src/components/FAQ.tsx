@@ -64,8 +64,8 @@ export default function FAQ({ focusedSection }: FAQProps): JSX.Element {
       <p className="hint">
         TokenRage is a Play2Earn RPG/Strategy game with raids, loots and PvP.
         <br />
-        You can mint fighters, which are actual NFTs, train their skills, create
-        deathmatches and build aliances.
+        You can mint heroes, which are actual NFTs, train their skills, fight in
+        deatchmatches, go to adventures and build aliances.
       </p>
       {content.map((key, k) => (
         <FAQSection key={k} name={key} />
